@@ -1,0 +1,123 @@
+-- ============================================================
+-- Chitopo — catálogo mayorista
+-- Ejecutar en el SQL Editor de Supabase, sobre un proyecto nuevo.
+-- Después correr seed.sql para cargar los 5 productos reales.
+-- ============================================================
+
+-- ── 1. PRODUCTOS ────────────────────────────────────────────
+-- Un producto = un SKU (sabor + gramaje). Los bultos de venta
+-- (caja, display, unidad) viven en formats como JSONB:
+--   [{ "id":"caja-24", "label":"Caja", "units":24, "stock":40, "price":null }]
+-- price en null significa "a consultar".
+
+CREATE TABLE IF NOT EXISTS productos (
+  id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  slug        TEXT UNIQUE NOT NULL,
+  name        TEXT NOT NULL,
+  line        TEXT NOT NULL DEFAULT 'sufles',
+  flavor      TEXT,
+  grams       INT  NOT NULL,
+  status      TEXT NOT NULL DEFAULT 'activo'
+              CHECK (status IN ('activo', 'proximamente')),
+  active      BOOLEAN NOT NULL DEFAULT true,
+  tag         TEXT,
+  emoji       TEXT DEFAULT '🍿',
+  image       TEXT,
+  barcode     TEXT,
+  claims      JSONB NOT NULL DEFAULT '{"baked":true,"glutenFree":false,"seals":[]}'::jsonb,
+  formats     JSONB NOT NULL DEFAULT '[]'::jsonb,
+  ingredients TEXT,
+  allergens   TEXT,
+  nutrition   JSONB,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS productos_line_idx   ON productos (line);
+CREATE INDEX IF NOT EXISTS productos_active_idx ON productos (active);
+
+ALTER TABLE productos ENABLE ROW LEVEL SECURITY;
+
+-- El catálogo es público: cualquiera lee. Escribir exige sesión.
+DROP POLICY IF EXISTS "productos lectura publica" ON productos;
+CREATE POLICY "productos lectura publica" ON productos
+  FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "productos escritura admin" ON productos;
+CREATE POLICY "productos escritura admin" ON productos
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- ── 2. PEDIDOS ──────────────────────────────────────────────
+-- Se guardan al momento de derivar a WhatsApp. total puede ser NULL
+-- mientras el catálogo esté en modo "precio a consultar".
+
+CREATE TABLE IF NOT EXISTS pedidos (
+  id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  client     TEXT NOT NULL,          -- nombre del local
+  contact    TEXT,                   -- persona que hace el pedido
+  phone      TEXT,
+  units      INT  NOT NULL DEFAULT 0, -- total de bolsas
+  total      NUMERIC,                 -- NULL = a confirmar
+  status     TEXT NOT NULL DEFAULT 'pendiente'
+             CHECK (status IN ('pendiente', 'confirmado', 'enviado', 'cancelado')),
+  items      JSONB NOT NULL DEFAULT '[]'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS pedidos_status_idx ON pedidos (status, created_at DESC);
+
+ALTER TABLE pedidos ENABLE ROW LEVEL SECURITY;
+
+-- Un cliente anónimo puede crear su pedido, pero no leer los de otros.
+DROP POLICY IF EXISTS "pedidos alta publica" ON pedidos;
+CREATE POLICY "pedidos alta publica" ON pedidos
+  FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS "pedidos lectura admin" ON pedidos;
+CREATE POLICY "pedidos lectura admin" ON pedidos
+  FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "pedidos update admin" ON pedidos;
+CREATE POLICY "pedidos update admin" ON pedidos
+  FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+-- ── 3. CONFIG ───────────────────────────────────────────────
+-- Fila única con los parámetros que Alex puede querer cambiar sin deploy.
+
+CREATE TABLE IF NOT EXISTS config (
+  id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  shop_name   TEXT    DEFAULT 'Chitopo',
+  phone       TEXT    DEFAULT '56978632055',
+  min_order   INT     DEFAULT 24,      -- en bolsas
+  currency    TEXT    DEFAULT 'CLP',
+  show_prices BOOLEAN DEFAULT false,   -- false = modo "a consultar"
+  low_stock   INT     DEFAULT 5,       -- umbral en bultos
+  updated_at  TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE config ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "config lectura publica" ON config;
+CREATE POLICY "config lectura publica" ON config
+  FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "config escritura admin" ON config;
+CREATE POLICY "config escritura admin" ON config
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+INSERT INTO config (shop_name, phone)
+SELECT 'Chitopo', '56978632055'
+WHERE NOT EXISTS (SELECT 1 FROM config);
+
+-- ── 4. updated_at automático ────────────────────────────────
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_config_updated_at ON config;
+CREATE TRIGGER trg_config_updated_at
+  BEFORE UPDATE ON config
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();

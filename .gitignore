@@ -1,0 +1,15 @@
+/dist-site/
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+.DS_Store
+Thumbs.db
+.claude/
+opencode.json
+page-snapshot.yml
+
+# Documentos de negocio / assets de diseño en bruto — no van al repo de código
+*.docx
+Logos vectorizados/

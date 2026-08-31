@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.playwright-mcp/
+.opencode/
+opencode.json
+page-snapshot.yml
+
+.env
+.env.local
+.env.*.local
+
+# Documentos comerciales internos — no van a un repo público
+presupuesto-catalogo.html
+propuesta-comercial.html
+propuesta-comercial.pdf

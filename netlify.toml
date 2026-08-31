@@ -1,0 +1,11 @@
+[build]
+  command = "node build.mjs"
+  publish = "dist-site"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/catalogo/*"
+  to = "/catalogo/index.html"
+  status = 200

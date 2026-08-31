@@ -1,0 +1,314 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   CHITOPO — Tokens de marca
+   Paleta derivada del logo y los empaques (brief 22-08-2026):
+   dorado/mostaza #FBC610–#FDC008, café oscuro/vinotinto #5B1106,
+   y un color de acento por sabor.
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Superficies — café oscuro derivado del #5B1106 del logo */
+  --color-bg: #1a0704;
+  --color-surface: #2a0d06;
+  --color-surface-2: #3a150b;
+  --color-surface-3: #4a1f12;
+  --color-border: #4a1f12;
+  --color-border-soft: #351209;
+
+  /* Acento principal — dorado Chitopo */
+  --color-accent: #fbc610;
+  --color-accent-light: #ffd84d;
+  --color-accent-dark: #d9a600;
+
+  /* Texto */
+  --color-text: #fff6e5;
+  --color-muted: #c9a88f;
+  /* Aclarado respecto del #8f6f5c del catálogo: ahí no llegaba a 4.5:1
+     sobre el fondo café y acá se usa en el texto legal de 10px. */
+  --color-faint: #9d7d6a;
+
+  /* Semánticos */
+  --color-green: #22c55e;
+  --color-red: #ef4444;
+
+  /* Acento por sabor — rellenos, bordes y tipografía grande */
+  --color-queso: #e23a2e;
+  --color-papa: #3fa34d;
+  --color-frutos: #b5179e;
+  --color-mani: #c98a2b;
+  --color-tocino: #ff3b14;
+
+  /* Variantes para texto bajo 24px: queso (4.21) y frutos (3.09) no
+     llegaban a 4.5:1 sobre --color-surface. Estas sí. */
+  --color-queso-text: #f0584a;
+  --color-papa-text: #3fa34d;
+  --color-frutos-text: #d94bbd;
+  --color-mani-text: #c98a2b;
+  --color-tocino-text: #ff3b14;
+
+  /* Tipografía — el brief avisa que no hay licencia de la fuente del
+     empaque; estas son alternativas libres de Google Fonts. */
+  --font-sans: "Archivo", system-ui, sans-serif;
+  --font-display: "Baloo 2", "Archivo", system-ui, sans-serif;
+  --font-condensed: "Anton", "Archivo", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  /* `clip` y no `hidden`: hidden crea un contenedor de scroll que
+     desestabiliza el position:fixed del pin de ScrollTrigger. */
+  overflow-x: clip;
+}
+
+/* Lenis toma el control del scroll: desactiva el smooth nativo para
+   que no peleen entre sí. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+html.lenis {
+  scroll-behavior: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b3220;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Neubrutalismo adaptado a la paleta café/dorado ────────────── */
+
+/* Borde grueso + sombra dura con offset, en vez de sombras difusas. */
+.nb {
+  border: 3px solid var(--color-accent);
+  box-shadow: 5px 5px 0 var(--color-accent-dark);
+}
+
+.nb-soft {
+  border: 3px solid var(--color-border);
+  box-shadow: 5px 5px 0 var(--color-border-soft);
+}
+
+/* El botón se "hunde" al presionar: se mueve hacia la sombra. */
+.nb-press {
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+}
+.nb-press:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--color-accent-dark);
+}
+.nb-press:active {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 var(--color-accent-dark);
+}
+
+/* Foco visible siempre — nunca quitar el anillo de foco. */
+:where(a, button, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-accent-light);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Textura de grano sutil sobre el fondo café, para que no se vea plano. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Marquee infinito: dos copias del contenido desplazándose sin corte. */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee-x var(--marquee-duration, 30s) linear infinite;
+}
+
+/* ── Escena de sabor del hero ──────────────────────────────────────
+   El sabor inunda la pantalla: campo de color + arte del envase
+   desenfocado, todo bajo un velo café que mantiene el texto legible. */
+
+.flavor-field {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 520ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.flavor-field[data-active="true"] {
+  opacity: 1;
+}
+
+/* El desenfoque convierte el arte plano del envase en un campo con
+   textura, y de paso apaga los blancos localizados del packaging. */
+.flavor-art {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  object-fit: cover;
+  filter: blur(64px) saturate(1.15);
+  opacity: 0.85;
+}
+
+/* Velo en degradado: denso sobre la columna de texto, suelto del lado de
+   la bolsa para que el sabor se note fuerte. Medido sobre el compuesto
+   real (color + arte desenfocado + velo), muestreando toda la zona de
+   texto: el peor caso de los 5 sabores da 10.3:1 para el texto y 6.9:1
+   para el dorado, o sea AAA de sobra. Si se quiere más o menos color,
+   estos tres valores son la perilla. */
+.flavor-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--color-bg) 94%, transparent) 0%,
+      color-mix(in srgb, var(--color-bg) 74%, transparent) 42%,
+      color-mix(in srgb, var(--color-bg) 45%, transparent) 100%
+    );
+}
+
+/* Marco de proporción fija: las 5 imágenes vienen con proporciones
+   distintas (0.588 / 0.65 / 0.688) y así ninguna mueve el layout.
+   Cuando lleguen los recortes con alfa, se saca el fondo del marco. */
+.flavor-frame {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+}
+
+.flavor-track {
+  display: flex;
+  height: 100%;
+}
+
+.flavor-panel {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: grid;
+  place-items: center;
+}
+
+/* En computadora manda GSAP: el riel se mueve por transform y el scroll
+   nativo del marco se apaga. Va condicionado a que haya animación: sin
+   ella no hay pin que mueva el riel, así que el marco tiene que seguir
+   siendo deslizable o los otros 4 sabores quedan inalcanzables. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .flavor-frame {
+    overflow: hidden;
+    scroll-snap-type: none;
+  }
+  .flavor-track {
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flavor-track {
+    transform: none !important;
+  }
+  .flavor-field {
+    transition: none;
+  }
+}
+
+/* ── Estallido de chitopos ─────────────────────────────────────────
+   Las partículas viven en una capa fija sobre toda la página, así
+   escapan del overflow-hidden de las tarjetas sin tocar el layout. */
+.burst-particle {
+  will-change: transform, opacity;
+  visibility: hidden;
+}
+
+.burst-particle svg {
+  /* Siempre una pizca de dorado de marca mezclada con el sabor: aunque
+     el acento sea magenta, el estallido se sigue leyendo "Chitopo". */
+  color: color-mix(
+    in oklab,
+    var(--burst-accent, var(--color-accent)) var(--tone, 78%),
+    var(--color-accent)
+  );
+  fill: currentColor;
+  stroke: var(--color-bg);
+  stroke-width: 2;
+  paint-order: stroke fill;
+}
+
+.burst-particle:nth-child(3n) {
+  --tone: 100%;
+}
+.burst-particle:nth-child(3n + 1) {
+  --tone: 55%;
+}
+
+/* Sin animaciones para quien las pidió apagadas. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .nb-press:hover,
+  .nb-press:active {
+    transform: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
