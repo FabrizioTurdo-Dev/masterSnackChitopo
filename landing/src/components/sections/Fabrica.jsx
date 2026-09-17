@@ -1,0 +1,299 @@
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Pause, Play, Factory, ShieldCheck, Flame } from "lucide-react";
+import InstagramIcon from "../brand/InstagramIcon";
+import { STORE_CONFIG } from "../../data/store";
+import { prefersReducedMotion } from "../../lib/useLenis";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+// Los dos videos cuentan el proceso en orden: primero se hace el suflé,
+// después se embolsa. Los genera `npm run media` en el catálogo.
+const PASOS = [
+  {
+    n: "01",
+    video: "/video/fabrica-produccion.mp4",
+    poster: "/video/fabrica-produccion.webp",
+    title: "Sale de la extrusora",
+    text: "Maíz adentro, suflé afuera. Después pasa al bombo, donde agarra el sabor.",
+    label: "Video de la extrusora sacando suflés y del bombo donde se sazonan",
+  },
+  {
+    n: "02",
+    video: "/video/fabrica-envasado.mp4",
+    poster: "/video/fabrica-envasado.webp",
+    title: "Directo a la bolsa",
+    text: "La envasadora pesa, llena y sella. De ahí salen las cajas a los almacenes.",
+    label: "Video de la envasadora sellando bolsas de Chitopo en la cinta",
+  },
+];
+
+const DATOS = [
+  { icon: Factory, text: "Galpón propio en La Pintana" },
+  { icon: ShieldCheck, text: "Resolución sanitaria SESMA al día" },
+  { icon: Flame, text: "Horneado, no frito" },
+];
+
+// Un video en loop que solo corre mientras se ve. Sin animaciones
+// reducidas arranca solo; con ellas espera a que la persona le dé play.
+// El botón existe siempre: nada se mueve más de 5 s sin poder pararlo.
+function VideoFabrica({ paso, className = "" }) {
+  const ref = useRef(null);
+  const [manualPause, setManualPause] = useState(() => prefersReducedMotion());
+  const [playing, setPlaying] = useState(false);
+  const visible = useRef(false);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    // React no refleja `muted` como atributo y sin eso el navegador
+    // bloquea el play() automático.
+    v.muted = true;
+
+    const sync = () => {
+      if (visible.current && !manualPause) {
+        v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible.current = entry.isIntersecting;
+        sync();
+      },
+      { threshold: 0.25 }
+    );
+    io.observe(v);
+    sync();
+
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    v.addEventListener("playing", onPlay);
+    v.addEventListener("pause", onPause);
+    return () => {
+      io.disconnect();
+      v.removeEventListener("playing", onPlay);
+      v.removeEventListener("pause", onPause);
+    };
+  }, [manualPause]);
+
+  const toggle = () => {
+    const v = ref.current;
+    if (!v) return;
+    if (playing) {
+      setManualPause(true);
+      v.pause();
+    } else {
+      setManualPause(false);
+      v.play().catch(() => {});
+    }
+  };
+
+  return (
+    <figure className={`fab-card relative m-0 ${className}`}>
+      <div className="nb bg-ink">
+        <div className="fab-media relative aspect-[3/4] overflow-hidden">
+          <video
+            ref={ref}
+            src={paso.video}
+            poster={paso.poster}
+            muted
+            loop
+            playsInline
+            preload="none"
+            disablePictureInPicture
+            disableRemotePlayback
+            aria-label={paso.label}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+
+          <span className="absolute top-2 left-2 sm:top-3 sm:left-3 inline-flex items-center gap-1.5 bg-ink/85 px-2 py-1 font-condensed uppercase tracking-[0.12em] text-[10px] sm:text-xs text-cream">
+            <span
+              className={`size-2 rounded-full bg-red ${playing ? "motion-safe:animate-pulse" : "opacity-40"}`}
+              aria-hidden="true"
+            />
+            Rec
+            <span className="hidden sm:inline text-cream/60">· La Pintana</span>
+          </span>
+
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={playing ? `Pausar: ${paso.title}` : `Reproducir: ${paso.title}`}
+            className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 inline-flex items-center justify-center size-11 bg-gold text-ink border-[3px] border-ink cursor-pointer nb-press"
+          >
+            {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
+          </button>
+        </div>
+
+        <figcaption className="flex items-baseline gap-2 sm:gap-3 px-3 py-2.5 sm:px-4 sm:py-3 border-t-[3px] border-gold">
+          <span className="font-condensed text-gold text-lg sm:text-2xl leading-none">{paso.n}</span>
+          <span className="font-condensed uppercase text-cream text-sm sm:text-lg leading-tight">
+            {paso.title}
+          </span>
+        </figcaption>
+      </div>
+    </figure>
+  );
+}
+
+export default function Fabrica() {
+  const root = useRef(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          motion: "(prefers-reduced-motion: no-preference)",
+          desktop: "(min-width: 1024px)",
+        },
+        (ctx) => {
+          const { motion, desktop } = ctx.conditions;
+          if (!motion) return;
+
+          gsap.from(".fab-fade", {
+            autoAlpha: 0,
+            y: 28,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: "power3.out",
+            scrollTrigger: { trigger: root.current, start: "top 75%", once: true },
+          });
+
+          // El video se destapa de abajo hacia arriba, como una persiana.
+          // El clip va en el interior y no en el marco, para no cortar la
+          // sombra dura del borde.
+          gsap.fromTo(
+            ".fab-media",
+            { clipPath: "inset(100% 0% 0% 0%)" },
+            {
+              clipPath: "inset(0% 0% 0% 0%)",
+              duration: 1.1,
+              ease: "expo.out",
+              stagger: 0.18,
+              clearProps: "clipPath",
+              scrollTrigger: { trigger: ".fab-videos", start: "top 80%", once: true },
+            }
+          );
+
+          // La palabra de fondo cruza la sección con el scroll.
+          gsap.fromTo(
+            ".fab-word",
+            { xPercent: 0 },
+            {
+              xPercent: -35,
+              ease: "none",
+              scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 0.6 },
+            }
+          );
+
+          if (!desktop) return;
+
+          // Dos velocidades distintas y la inclinación que se endereza al
+          // llegar al centro: da profundidad sin pinear nada.
+          const cards = gsap.utils.toArray(".fab-card");
+          const recorrido = [
+            { from: { y: 70, rotate: -5 }, to: { y: -50, rotate: -1.5 } },
+            { from: { y: 150, rotate: 5 }, to: { y: 10, rotate: 1.5 } },
+          ];
+          cards.forEach((card, i) => {
+            const r = recorrido[i];
+            if (!r) return;
+            gsap.fromTo(card, r.from, {
+              ...r.to,
+              ease: "none",
+              scrollTrigger: {
+                trigger: ".fab-videos",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.8,
+              },
+            });
+          });
+        }
+      );
+    },
+    { scope: root }
+  );
+
+  return (
+    <section
+      id="fabrica"
+      ref={root}
+      className="on-dark relative scroll-mt-20 overflow-hidden bg-ink text-cream border-y-[3px] border-ink py-16 sm:py-24 lg:py-32"
+    >
+      <span
+        aria-hidden="true"
+        className="fab-word pointer-events-none select-none absolute left-0 top-1/2 -translate-y-1/2 whitespace-nowrap font-condensed uppercase leading-none text-transparent text-[clamp(7rem,24vw,22rem)] [-webkit-text-stroke:2px_rgb(255_194_14/0.16)]"
+      >
+        La Pintana · La Pintana · La Pintana
+      </span>
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16 items-center">
+        <div>
+          <p className="fab-fade font-condensed uppercase tracking-[0.22em] text-gold text-xs sm:text-sm mb-3">
+            La fábrica
+          </p>
+          <h2 className="fab-fade font-condensed uppercase text-5xl sm:text-7xl lg:text-8xl leading-[0.9] text-cream m-0">
+            La máquina
+            <br />
+            que no para
+          </h2>
+          <p className="fab-fade text-cream/80 text-base sm:text-lg leading-relaxed mt-5 max-w-md">
+            Así se ve el galpón un día cualquiera. Sin estudio ni actores: el maíz entra
+            a la máquina, sale suflé, agarra sabor y cae directo a la bolsa.
+          </p>
+
+          <ol className="list-none p-0 m-0 mt-8 flex flex-col gap-5">
+            {PASOS.map((p) => (
+              <li key={p.n} className="fab-fade flex gap-4">
+                <span className="font-condensed text-3xl sm:text-4xl leading-none text-gold shrink-0 w-12">
+                  {p.n}
+                </span>
+                <div>
+                  <h3 className="font-condensed uppercase text-xl sm:text-2xl text-cream m-0 leading-tight">
+                    {p.title}
+                  </h3>
+                  <p className="text-cream/75 text-sm sm:text-base leading-relaxed m-0 mt-1">{p.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <ul className="list-none p-0 m-0 mt-8 flex flex-wrap gap-2">
+            {DATOS.map(({ icon: Icon, text }) => (
+              <li
+                key={text}
+                className="fab-fade inline-flex items-center gap-2 bg-cream/5 border-[3px] border-gold/40 px-3 py-2 text-sm text-cream"
+              >
+                <Icon size={16} className="text-gold shrink-0" aria-hidden="true" />
+                {text}
+              </li>
+            ))}
+          </ul>
+
+          <a
+            href={`https://instagram.com/${STORE_CONFIG.instagram}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fab-fade mt-7 inline-flex items-center gap-2 min-h-[44px] font-condensed uppercase tracking-[0.08em] text-gold hover:text-cream no-underline"
+          >
+            <InstagramIcon size={18} />
+            Más del día a día en @{STORE_CONFIG.instagram}
+          </a>
+        </div>
+
+        <div className="fab-videos grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 items-start">
+          <VideoFabrica paso={PASOS[0]} />
+          <VideoFabrica paso={PASOS[1]} className="mt-10 sm:mt-16" />
+        </div>
+      </div>
+    </section>
+  );
+}

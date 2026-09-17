@@ -25,7 +25,7 @@ export default function ProductosDestacados() {
 
       <Reveal className="mt-10 flex justify-center">
         <Button href={CATALOGO_URL} target="_blank" rel="noopener noreferrer">
-          Pedilos al por mayor
+          Pídelos al por mayor
         </Button>
       </Reveal>
     </Section>

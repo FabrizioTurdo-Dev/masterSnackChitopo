@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { X, Plus, Minus, Bell, WheatOff, Flame } from "lucide-react";
+import { useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { X, Plus, Minus, Bell, WheatOff, Flame, Maximize2 } from "lucide-react";
 import SelloAdvertencia from "./brand/SelloAdvertencia";
 import NutritionTable from "./brand/NutritionTable";
+import ImageLightbox from "./ImageLightbox";
 import { formatPrice, hasPrice, flavorAccent, formatsOf, SELLER_PHONE } from "../data/store";
 
 function Dato({ label, children }) {
@@ -21,8 +22,22 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
   const [selectedId, setSelectedId] = useState(available[0]?.id ?? null);
   const [qty, setQty] = useState(1);
   const [imgError, setImgError] = useState(false);
+  const [viewIdx, setViewIdx] = useState(0);
+  const [zoomed, setZoomed] = useState(false);
+  const zoomTrigger = useRef(null);
 
   if (!product) return null;
+
+  // Frente (`image`) + las imágenes extra de `gallery`, en ese orden.
+  const views = [
+    product.image && { src: product.image, label: "Frente", alt: `Empaque de ${product.name}` },
+    ...(product.gallery || []).map(g => ({
+      src: g.src,
+      label: g.label,
+      alt: `${g.label} del empaque de ${product.name}`,
+    })),
+  ].filter(Boolean);
+  const current = views[viewIdx] || views[0] || null;
 
   const accent = flavorAccent(product.flavor);
   const soon = product.status === "proximamente";
@@ -66,19 +81,62 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
         </div>
 
         <div className="p-5 flex flex-col gap-5">
-          <div
-            className="relative h-72 rounded-xl overflow-hidden flex items-center justify-center p-4"
-            style={{ background: `radial-gradient(circle at 50% 40%, ${accent}2e, transparent 70%)` }}
-          >
-            {product.image && !imgError ? (
-              <img
-                src={product.image}
-                alt={`Empaque de ${product.name}`}
-                onError={() => setImgError(true)}
-                className="max-h-full w-auto object-contain drop-shadow-2xl"
-              />
-            ) : (
-              <div className="text-7xl" aria-hidden="true">{product.emoji}</div>
+          <div>
+            <div
+              className="relative h-72 rounded-xl overflow-hidden flex items-center justify-center p-4"
+              style={{ background: `radial-gradient(circle at 50% 40%, ${accent}2e, transparent 70%)` }}
+            >
+              {current && !(viewIdx === 0 && imgError) ? (
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.img
+                    key={current.src}
+                    src={current.src}
+                    alt={current.alt}
+                    onError={() => viewIdx === 0 && setImgError(true)}
+                    initial={prefersReduced ? false : { opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.97 }}
+                    transition={{ duration: prefersReduced ? 0 : 0.18 }}
+                    className="max-h-full w-auto max-w-full object-contain drop-shadow-2xl"
+                  />
+                </AnimatePresence>
+              ) : (
+                <div className="text-7xl" aria-hidden="true">{product.emoji}</div>
+              )}
+
+              {views.length > 1 && current && (
+                <button
+                  ref={zoomTrigger}
+                  onClick={() => setZoomed(true)}
+                  className="absolute bottom-2 right-2 inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg bg-bg/85 text-text text-[11px] font-bold border border-border hover:border-accent hover:text-accent transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <Maximize2 size={13} aria-hidden="true" />
+                  Ver en grande
+                </button>
+              )}
+            </div>
+
+            {views.length > 1 && (
+              <div className="flex gap-2 mt-3" role="group" aria-label="Imágenes del producto">
+                {views.map((v, i) => {
+                  const on = i === viewIdx;
+                  return (
+                    <button
+                      key={v.src}
+                      onClick={() => setViewIdx(i)}
+                      aria-pressed={on}
+                      className={`flex items-center gap-2 pr-3 rounded-lg border overflow-hidden text-[11px] font-bold uppercase tracking-[0.06em] transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent ${
+                        on
+                          ? "border-accent text-accent bg-accent/10"
+                          : "border-border text-muted hover:border-muted hover:text-text"
+                      }`}
+                    >
+                      <img src={v.src} alt="" aria-hidden="true" className="size-11 object-cover bg-bg" />
+                      {v.label}
+                    </button>
+                  );
+                })}
+              </div>
             )}
           </div>
 
@@ -256,6 +314,20 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
           </div>
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {zoomed && current && (
+          <ImageLightbox
+            src={current.src}
+            alt={current.alt}
+            title={`${product.name} · ${current.label}`}
+            onClose={() => {
+              setZoomed(false);
+              zoomTrigger.current?.focus();
+            }}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

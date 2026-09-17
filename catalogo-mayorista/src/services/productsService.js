@@ -22,6 +22,7 @@ const COLUMNS = [
   "tag",
   "emoji",
   "image",
+  "gallery",
   "barcode",
   "claims",
   "formats",

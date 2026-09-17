@@ -6,7 +6,9 @@ import { WHATSAPP_LINK } from "../../data/store";
 
 const NAV = [
   { href: "#nosotros", label: "Nosotros" },
-  { href: "#productos", label: "Productos" },
+  { href: "#fabrica", label: "Fábrica" },
+  // Sección comentada en App.jsx para acortar el recorrido.
+  // { href: "#productos", label: "Productos" },
   { href: "#por-que", label: "Por qué" },
   { href: "#faq", label: "FAQ" },
   { href: "#contacto", label: "Contacto" },
@@ -26,7 +28,7 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
-        scrolled ? "bg-bg/95 backdrop-blur border-b-[3px] border-accent" : "bg-transparent"
+        scrolled ? "bg-cream/95 backdrop-blur border-b-[3px] border-ink" : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -39,7 +41,7 @@ export default function Header() {
             <a
               key={item.href}
               href={item.href}
-              className="font-condensed uppercase tracking-[0.1em] text-sm text-muted hover:text-accent transition-colors no-underline"
+              className="font-condensed uppercase tracking-[0.1em] text-sm text-ink hover:text-fire transition-colors no-underline"
             >
               {item.label}
             </a>
@@ -51,7 +53,7 @@ export default function Header() {
             href={CATALOGO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center min-h-[44px] px-4 bg-accent text-bg font-condensed uppercase tracking-[0.06em] text-sm no-underline border-[3px] border-accent-dark [box-shadow:3px_3px_0_var(--color-accent-dark)] nb-press"
+            className="hidden sm:inline-flex items-center min-h-[44px] px-4 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-sm no-underline border-[3px] border-ink [box-shadow:3px_3px_0_var(--color-ink)] nb-press"
           >
             Catálogo mayorista
           </a>
@@ -60,8 +62,8 @@ export default function Header() {
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Escribinos por WhatsApp"
-            className="inline-flex items-center justify-center size-11 text-green hover:text-text transition-colors"
+            aria-label="Escríbenos por WhatsApp"
+            className="inline-flex items-center justify-center size-11 text-ink hover:text-[#15803d] transition-colors"
           >
             <MessageCircle size={24} aria-hidden="true" />
           </a>
@@ -72,7 +74,7 @@ export default function Header() {
             aria-expanded={open}
             aria-controls="nav-mobile"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            className="md:hidden inline-flex items-center justify-center size-11 bg-transparent border-0 text-text cursor-pointer p-0"
+            className="md:hidden inline-flex items-center justify-center size-11 bg-transparent border-0 text-ink cursor-pointer p-0"
           >
             {open ? <X size={26} aria-hidden="true" /> : <Menu size={26} aria-hidden="true" />}
           </button>
@@ -82,7 +84,7 @@ export default function Header() {
       {open && (
         <nav
           id="nav-mobile"
-          className="md:hidden bg-bg border-b-[3px] border-accent px-4 pb-5 pt-2"
+          className="md:hidden bg-cream border-b-[3px] border-ink px-4 pb-5 pt-2"
           aria-label="Navegación principal"
         >
           <ul className="list-none p-0 m-0 flex flex-col">
@@ -91,7 +93,7 @@ export default function Header() {
                 <a
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block py-3 font-condensed uppercase tracking-[0.1em] text-lg text-text no-underline border-b border-border-soft"
+                  className="block py-3 font-condensed uppercase tracking-[0.1em] text-lg text-ink no-underline border-b-2 border-ink/15"
                 >
                   {item.label}
                 </a>
@@ -103,7 +105,7 @@ export default function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="block mt-4 text-center py-3 bg-accent text-bg font-condensed uppercase tracking-[0.06em] text-lg no-underline"
+                className="block mt-4 text-center py-3 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-lg no-underline nb"
               >
                 Catálogo mayorista
               </a>

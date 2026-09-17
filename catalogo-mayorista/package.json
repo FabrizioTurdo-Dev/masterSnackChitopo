@@ -10,6 +10,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "assets": "node scripts/build-assets.mjs",
+    "media": "node scripts/build-media.mjs",
     "seed:sql": "node scripts/build-seed.mjs"
   },
   "dependencies": {

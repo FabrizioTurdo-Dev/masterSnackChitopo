@@ -17,17 +17,17 @@ export default function Section({
         {(eyebrow || title) && (
           <div className="mb-10 sm:mb-14">
             {eyebrow && (
-              <p className="font-condensed uppercase tracking-[0.22em] text-accent text-xs sm:text-sm mb-3">
+              <p className="font-condensed uppercase tracking-[0.22em] text-ink text-xs sm:text-sm mb-3 before:content-['★'] before:text-fire before:mr-2">
                 {eyebrow}
               </p>
             )}
             {title && (
-              <h2 className="font-condensed uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] text-text m-0">
+              <h2 className="font-condensed uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] text-ink m-0">
                 {title}
               </h2>
             )}
             {intro && (
-              <p className="text-muted text-base sm:text-lg leading-relaxed mt-5 max-w-2xl">
+              <p className="text-ink-soft text-base sm:text-lg leading-relaxed mt-5 max-w-2xl">
                 {intro}
               </p>
             )}

@@ -21,7 +21,7 @@ const rows = PRODUCTS.map(p =>
   "  (" +
   [
     q(p.slug), q(p.name), q(p.line), q(p.flavor), p.grams, q(p.status), p.active,
-    q(p.tag), q(p.emoji), q(p.image), q(p.barcode), j(p.claims), j(p.formats),
+    q(p.tag), q(p.emoji), q(p.image), j(p.gallery ?? []), q(p.barcode), j(p.claims), j(p.formats),
     q(p.ingredients), q(p.allergens), j(p.nutrition),
   ].join(", ") +
   ")"
@@ -35,7 +35,7 @@ const sql = `-- ============================================================
 
 INSERT INTO productos
   (slug, name, line, flavor, grams, status, active, tag, emoji, image,
-   barcode, claims, formats, ingredients, allergens, nutrition)
+   gallery, barcode, claims, formats, ingredients, allergens, nutrition)
 VALUES
 ${rows}
 ON CONFLICT (slug) DO UPDATE SET
@@ -48,6 +48,7 @@ ON CONFLICT (slug) DO UPDATE SET
   tag         = EXCLUDED.tag,
   emoji       = EXCLUDED.emoji,
   image       = EXCLUDED.image,
+  gallery     = EXCLUDED.gallery,
   barcode     = EXCLUDED.barcode,
   claims      = EXCLUDED.claims,
   formats     = EXCLUDED.formats,

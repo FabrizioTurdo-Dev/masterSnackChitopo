@@ -3,10 +3,10 @@ import gsap from "gsap";
 import { prefersReducedMotion } from "../../lib/useLenis";
 
 const VARIANTS = {
-  primary: "bg-accent text-bg nb nb-press hover:bg-accent-light",
-  secondary: "bg-surface-2 text-text nb nb-press hover:bg-surface-3",
-  whatsapp:
-    "bg-green text-[#06300f] border-[3px] border-[#106b2c] [box-shadow:5px_5px_0_#106b2c] nb-press hover:brightness-110",
+  primary: "bg-fire text-cream nb nb-press hover:bg-[#c42904]",
+  secondary: "bg-cream text-ink nb nb-press hover:bg-cream-2",
+  gold: "bg-gold text-ink nb nb-press hover:bg-[#ffcf3d]",
+  whatsapp: "bg-green text-[#06300f] nb nb-press hover:brightness-105",
 };
 
 // Botón con imán: en desktop sigue levemente al cursor. En touch y con

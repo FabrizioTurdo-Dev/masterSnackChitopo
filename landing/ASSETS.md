@@ -63,7 +63,7 @@ adolescentes identificables en las fotos**, y nada de códigos visuales infantil
   Archivo y Baloo 2 de Google Fonts como sustitutas de la fuente del empaque, porque el
   brief aclara que no hay licencia de esa.
 - Si se formaliza una **paleta oficial**, pasarla: la actual está derivada del logo y los
-  empaques (café oscuro `#1a0704`, dorado `#fbc610`, y un color por sabor).
+  empaques (dorado `#ffc20e`, café `#3a0d04`, rojo `#d02b05`, crema `#fff4d6` y un color por sabor).
 - Si se hacen stickers, sellos o ilustraciones para redes, pedirlos también en **SVG o PNG
   transparente** para poder reutilizarlos en la web.
 

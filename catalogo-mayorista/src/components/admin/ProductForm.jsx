@@ -44,6 +44,8 @@ export default function ProductForm({ product, onSave, onCancel }) {
     tag: product?.tag || "",
     emoji: product?.emoji || "🧀",
     image: product?.image || null,
+    // Sin UI propia todavía: se conserva tal cual para no perderla al guardar.
+    gallery: product?.gallery || [],
     barcode: product?.barcode || "",
     claims: product?.claims || { baked: true, glutenFree: false, seals: [] },
     formats: product?.formats?.length

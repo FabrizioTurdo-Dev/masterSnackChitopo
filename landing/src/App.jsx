@@ -5,7 +5,11 @@ import Footer from "./components/layout/Footer";
 import Marquee from "./components/ui/Marquee";
 import Hero from "./components/sections/Hero";
 import Historia from "./components/sections/Historia";
-import ProductosDestacados from "./components/sections/ProductosDestacados";
+import Fabrica from "./components/sections/Fabrica";
+// Productos queda afuera por ahora para acortar el recorrido: los 5 sabores
+// ya se ven en el hero. Se reactiva descomentando esto, el <ProductosDestacados />
+// de abajo y la entrada "Productos" del NAV en Header.jsx.
+// import ProductosDestacados from "./components/sections/ProductosDestacados";
 import PorQueElegirnos from "./components/sections/PorQueElegirnos";
 import RedesSociales from "./components/sections/RedesSociales";
 import CtaCatalogo from "./components/sections/CtaCatalogo";
@@ -33,10 +37,13 @@ export default function App() {
           <Hero />
           <Marquee items={CINTA} />
           <Historia />
-          <ProductosDestacados />
+          <Fabrica />
+          {/* <ProductosDestacados /> */}
           <Marquee
             items={["Super BKN crunchy", "Horneado, no frito", "Pyme chilena"]}
             duration={22}
+            reverse
+            tilted
           />
           <PorQueElegirnos />
           <RedesSociales />

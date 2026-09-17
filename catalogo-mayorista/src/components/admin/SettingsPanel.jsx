@@ -50,7 +50,7 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <ReadOnly label="Nombre" value={STORE_CONFIG.name} />
             <ReadOnly label="WhatsApp de pedidos" value={`+${SELLER_PHONE}`} />
-            <ReadOnly label="Pedido mínimo" value={`${STORE_CONFIG.minOrderUnits} bolsas`} />
+            <ReadOnly label="Pedido mínimo" value={`${STORE_CONFIG.minOrderUnits} unidades`} />
             <ReadOnly
               label="Moneda"
               value={`${STORE_CONFIG.currency.code} · ${STORE_CONFIG.currency.locale}`}

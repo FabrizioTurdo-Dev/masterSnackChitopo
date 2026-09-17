@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS productos (
   tag         TEXT,
   emoji       TEXT DEFAULT '🍿',
   image       TEXT,
+  -- Imágenes extra de la ficha: [{ "src":"/img/...", "label":"Reverso" }]
+  gallery     JSONB NOT NULL DEFAULT '[]'::jsonb,
   barcode     TEXT,
   claims      JSONB NOT NULL DEFAULT '{"baked":true,"glutenFree":false,"seals":[]}'::jsonb,
   formats     JSONB NOT NULL DEFAULT '[]'::jsonb,
@@ -87,7 +89,7 @@ CREATE TABLE IF NOT EXISTS config (
   id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   shop_name   TEXT    DEFAULT 'Chitopo',
   phone       TEXT    DEFAULT '56978632055',
-  min_order   INT     DEFAULT 24,      -- en bolsas
+  min_order   INT     DEFAULT 100,     -- en unidades (bolsas)
   currency    TEXT    DEFAULT 'CLP',
   show_prices BOOLEAN DEFAULT false,   -- false = modo "a consultar"
   low_stock   INT     DEFAULT 5,       -- umbral en bultos

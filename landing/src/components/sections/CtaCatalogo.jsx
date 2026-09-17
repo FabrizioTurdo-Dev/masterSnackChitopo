@@ -32,7 +32,7 @@ export default function CtaCatalogo() {
   return (
     <section id="catalogo" ref={root} className="relative scroll-mt-20 py-16 sm:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="cta-box nb bg-accent text-bg p-7 sm:p-14 text-center">
+        <div className="cta-box nb damero-fire text-cream p-7 sm:p-14 text-center">
           <Store size={40} className="mx-auto mb-5" aria-hidden="true" />
 
           <h2 className="font-condensed uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] m-0">
@@ -40,7 +40,7 @@ export default function CtaCatalogo() {
           </h2>
 
           <p className="text-base sm:text-xl leading-relaxed mt-5 max-w-2xl mx-auto font-medium">
-            Armá tu pedido al por mayor en el catálogo. Elegís los formatos, ves el mínimo
+            Arma tu pedido al por mayor en el catálogo. Eliges los formatos, ves el mínimo
             y nosotros te confirmamos precio y despacho por WhatsApp.
           </p>
 
@@ -49,7 +49,7 @@ export default function CtaCatalogo() {
               href={CATALOGO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              variant="secondary"
+              variant="gold"
               className="w-full sm:w-auto"
             >
               Ver catálogo mayorista
@@ -57,9 +57,9 @@ export default function CtaCatalogo() {
             </Button>
           </div>
 
-          <p className="text-sm mt-6 opacity-75">
-            Cotizás online, cerramos por WhatsApp · Pedido mínimo{" "}
-            {STORE_CONFIG.minOrderUnits} bolsas
+          <p className="text-sm mt-6 opacity-90">
+            Cotizas online, cerramos por WhatsApp · Pedido mínimo{" "}
+            {STORE_CONFIG.minOrderUnits} unidades
           </p>
         </div>
       </div>

@@ -8,7 +8,7 @@
 //   ../Logos vectorizados/marketing/
 
 import sharp from "sharp";
-import { mkdir, copyFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -55,11 +55,9 @@ async function buildPacks() {
 }
 
 async function buildBrand() {
+  // El logo de la UI ya no sale de acá: lo genera build-media.mjs a partir
+  // del logo nuevo. Este SVG queda solo para favicons y Open Graph.
   const logo = join(SRC, "Logos vectorizados", "Logo_Chitopo_transparente.svg");
-
-  // El SVG del logo, tal cual, para usarlo inline en la UI
-  await copyFile(logo, join(ROOT, "src", "assets", "logo-chitopo.svg"));
-  console.log("  ✓ src/assets/logo-chitopo.svg");
 
   // Favicons: el logotipo centrado sobre el café de marca
   const marks = [

@@ -13,8 +13,8 @@ export default function ChitopoShapes() {
                -3.4-.7-4.4-3.6-7-5.6-2.7-2.1-5.6-2.9-5.6-6.6 0-3.1 2.3-4.9 3-7.8
                .7-3-.4-6 2.3-7.9C13 5.8 16.2 3 20 3Z"
           />
-          <ellipse cx="15" cy="15" rx="3.2" ry="2.4" fill="#1a0704" opacity=".22" stroke="none" />
-          <ellipse cx="25" cy="24" rx="2.4" ry="1.8" fill="#1a0704" opacity=".18" stroke="none" />
+          <ellipse cx="15" cy="15" rx="3.2" ry="2.4" fill="#3a0d04" opacity=".22" stroke="none" />
+          <ellipse cx="25" cy="24" rx="2.4" ry="1.8" fill="#3a0d04" opacity=".18" stroke="none" />
         </symbol>
 
         {/* B — palito curvo, el extrudido */}
@@ -25,7 +25,7 @@ export default function ChitopoShapes() {
           />
           <path
             d="M12 11c3 1.4 5.4 4.4 7.4 7.6"
-            stroke="#1a0704"
+            stroke="#3a0d04"
             strokeWidth="1.6"
             strokeLinecap="round"
             fill="none"
@@ -42,7 +42,7 @@ export default function ChitopoShapes() {
           />
           <path
             d="M14 15.5c2.6.6 5 .4 7.2-.8"
-            stroke="#1a0704"
+            stroke="#3a0d04"
             strokeWidth="1.8"
             strokeLinecap="round"
             fill="none"

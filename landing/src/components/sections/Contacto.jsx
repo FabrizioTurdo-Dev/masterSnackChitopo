@@ -19,16 +19,16 @@ export default function Contacto() {
     <Section
       id="contacto"
       eyebrow="Hablemos"
-      title="Escribinos y listo"
-      intro="No hay formulario ni esperas raras. Nos escribís por WhatsApp y te contesta una persona."
+      title="Escríbenos y listo"
+      intro="No hay formulario ni esperas raras. Nos escribes por WhatsApp y te contesta una persona."
     >
       <Reveal stagger className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="nb-soft bg-surface p-6 sm:p-8 flex flex-col gap-5">
+        <div className="nb-soft bg-cream p-6 sm:p-8 flex flex-col gap-5">
           <div>
-            <p className="font-condensed uppercase tracking-[0.14em] text-accent text-xs mb-2">
+            <p className="font-condensed uppercase tracking-[0.14em] text-ink-soft text-xs mb-2">
               WhatsApp
             </p>
-            <p className="font-condensed text-3xl sm:text-4xl text-text m-0">
+            <p className="font-condensed text-3xl sm:text-4xl text-ink m-0">
               {SELLER_PHONE_PRETTY}
             </p>
           </div>
@@ -44,10 +44,10 @@ export default function Contacto() {
           </Button>
         </div>
 
-        <ul className="nb-soft bg-surface p-6 sm:p-8 list-none m-0 flex flex-col gap-4">
+        <ul className="nb-soft bg-cream p-6 sm:p-8 list-none m-0 flex flex-col gap-4">
           {DATOS.map(({ icon: Icon, label }) => (
-            <li key={label} className="flex items-start gap-3 text-muted leading-relaxed">
-              <Icon size={20} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+            <li key={label} className="flex items-start gap-3 text-ink-soft leading-relaxed">
+              <Icon size={20} className="mt-0.5 shrink-0 text-fire" aria-hidden="true" />
               <span>{label}</span>
             </li>
           ))}

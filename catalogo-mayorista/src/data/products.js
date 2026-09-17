@@ -147,22 +147,40 @@ const PRODUCTS = [
     name: "Tocino Merkén",
     line: "aros",
     flavor: "tocino",
-    grams: 140,
+    grams: 130,
     status: "proximamente",
     active: true,
     tag: "Viene fuertón",
     emoji: "🌶️",
     image: "/img/productos/tocino-merken.webp",
-    barcode: null,
-    claims: { baked: true, glutenFree: false, seals: ["alto-en-calorias"] },
+    // Imágenes extra de la ficha, además de `image` (que es el frente).
+    gallery: [
+      { src: "/img/productos/tocino-merken-reverso.webp", label: "Reverso" },
+    ],
+    barcode: "0762083569200",
+    // Datos del arte del envase (TCM.png): declara "LIBRE DE GLUTEN" y "NO FRITO".
+    claims: { baked: true, glutenFree: true, seals: ["alto-en-calorias"] },
     formats: [
       { id: "caja-24", label: "Caja", units: 24, stock: 0, price: null },
     ],
-    // TODO: ingredientes y tabla nutricional pendientes.
-    // Hoy es solo concepto visual, falta confirmar si pasa a producto real.
-    ingredients: null,
-    allergens: null,
-    nutrition: null,
+    ingredients:
+      "Gritz de maíz, Aceite vegetal (TBHQ), Harina de arroz, Saborizante tocino, Merkén, Glutamato, Sal, Colorante rojo.",
+    allergens: "Contiene derivados de soya.",
+    // ⚠️ Tal cual la etiqueta. Hidratos 7,8 g por 100 g no calza con un
+    // snack de maíz y la columna por porción no es proporcional: confirmar
+    // con el fabricante antes de que salga a la venta.
+    nutrition: {
+      serving: "15 g",
+      portions: 9,
+      per100g: {
+        energia: 451,
+        proteinas: 6.2,
+        grasas: 20.6,
+        hidratos: 7.8,
+        azucares: 1.8,
+        sodio: 398,
+      },
+    },
   },
 ];
 

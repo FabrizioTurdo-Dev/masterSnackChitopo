@@ -63,7 +63,7 @@ export default function Footer() {
               </li>
               <Item icon={Clock}>{STORE_CONFIG.schedule}</Item>
               <Item icon={Truck}>{STORE_CONFIG.shipping}</Item>
-              <Item icon={Truck}>Pedido mínimo: {STORE_CONFIG.minOrderUnits} bolsas</Item>
+              <Item icon={Truck}>Pedido mínimo: {STORE_CONFIG.minOrderUnits} unidades</Item>
             </ul>
           </div>
 

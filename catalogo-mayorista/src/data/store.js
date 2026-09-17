@@ -32,7 +32,7 @@ export const STORE_CONFIG = {
   showPrices: false,
 
   // Catálogo
-  minOrderUnits: 24,
+  minOrderUnits: 100,
   defaultStockThreshold: 5,
 
   // Moneda

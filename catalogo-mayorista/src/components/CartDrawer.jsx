@@ -272,7 +272,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                       >
                         <AlertTriangle size={14} className="shrink-0" aria-hidden="true" />
                         <span>
-                          El pedido mínimo es de {STORE_CONFIG.minOrderUnits} bolsas. Te faltan{" "}
+                          El pedido mínimo es de {STORE_CONFIG.minOrderUnits} unidades. Te faltan{" "}
                           {STORE_CONFIG.minOrderUnits - units}.
                         </span>
                       </div>

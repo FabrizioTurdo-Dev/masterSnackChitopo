@@ -1,7 +1,8 @@
-import logoUrl from "../../assets/logo-chitopo.svg";
+import logoUrl from "../../assets/logo-chitopo.png";
 import { STORE_CONFIG } from "../../data/store";
 
-// Logotipo vectorizado de Chitopo. `height` en px; el ancho se ajusta solo.
+// Logotipo de Chitopo con fondo transparente (lo genera `npm run media`).
+// `height` en px; el ancho se ajusta solo.
 export default function Logo({ height = 32, className = "", withTagline = false }) {
   return (
     <span className={`inline-flex flex-col items-start ${className}`}>

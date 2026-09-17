@@ -21,7 +21,7 @@ const RAZONES = [
   {
     icon: Handshake,
     title: "Trato directo",
-    text: "Hablás con nosotros, no con un call center. Cero vueltas.",
+    text: "Hablas con nosotros, no con un call center. Cero vueltas.",
   },
   {
     icon: TrendingUp,
@@ -41,6 +41,7 @@ export default function PorQueElegirnos() {
       id="por-que"
       eyebrow="Por qué Chitopo"
       title="Por qué nos vas a elegir"
+      className="dots-cream border-b-[3px] border-ink"
     >
       <Reveal
         stagger
@@ -50,19 +51,19 @@ export default function PorQueElegirnos() {
         {RAZONES.map(({ icon: Icon, title, text }) => (
           <article
             key={title}
-            className="nb-soft bg-surface p-5 flex items-start gap-4"
+            className="nb-soft bg-gold p-5 flex items-start gap-4"
           >
             <span
-              className="shrink-0 grid place-items-center size-11 bg-accent text-bg"
+              className="shrink-0 grid place-items-center size-11 bg-fire text-cream border-[3px] border-ink"
               aria-hidden="true"
             >
               <Icon size={22} />
             </span>
             <div>
-              <h3 className="font-condensed uppercase text-lg sm:text-xl text-text m-0 leading-tight">
+              <h3 className="font-condensed uppercase text-lg sm:text-xl text-ink m-0 leading-tight">
                 {title}
               </h3>
-              <p className="text-muted text-sm leading-relaxed m-0 mt-1.5">{text}</p>
+              <p className="text-ink-soft text-sm leading-relaxed m-0 mt-1.5">{text}</p>
             </div>
           </article>
         ))}
