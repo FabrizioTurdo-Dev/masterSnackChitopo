@@ -1,6 +1,6 @@
 # Estado del proyecto — Chitopo
 
-Última actualización: 2026-08-31
+Última actualización: 2026-09-17
 
 ## 1. Resumen
 
@@ -19,6 +19,7 @@ En producción quedan bajo el mismo dominio: la landing en `/` y el catálogo en
 - Landing completa: hero, historia, productos destacados, FAQ, contacto, animaciones (GSAP + Lenis), responsive.
 - Catálogo: browse de productos, filtros, carrito, pedido derivado a WhatsApp.
 - Panel de admin (`/catalogo/#/admin`): dashboard, CRUD de productos, listado de pedidos, configuración de tienda — todo funcional en UI.
+- Login del panel con **Supabase Auth** (email + contraseña, sesión persistente, cerrar sesión): ya no hay credenciales hardcodeadas en el bundle. Falta conectar el proyecto de Supabase para que tenga contra qué autenticar.
 - Infra: repo unificado, build combinado (`build.mjs`) que compila ambas apps y las publica bajo un mismo dominio, `netlify.toml` con el redirect necesario para el panel admin.
 - **Modo actual: `MOCK_MODE = true`** (`catalogo-mayorista/src/data/store.js`) — el catálogo y el panel admin trabajan con datos en memoria (`src/data/products.js`). Nada de lo que se edite en el panel admin persiste: se pierde al recargar la página.
 
@@ -26,15 +27,39 @@ En producción quedan bajo el mismo dominio: la landing en `/` y el catálogo en
 
 ### 3.1 Conexión real a Supabase (base de datos + auth del admin)
 
-Hoy no hay ninguna base de datos conectada. El catálogo corre en memoria, y el login del panel admin es un `if` de JavaScript en el cliente comparando contra un usuario/clave por defecto (`admin` / `chitopo2026`, sobreescribibles por variables de entorno) — **no es seguridad real**, cualquiera con acceso a las herramientas de desarrollador del navegador puede saltearlo. Lo que protegería datos de verdad son las políticas de acceso (RLS) de Supabase, y esas recién existen una vez conectada la base.
+El proyecto de Supabase ya está creado, **en la cuenta del cliente (Master Snacks)**. El
+código del front ya está escrito: falta correr el SQL y cargar las credenciales.
 
-El código para conectar ya está escrito y listo, solo falta ejecutarlo:
+Pasos, en orden:
 
-1. Crear un proyecto nuevo en [supabase.com](https://supabase.com) (el proyecto anterior fue dado de baja).
-2. Correr `catalogo-mayorista/supabase/schema.sql` y `catalogo-mayorista/supabase/seed.sql` en el SQL Editor de Supabase.
-3. Cargar `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en `catalogo-mayorista/.env.local` (para desarrollo local) y en las variables de entorno del sitio en Netlify (para producción).
-4. Cambiar `MOCK_MODE` a `false` en `catalogo-mayorista/src/data/store.js`.
-5. **Para que el login del admin sea seguridad real:** correr `catalogo-mayorista/supabase/migration-auth.sql` (crea la whitelist de admins y las políticas RLS reales), crear el usuario de Alex en Supabase Auth desde el dashboard, y reemplazar el login hardcodeado de `catalogo-mayorista/src/pages/Admin.jsx` por `supabase.auth.signInWithPassword()`.
+1. **SQL Editor de Supabase**, uno detrás del otro:
+   `catalogo-mayorista/supabase/schema.sql` → `seed.sql` → `migration-auth.sql`.
+   Antes de correr el último, editar adentro la lista de emails con acceso (hoy son dos
+   placeholders: Alex y Fabrizio).
+2. **Authentication → Providers → Email**: desactivar *Enable email signups*.
+3. **Authentication → Users → Add user**: crear a mano la cuenta de Alex y la de Fabrizio,
+   con los mismos emails que se pusieron en `migration-auth.sql`. Cada uno elige su propia
+   contraseña; no se comparte una sola cuenta.
+4. **Project Settings → API**: copiar URL y publishable key a
+   `catalogo-mayorista/.env.local` y a las variables de entorno del sitio en Netlify.
+5. Probar el login: entrar al panel, recargar (la sesión se mantiene), cerrar sesión.
+6. **Todavía no poner `MOCK_MODE` en `false`.** El catálogo público lee los productos del
+   estado en memoria, no de Supabase: con el flag apagado los visitantes verían el catálogo
+   vacío. Falta una etapa de código: que el catálogo cargue los productos desde la base, que
+   los pedidos se guarden al derivar a WhatsApp, y que el panel de configuración persista.
+   Hoy solo el CRUD de productos del panel habla con Supabase.
+
+Qué protege qué, para tenerlo claro:
+
+- El login del panel decide **qué se muestra**. Es UX.
+- Las políticas RLS de `migration-auth.sql` deciden **qué se puede escribir**, y son la
+  barrera real: después de correrlas, la base solo acepta escrituras de sesiones cuyo email
+  esté en la tabla `admins`. Cualquier otro intento — con la anon key, desde la consola del
+  navegador, rearmando la interfaz — recibe `row-level security policy` y nada más.
+- La `service_role` key de Supabase nunca va al front, al repo ni a Netlify.
+
+Quién tiene acceso: Alex (dueño) y Fabrizio (desarrollo), una cuenta cada uno. Se da de baja
+a alguien borrando su usuario en Authentication → Users y su fila en `admins`.
 
 ### 3.2 Datos de producto incompletos
 

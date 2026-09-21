@@ -1,7 +1,13 @@
 -- ============================================================
 -- Chitopo — catálogo mayorista
 -- Ejecutar en el SQL Editor de Supabase, sobre un proyecto nuevo.
--- Después correr seed.sql para cargar los 5 productos reales.
+-- Después correr seed.sql para cargar los 5 productos reales, y al final
+-- migration-auth.sql.
+--
+-- ⚠️ Si alguna vez se vuelve a correr este archivo, correr migration-auth.sql
+-- de nuevo inmediatamente después: acá las políticas de escritura dejan pasar
+-- a cualquier sesión, y es migration-auth.sql el que las restringe a la
+-- lista de admins.
 -- ============================================================
 
 -- ── 1. PRODUCTOS ────────────────────────────────────────────
@@ -123,3 +129,33 @@ DROP TRIGGER IF EXISTS trg_config_updated_at ON config;
 CREATE TRIGGER trg_config_updated_at
   BEFORE UPDATE ON config
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- ── 5. Permisos para la API (GRANT) ─────────────────────────
+-- Desde mayo de 2026 los proyectos nuevos de Supabase no exponen las tablas
+-- a la API automáticamente: sin estos GRANT el front recibe
+-- "permission denied for table ...".
+--
+-- Son dos capas distintas y hacen falta las dos:
+--   GRANT = a qué TABLAS puede entrar cada rol.
+--   RLS   = qué FILAS ve o modifica dentro de esa tabla (políticas de arriba).
+--
+--   anon          = visitante sin sesión (el catálogo público)
+--   authenticated = alguien logueado (el panel admin)
+--
+-- Primero se limpia todo y después se da lo justo, así el resultado es el
+-- mismo sin importar cómo se haya creado el proyecto.
+
+REVOKE ALL ON productos, pedidos, config FROM anon, authenticated;
+
+GRANT SELECT ON productos TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON productos TO authenticated;
+
+-- El local manda su pedido sin cuenta, pero no puede leer ninguno.
+GRANT INSERT ON pedidos TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON pedidos TO authenticated;
+
+GRANT SELECT ON config TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON config TO authenticated;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON productos, pedidos, config TO service_role;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;

@@ -72,36 +72,89 @@ formats: [
 
 ## Conectar Supabase
 
-El proyecto Supabase anterior fue dado de baja. Para levantar uno nuevo:
+El proyecto vive en la cuenta de Supabase del cliente (Master Snacks). Pasos, en orden:
 
-1. Crear un proyecto en [supabase.com](https://supabase.com).
-2. En el **SQL Editor**, correr `supabase/schema.sql` y después `supabase/seed.sql`.
-3. En **Project Settings → API**, copiar la URL y la publishable key a `.env.local`:
+1. **Crear el proyecto** en [supabase.com](https://supabase.com) y elegir la región más
+   cercana (`South America (São Paulo)`).
+2. **SQL Editor**, en este orden:
+   `supabase/schema.sql` → `supabase/seed.sql` → `supabase/migration-auth.sql`
+   (antes de correr el último, editar la lista de emails que están adentro).
+3. **Project Settings → API**: copiar la URL y la publishable key a `.env.local`:
 
    ```
    VITE_SUPABASE_URL=https://xxxx.supabase.co
    VITE_SUPABASE_ANON_KEY=sb_publishable_xxxx
    ```
 
-4. Poner `MOCK_MODE = false` en `src/data/store.js`.
-5. Reiniciar `npm run dev` y probar el panel: crear, editar y borrar un producto.
+   Las mismas dos variables van en Netlify → Site configuration → Environment variables.
+4. Reiniciar `npm run dev` y probar el login del panel.
 
-### Seguridad del panel
+> ⚠️ **No poner `MOCK_MODE = false` todavía.** El catálogo público lee los productos del
+> estado en memoria (`AppContext`), no de Supabase: con el flag apagado, los visitantes
+> verían el catálogo vacío. El login funciona igual con `MOCK_MODE` en `true` (solo depende
+> de que `.env.local` tenga las credenciales). Conectar el catálogo, los pedidos y la
+> configuración a la base es la etapa siguiente.
 
-El login de `src/pages/Admin.jsx` compara usuario y contraseña **en el navegador**. Eso no es
-seguridad: el bundle es público y cualquiera puede leer esas credenciales. Sirve solo para que
-el panel no quede a la vista.
+La anon key es pública por diseño (viaja en el bundle del navegador). Lo que impide que
+alguien la use para escribir son las políticas RLS. **La service_role key nunca va al front
+ni al repo**: esa sí saltea todas las políticas.
 
-Lo que protege los datos de verdad son las políticas RLS de `supabase/schema.sql`: lectura
-pública de productos, pero escritura solo con sesión autenticada. Para cerrar el círculo,
-`supabase/migration-auth.sql` deja lista la migración a Supabase Auth con lista blanca de emails.
+## Seguridad del panel
 
-Mientras tanto, se puede cambiar la clave sin tocar código:
+El panel (`/#/admin`) usa **Supabase Auth**: email + contraseña reales contra
+`supabase.auth.signInWithPassword()` (`src/context/AuthContext.jsx`). La sesión queda
+guardada en el navegador y se cierra desde el botón del sidebar.
 
-```
-VITE_ADMIN_USER=alex
-VITE_ADMIN_PASS=una-clave-larga
-```
+Hay dos barreras, y solo la segunda es la que protege de verdad:
+
+| Capa | Dónde | Qué hace |
+|---|---|---|
+| Login | `src/pages/Admin.jsx` | Decide qué se ve. Es UX, no seguridad. |
+| RLS | `supabase/migration-auth.sql` | Decide qué se puede escribir. Es la barrera real. |
+
+Además de RLS, `schema.sql` define los `GRANT` de cada tabla: desde mayo de 2026 Supabase no
+expone las tablas nuevas a la API automáticamente, y sin ellos el front recibe
+`permission denied for table ...`.
+
+Después de `migration-auth.sql`, la base solo acepta escrituras de sesiones cuyo email esté
+en la tabla `admins`. Aunque alguien rearme la interfaz o pegue directo contra la API con la
+anon key, Postgres le devuelve error.
+
+**Alta de un administrador** (no se hace desde el código):
+
+1. Authentication → Users → **Add user** → email + contraseña. Marcar *Auto Confirm User*.
+2. Agregarlo a la whitelist:
+   ```sql
+   INSERT INTO admins (email, nombre) VALUES ('nuevo@dominio.com', 'Nombre');
+   ```
+
+**Baja**: borrar el usuario en Authentication → Users **y** la fila de `admins`.
+
+**Contraseña olvidada o cambio de clave**: Authentication → Users → borrar el usuario y
+volver a crearlo con *Add user*, mismo email y clave nueva. La fila de `admins` se mantiene
+porque va por email. No hay flujo de "olvidé mi contraseña" dentro del panel a propósito: son
+dos cuentas, y el link de recuperación de Supabase choca con el HashRouter.
+
+**Checklist de configuración en el dashboard de Supabase:**
+
+- Authentication → Providers → Email: **desactivar "Enable email signups"**. Nadie tiene por
+  qué registrarse solo; las cuentas se crean a mano.
+- Authentication → Providers → Email: dejar activo *Confirm email* y no habilitar otros
+  providers (Google, GitHub, etc.).
+- Project Settings → API: la `service_role` key no se comparte ni se sube a ningún lado.
+- Verificar que las políticas quedaron aplicadas:
+  ```sql
+  SELECT tablename, policyname, cmd, roles FROM pg_policies
+  WHERE schemaname = 'public' ORDER BY tablename;
+  ```
+
+**Cómo probar que la seguridad funciona** (vale la pena hacerlo una vez): abrir el catálogo
+público en una ventana de incógnito, abrir la consola del navegador y pegar un insert contra
+la API con la anon key. Tiene que devolver `new row violates row-level security policy`.
+
+En desarrollo, si `.env.local` está vacío, el panel ofrece un botón de "modo demo" con datos
+en memoria. Esa puerta solo existe con `npm run dev`: en el build de producción se compila
+afuera (`import.meta.env.DEV`).
 
 ## Etiquetado (Ley 20.606)
 

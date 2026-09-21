@@ -7,12 +7,12 @@ export const ordersService = {
       return { success: true, data: { id: Date.now(), ...orderData } };
     }
     try {
-      const { data, error } = await supabase
-        .from("pedidos")
-        .insert([orderData])
-        .select();
+      // Sin .select(): quien manda el pedido es un visitante anónimo, que
+      // puede insertar pero no leer pedidos (ni siquiera el suyo). Pedir la
+      // fila de vuelta haría fallar el insert por RLS.
+      const { error } = await supabase.from("pedidos").insert([orderData]);
       if (error) throw error;
-      return { success: true, data };
+      return { success: true, data: orderData };
     } catch (error) {
       console.error("Error al crear pedido:", error.message);
       return { success: false, error: error.message };

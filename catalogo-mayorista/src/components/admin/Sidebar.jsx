@@ -1,5 +1,6 @@
-import { Package, ShoppingCart, BarChart3, Settings, ExternalLink } from "lucide-react";
+import { Package, ShoppingCart, BarChart3, Settings, ExternalLink, LogOut } from "lucide-react";
 import { STORE_CONFIG } from "../../data/store";
+import { useAuth } from "../../context/AuthContext";
 import Logo from "../brand/Logo";
 
 const NAV = [
@@ -10,6 +11,8 @@ const NAV = [
 ];
 
 export default function Sidebar({ page, setPage, pending, stockAlerts }) {
+  const { email, signOut } = useAuth();
+
   function Content() {
     return (
       <>
@@ -68,6 +71,19 @@ export default function Sidebar({ page, setPage, pending, stockAlerts }) {
           <ExternalLink size={14} aria-hidden="true" />
           Ver el catálogo
         </a>
+
+        <div className="mt-2 pt-3 border-t border-border">
+          <div className="px-3 text-[10px] text-faint truncate" title={email}>
+            {email}
+          </div>
+          <button
+            onClick={signOut}
+            className="w-full flex items-center gap-2 px-3 py-2.5 mt-1 rounded-xl text-xs text-faint hover:text-red-400 hover:bg-surface-2 transition-colors duration-200 cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+          >
+            <LogOut size={14} aria-hidden="true" />
+            Cerrar sesión
+          </button>
+        </div>
       </>
     );
   }
