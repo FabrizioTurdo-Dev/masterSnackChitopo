@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Package, Plus, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import Btn from "./ui/Btn";
+import PageHeader from "./ui/PageHeader";
+import { CARD, FIELD, TH, PILL, TONES, chip } from "./ui/styles";
 import Modal from "./Modal";
 import ProductForm from "./ProductForm";
 import { useApp } from "../../context/AppContext";
@@ -13,13 +15,7 @@ function FormatTag({ format, threshold }) {
   const isLow = format.stock > 0 && format.stock <= threshold;
   return (
     <span
-      className={`text-[10px] px-1.5 py-0.5 rounded font-bold whitespace-nowrap ${
-        isZero
-          ? "bg-red-500/10 text-red-400"
-          : isLow
-            ? "bg-amber-500/10 text-amber-400"
-            : "bg-emerald-500/10 text-emerald-400"
-      }`}
+      className={`${PILL} ${isZero ? TONES.red : isLow ? TONES.gold : TONES.green}`}
       title={`${format.label} de ${format.units} bolsas — ${format.stock} en stock`}
     >
       {format.label} ×{format.units}: {format.stock}
@@ -32,12 +28,12 @@ function SortHeader({ label, field, current, direction, onSort }) {
   const Icon = active ? (direction === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
   return (
     <th
-      className="text-left px-4 py-3 text-[11px] font-bold text-muted uppercase tracking-[0.05em] border-b border-border cursor-pointer select-none hover:text-text transition-colors"
+      className={`${TH} cursor-pointer select-none hover:text-cream transition-colors`}
       onClick={() => onSort(field)}
     >
       <div className="flex items-center gap-1.5">
         {label}
-        <Icon size={12} className={active ? "text-accent" : "opacity-40"} />
+        <Icon size={12} className={active ? "text-cream" : "opacity-50"} aria-hidden="true" />
       </div>
     </th>
   );
@@ -45,10 +41,10 @@ function SortHeader({ label, field, current, direction, onSort }) {
 
 function SkeletonRow() {
   return (
-    <tr className="border-b border-border-soft">
+    <tr className="border-t-2 border-ink/10 first:border-t-0">
       {[1, 2, 3, 4, 5, 6].map(i => (
         <td key={i} className="px-4 py-4">
-          <div className="h-4 bg-surface-2 rounded animate-pulse" style={{ width: `${40 + i * 15}%` }} />
+          <div className="h-4 bg-cream-2 animate-pulse" style={{ width: `${40 + i * 15}%` }} />
         </td>
       ))}
     </tr>
@@ -57,9 +53,9 @@ function SkeletonRow() {
 
 function EmptyState({ hasFilters }) {
   return (
-    <div className="py-16 text-center text-faint">
-      <Package size={40} className="mx-auto mb-3 opacity-50" />
-      <p className="text-sm">
+    <div className="py-16 text-center">
+      <Package size={40} className="mx-auto mb-3 text-ink-faint" aria-hidden="true" />
+      <p className="font-condensed uppercase tracking-[0.04em] text-lg text-ink-soft m-0">
         {hasFilters ? "No hay productos para esos filtros" : "Todavía no hay productos. ¡Crea el primero!"}
       </p>
     </div>
@@ -220,41 +216,36 @@ export default function ProductsTable({ stockThreshold }) {
 
   const statusPill = p =>
     p.status === "proximamente" ? (
-      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/30">
+      <span className={`${PILL} ${TONES.gold}`}>
         Próximamente
       </span>
     ) : null;
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
-        <div>
-          <h2 className="font-display text-lg font-bold text-text">Productos</h2>
-          <p className="text-xs text-muted">
-            {products.length} cargados · {filtered.length} visibles
-            {totalPages > 1 ? ` · Pág. ${page}/${totalPages}` : ""}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Btn small variant="ghost" onClick={exportCSV} disabled={filtered.length === 0}>
-            Exportar CSV
-          </Btn>
-          <Btn onClick={() => setModal("new")}>
-            <Plus size={16} /> Nuevo producto
-          </Btn>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Catálogo"
+        title="Productos"
+        subtitle={`${products.length} cargados · ${filtered.length} visibles${totalPages > 1 ? ` · Pág. ${page}/${totalPages}` : ""}`}
+      >
+        <Btn variant="ghost" onClick={exportCSV} disabled={filtered.length === 0}>
+          Exportar CSV
+        </Btn>
+        <Btn onClick={() => setModal("new")}>
+          <Plus size={16} aria-hidden="true" /> Nuevo producto
+        </Btn>
+      </PageHeader>
 
-      <div className="bg-surface rounded-2xl border border-border mb-6 p-4">
+      <div className={`${CARD} mb-6 p-4`}>
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           <div className="relative flex-1 w-full">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none" aria-hidden="true" />
             <input
               type="text"
               placeholder="Buscar por nombre o sabor…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-bg text-text text-sm outline-none focus:border-accent transition-colors placeholder:text-faint"
+              className={`${FIELD} pl-9`}
             />
           </div>
           {FILTERS.map(f => (
@@ -262,7 +253,7 @@ export default function ProductsTable({ stockThreshold }) {
               key={f.key}
               value={f.value}
               onChange={e => f.set(e.target.value)}
-              className="px-3 py-2.5 rounded-xl border border-border bg-bg text-text text-sm outline-none cursor-pointer focus:border-accent"
+              className={`${FIELD} sm:w-auto cursor-pointer`}
             >
               {f.options.map(o => (
                 <option key={o.v} value={o.v}>{o.l}</option>
@@ -272,7 +263,7 @@ export default function ProductsTable({ stockThreshold }) {
         </div>
       </div>
 
-      <div className="bg-surface rounded-2xl border border-border overflow-hidden">
+      <div className={`${CARD} overflow-hidden`}>
         {loading ? (
           <table className="w-full border-collapse">
             <tbody>
@@ -286,22 +277,22 @@ export default function ProductsTable({ stockThreshold }) {
         ) : (
           <>
             {/* Mobile */}
-            <div className="divide-y divide-border sm:hidden">
+            <div className="divide-y-2 divide-ink/15 sm:hidden">
               {paginated.map(p => (
                 <div key={p.id} className="p-4 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-lg bg-bg flex items-center justify-center text-lg overflow-hidden shrink-0">
+                      <div className="size-11 bg-cream-2 border-2 border-ink flex items-center justify-center text-lg overflow-hidden shrink-0">
                         {p.image ? <img src={p.image} alt="" className="w-full h-full object-contain p-0.5" /> : p.emoji}
                       </div>
                       <div className="min-w-0">
-                        <div className="text-sm font-bold text-text truncate">{p.name}</div>
-                        <div className="text-[11px] text-muted">
+                        <div className="font-condensed uppercase text-base leading-tight text-ink truncate">{p.name}</div>
+                        <div className="text-xs text-ink-faint">
                           {lineLabel(p.line)} · {p.grams} g
                         </div>
                       </div>
                     </div>
-                    <div className="text-xs font-bold text-accent shrink-0 text-right">{priceOf(p)}</div>
+                    <div className="text-xs font-bold text-fire shrink-0 text-right">{priceOf(p)}</div>
                   </div>
                   <div className="flex gap-1 flex-wrap">
                     {(p.formats || []).map(f => (
@@ -312,25 +303,21 @@ export default function ProductsTable({ stockThreshold }) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => toggleActive(p)}
-                        className={`text-[11px] font-bold px-2.5 py-1 rounded-full cursor-pointer transition-all ${
-                          p.active
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                            : "bg-surface-2 text-faint border border-border"
-                        }`}
+                        className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.cream}`}
                       >
                         {p.active ? "● Visible" : "○ Oculto"}
                       </button>
                       {statusPill(p)}
-                      <span className="text-[10px] text-faint">{totalStock(p)} bolsas</span>
+                      <span className="text-xs text-ink-faint">{totalStock(p)} bolsas</span>
                     </div>
                     <div className="flex gap-1.5">
                       <Btn small variant="ghost" onClick={() => setModal(p)}>Editar</Btn>
                       <button
                         onClick={() => deleteProduct(p.id)}
-                        className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
+                        className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-ink hover:bg-[#ffd9cc] transition-colors cursor-pointer"
                         aria-label={`Eliminar ${p.name}`}
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={15} aria-hidden="true" />
                       </button>
                     </div>
                   </div>
@@ -342,54 +329,46 @@ export default function ProductsTable({ stockThreshold }) {
             <div className="hidden sm:block overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-bg">
+                  <tr className="bg-ink">
                     <SortHeader label="Producto" field="name" current={sortField} direction={sortDir} onSort={handleSort} />
                     <SortHeader label="Línea" field="line" current={sortField} direction={sortDir} onSort={handleSort} />
                     <SortHeader label="Gramaje" field="grams" current={sortField} direction={sortDir} onSort={handleSort} />
-                    <th className="text-left px-4 py-3 text-[11px] font-bold text-muted uppercase tracking-[0.05em] border-b border-border">
-                      Precio
-                    </th>
+                    <th className={TH}>Precio</th>
                     <SortHeader label="Formatos / Stock" field="stock" current={sortField} direction={sortDir} onSort={handleSort} />
                     <SortHeader label="Estado" field="active" current={sortField} direction={sortDir} onSort={handleSort} />
-                    <th className="text-left px-4 py-3 text-[11px] font-bold text-muted uppercase tracking-[0.05em] border-b border-border">
-                      Acciones
-                    </th>
+                    <th className={TH}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginated.map(p => (
-                    <tr key={p.id} className="border-b border-border-soft last:border-0 hover:bg-bg/50 transition-colors">
+                    <tr key={p.id} className="border-t-2 border-ink/15 first:border-t-0 hover:bg-cream-2/60 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-bg flex items-center justify-center text-lg overflow-hidden shrink-0">
+                          <div className="size-10 bg-cream-2 border-2 border-ink flex items-center justify-center text-lg overflow-hidden shrink-0">
                             {p.image ? <img src={p.image} alt="" className="w-full h-full object-contain p-0.5" /> : p.emoji}
                           </div>
                           <div>
-                            <div className="text-sm font-bold text-text">{p.name}</div>
-                            <div className="text-[11px] text-faint">{p.flavor}</div>
+                            <div className="font-condensed uppercase text-base leading-tight text-ink">{p.name}</div>
+                            <div className="text-xs text-ink-faint">{p.flavor}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted">{lineLabel(p.line)}</td>
-                      <td className="px-4 py-3 text-xs text-muted tabular-nums">{p.grams} g</td>
-                      <td className="px-4 py-3 text-xs font-bold text-accent">{priceOf(p)}</td>
+                      <td className="px-4 py-3 text-sm text-ink-soft">{lineLabel(p.line)}</td>
+                      <td className="px-4 py-3 text-sm text-ink-soft tabular-nums">{p.grams} g</td>
+                      <td className="px-4 py-3 text-xs font-bold text-fire">{priceOf(p)}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1 flex-wrap max-w-[260px]">
                           {(p.formats || []).map(f => (
                             <FormatTag key={f.id} format={f} threshold={stockThreshold} />
                           ))}
                         </div>
-                        <div className="text-[10px] text-faint mt-0.5">{totalStock(p)} bolsas</div>
+                        <div className="text-xs text-ink-faint mt-1">{totalStock(p)} bolsas</div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-col gap-1 items-start">
                           <button
                             onClick={() => toggleActive(p)}
-                            className={`text-[11px] font-bold px-2.5 py-1 rounded-full cursor-pointer transition-all ${
-                              p.active
-                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                                : "bg-surface-2 text-faint border border-border"
-                            }`}
+                            className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.cream}`}
                           >
                             {p.active ? "● Visible" : "○ Oculto"}
                           </button>
@@ -401,10 +380,10 @@ export default function ProductsTable({ stockThreshold }) {
                           <Btn small variant="ghost" onClick={() => setModal(p)}>Editar</Btn>
                           <button
                             onClick={() => deleteProduct(p.id)}
-                            className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
+                            className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-ink hover:bg-[#ffd9cc] transition-colors cursor-pointer"
                             aria-label={`Eliminar ${p.name}`}
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={15} aria-hidden="true" />
                           </button>
                         </div>
                       </td>
@@ -422,7 +401,7 @@ export default function ProductsTable({ stockThreshold }) {
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-2 text-muted border border-border hover:border-muted hover:text-text transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            className={`${chip(false)} disabled:opacity-40 disabled:cursor-not-allowed`}
           >
             Anterior
           </button>
@@ -430,9 +409,7 @@ export default function ProductsTable({ stockThreshold }) {
             <button
               key={n}
               onClick={() => setPage(n)}
-              className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                page === n ? "bg-accent text-bg" : "bg-surface-2 text-muted border border-border hover:border-muted"
-              }`}
+              className={`${chip(page === n)} justify-center min-w-[34px] px-0`}
             >
               {n}
             </button>
@@ -440,7 +417,7 @@ export default function ProductsTable({ stockThreshold }) {
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-2 text-muted border border-border hover:border-muted hover:text-text transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            className={`${chip(false)} disabled:opacity-40 disabled:cursor-not-allowed`}
           >
             Siguiente
           </button>

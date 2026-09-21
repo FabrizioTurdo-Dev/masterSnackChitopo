@@ -22,7 +22,7 @@ export default function Section({
               </p>
             )}
             {title && (
-              <h2 className="font-condensed uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] text-ink m-0">
+              <h2 className="font-title uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] text-ink m-0">
                 {title}
               </h2>
             )}

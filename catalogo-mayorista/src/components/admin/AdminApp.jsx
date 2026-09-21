@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { STORE_CONFIG } from "../../data/store";
+import { isSupabaseConfigured } from "../../config/supabase";
+import { ordersService } from "../../services/ordersService";
 import Logo from "../brand/Logo";
 import Sidebar from "./Sidebar";
 import Dashboard from "./Dashboard";
@@ -11,13 +13,47 @@ import OrdersList from "./OrdersList";
 import SettingsPanel from "./SettingsPanel";
 
 export default function AdminApp() {
-  const { products, orders } = useApp();
+  const { products, orders, setOrders } = useApp();
   const prefersReduced = useReducedMotion();
   const [page, setPage] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stockThreshold, setStockThreshold] = useState(STORE_CONFIG.defaultStockThreshold);
 
-  const pending = orders.filter(o => o.status === "pendiente").length;
+  // Los pedidos se cargan acá y no en su pestaña: el sidebar y el dashboard
+  // también muestran cuántos hay nuevos.
+  const [ordersSync, setOrdersSync] = useState({
+    loading: isSupabaseConfigured,
+    error: null,
+    at: null,
+  });
+
+  const refreshOrders = useCallback(async () => {
+    if (!isSupabaseConfigured) return;
+    setOrdersSync(s => ({ ...s, loading: true }));
+    const res = await ordersService.list();
+    if (res.success) {
+      setOrders(res.data);
+      setOrdersSync({ loading: false, error: null, at: new Date() });
+    } else {
+      setOrdersSync(s => ({ ...s, loading: false, error: res.error }));
+    }
+  }, [setOrders]);
+
+  // Los pedidos entran desde el celular de los clientes: se vuelven a pedir
+  // al volver a la pestaña y cada minuto mientras el panel está abierto.
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    refreshOrders();
+    const onFocus = () => document.visibilityState === "visible" && refreshOrders();
+    document.addEventListener("visibilitychange", onFocus);
+    const timer = setInterval(onFocus, 60_000);
+    return () => {
+      document.removeEventListener("visibilitychange", onFocus);
+      clearInterval(timer);
+    };
+  }, [refreshOrders]);
+
+  const newOrders = orders.filter(o => o.status === "nuevo").length;
   const stockAlerts = products.filter(p =>
     (p.formats || []).some(f => f.stock > 0 && f.stock <= stockThreshold)
   ).length;
@@ -25,15 +61,15 @@ export default function AdminApp() {
   const sections = {
     dashboard: <Dashboard products={products} orders={orders} setPage={setPage} stockThreshold={stockThreshold} />,
     products:  <ProductsTable stockThreshold={stockThreshold} />,
-    orders:    <OrdersList />,
+    orders:    <OrdersList sync={ordersSync} onRefresh={refreshOrders} />,
     settings:  <SettingsPanel stockThreshold={stockThreshold} onStockThresholdChange={setStockThreshold} />,
   };
 
   return (
-    <div className="min-h-screen bg-bg font-sans flex">
+    <div className="min-h-screen font-sans flex">
       {/* Sidebar desktop */}
-      <aside className="hidden sm:flex w-[220px] bg-surface border-r border-border flex-col px-3 py-5 sticky top-0 h-screen shrink-0">
-        <Sidebar page={page} setPage={setPage} pending={pending} stockAlerts={stockAlerts} />
+      <aside className="on-dark hidden sm:flex w-[232px] bg-ink text-cream border-r-[3px] border-ink flex-col px-3 py-5 sticky top-0 h-screen shrink-0">
+        <Sidebar page={page} setPage={setPage} newOrders={newOrders} stockAlerts={stockAlerts} />
       </aside>
 
       {/* Sidebar mobile overlay */}
@@ -45,7 +81,7 @@ export default function AdminApp() {
               animate={{ opacity: 1 }}
               exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: prefersReduced ? 0 : 0.2 }}
-              className="fixed inset-0 bg-black/60 z-[100] sm:hidden"
+              className="fixed inset-0 bg-ink/60 z-[100] sm:hidden"
               onClick={() => setSidebarOpen(false)}
             />
             <motion.aside
@@ -53,20 +89,20 @@ export default function AdminApp() {
               animate={{ x: 0 }}
               exit={prefersReduced ? { x: 0 } : { x: "-100%" }}
               transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 25, stiffness: 250 }}
-              className="fixed top-0 left-0 bottom-0 w-[260px] bg-surface z-[101] flex flex-col px-3 py-5 sm:hidden"
+              className="on-dark fixed top-0 left-0 bottom-0 w-[260px] bg-ink text-cream border-r-[3px] border-gold z-[101] flex flex-col px-3 py-5 sm:hidden"
             >
-              <Sidebar page={page} setPage={(p) => { setPage(p); setSidebarOpen(false); }} pending={pending} stockAlerts={stockAlerts} />
+              <Sidebar page={page} setPage={(p) => { setPage(p); setSidebarOpen(false); }} newOrders={newOrders} stockAlerts={stockAlerts} />
             </motion.aside>
           </>
         )}
       </AnimatePresence>
 
-      <main className="flex-1 overflow-auto py-5 px-4 sm:py-7 sm:px-8">
+      <main className="flex-1 min-w-0 overflow-auto py-5 px-4 sm:py-8 sm:px-8">
         {/* Mobile header */}
-        <div className="flex items-center gap-3 mb-6 sm:hidden">
+        <div className="flex items-center gap-3 mb-6 sm:hidden -mx-4 -mt-5 px-4 py-3 bg-cream border-b-[3px] border-ink">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-xl bg-surface-2 text-muted hover:text-text transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+            className="size-11 grid place-items-center bg-cream text-ink border-2 border-ink [box-shadow:3px_3px_0_var(--color-ink)] nb-press cursor-pointer"
             aria-label="Abrir menú"
           >
             <Menu size={20} aria-hidden="true" />
@@ -74,8 +110,8 @@ export default function AdminApp() {
           <div className="flex items-center gap-2.5">
             <Logo height={26} />
             <div>
-              <div className="text-sm font-bold text-text tracking-tight">Admin</div>
-              <div className="text-[11px] text-muted">{STORE_CONFIG.name}</div>
+              <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-ink">Admin</div>
+              <div className="text-[11px] text-ink-soft">{STORE_CONFIG.name}</div>
             </div>
           </div>
         </div>

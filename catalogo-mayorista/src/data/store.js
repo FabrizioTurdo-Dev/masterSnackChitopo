@@ -69,8 +69,17 @@ export const STORE_CONFIG = {
 
 // WhatsApp del socio — formato internacional sin +
 export const SELLER_PHONE = "56978632055";
+export const SELLER_PHONE_PRETTY = "+56 9 7863 2055";
+export const WHATSAPP_LINK = `https://wa.me/${SELLER_PHONE}`;
 
-// Acento por sabor (los tokens viven en index.css)
+// Crédito de desarrollo del footer, igual que en la landing. Celular de
+// Buenos Aires en formato internacional: 54 + 9 (móvil) + 11 5492-2800.
+export const DEV_CREDIT = { name: "Fabrizio Turdo", phone: "5491154922800" };
+const DEV_MESSAGE =
+  "¡Hola Fabrizio! Vi la web de Chitopo y quiero una para mi negocio. Te cuento de qué se trata: ";
+export const DEV_WHATSAPP_LINK = `https://wa.me/${DEV_CREDIT.phone}?text=${encodeURIComponent(DEV_MESSAGE)}`;
+
+// Acento por sabor (los tokens viven en shared/chitopo-brand.css)
 export const FLAVOR_ACCENTS = {
   queso: "#e23a2e",
   papa: "#3fa34d",
@@ -79,8 +88,9 @@ export const FLAVOR_ACCENTS = {
   tocino: "#ff3b14",
 };
 
+// Sin sabor conocido cae en el rojo de marca: el dorado no se ve sobre crema.
 export function flavorAccent(flavor) {
-  return FLAVOR_ACCENTS[flavor] || "#fbc610";
+  return FLAVOR_ACCENTS[flavor] || "#d02b05";
 }
 
 // Devuelve los formatos con stock disponible de un producto

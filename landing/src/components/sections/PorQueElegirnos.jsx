@@ -39,7 +39,6 @@ export default function PorQueElegirnos() {
   return (
     <Section
       id="por-que"
-      eyebrow="Por qué Chitopo"
       title="Por qué nos vas a elegir"
       className="dots-cream border-b-[3px] border-ink"
     >
@@ -60,7 +59,7 @@ export default function PorQueElegirnos() {
               <Icon size={22} />
             </span>
             <div>
-              <h3 className="font-condensed uppercase text-lg sm:text-xl text-ink m-0 leading-tight">
+              <h3 className="font-title uppercase text-lg sm:text-xl text-ink m-0 leading-tight">
                 {title}
               </h3>
               <p className="text-ink-soft text-sm leading-relaxed m-0 mt-1.5">{text}</p>

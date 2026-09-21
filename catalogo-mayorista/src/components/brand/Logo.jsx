@@ -14,7 +14,7 @@ export default function Logo({ height = 32, className = "", withTagline = false 
         translate="no"
       />
       {withTagline && (
-        <span className="font-condensed text-accent text-xs tracking-[0.18em] uppercase mt-1">
+        <span className="font-condensed text-current text-xs tracking-[0.18em] uppercase mt-1">
           {STORE_CONFIG.tagline}
         </span>
       )}

@@ -65,8 +65,11 @@ CREATE TABLE IF NOT EXISTS pedidos (
   phone      TEXT,
   units      INT  NOT NULL DEFAULT 0, -- total de bolsas
   total      NUMERIC,                 -- NULL = a confirmar
-  status     TEXT NOT NULL DEFAULT 'pendiente'
-             CHECK (status IN ('pendiente', 'confirmado', 'enviado', 'cancelado')),
+  -- nuevo (llegó por WhatsApp) → pendiente (cotización enviada) →
+  -- confirmado → enviado; o cancelado. Lo avanzan los dueños desde el panel.
+  status     TEXT NOT NULL DEFAULT 'nuevo'
+             CHECK (status IN ('nuevo', 'pendiente', 'confirmado', 'enviado', 'cancelado')),
+  ref        TEXT,                    -- código del mensaje de WhatsApp (CH-XXXX)
   items      JSONB NOT NULL DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -76,9 +79,11 @@ CREATE INDEX IF NOT EXISTS pedidos_status_idx ON pedidos (status, created_at DES
 ALTER TABLE pedidos ENABLE ROW LEVEL SECURITY;
 
 -- Un cliente anónimo puede crear su pedido, pero no leer los de otros.
+-- Solo como "nuevo": si no, cualquiera con la anon key podría meter pedidos
+-- ya confirmados.
 DROP POLICY IF EXISTS "pedidos alta publica" ON pedidos;
 CREATE POLICY "pedidos alta publica" ON pedidos
-  FOR INSERT TO anon, authenticated WITH CHECK (true);
+  FOR INSERT TO anon, authenticated WITH CHECK (status = 'nuevo');
 
 DROP POLICY IF EXISTS "pedidos lectura admin" ON pedidos;
 CREATE POLICY "pedidos lectura admin" ON pedidos

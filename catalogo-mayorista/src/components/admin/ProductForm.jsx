@@ -3,6 +3,7 @@ import { Upload, Plus, Trash2 } from "lucide-react";
 import Input from "./ui/Input";
 import Select from "./ui/Select";
 import Btn from "./ui/Btn";
+import { FIELD, FIELD_SM, LABEL, TONES, ERROR_TEXT } from "./ui/styles";
 import { STORE_CONFIG, FLAVOR_ACCENTS } from "../../data/store";
 
 const NUTRIENTS = [
@@ -154,8 +155,14 @@ export default function ProductForm({ product, onSave, onCancel }) {
   }
 
   const toggle = (on) =>
-    `flex-1 py-2 rounded-xl text-sm font-semibold cursor-pointer transition-all ${
-      on ? "bg-accent text-bg" : "bg-surface-2 text-muted border border-border hover:border-muted"
+    `flex-1 min-h-[40px] font-condensed uppercase tracking-[0.06em] text-sm border-2 border-ink cursor-pointer transition-colors ${
+      on ? "bg-ink text-gold" : "bg-cream text-ink hover:bg-cream-2"
+    }`;
+
+  // Chip de declaración o sello: se prende con el color que corresponde.
+  const claimChip = (on, onClass) =>
+    `px-3 min-h-[34px] text-xs font-bold border-2 border-ink cursor-pointer transition-colors ${
+      on ? onClass : "bg-cream text-ink-soft hover:bg-cream-2"
     }`;
 
   return (
@@ -163,7 +170,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
       <div className="flex gap-4 items-start">
         <div
           onClick={() => fileRef.current.click()}
-          className="w-[100px] h-[100px] rounded-xl border-2 border-dashed border-border bg-bg flex items-center justify-center cursor-pointer overflow-hidden shrink-0 hover:border-accent transition-colors duration-200"
+          className="size-[100px] border-2 border-dashed border-ink bg-cream-2 flex items-center justify-center cursor-pointer overflow-hidden shrink-0 hover:bg-gold/40 transition-colors duration-200"
         >
           {imgPreview ? (
             <img src={imgPreview} alt="" className="w-full h-full object-contain p-1" />
@@ -174,9 +181,9 @@ export default function ProductForm({ product, onSave, onCancel }) {
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImage} />
         <div className="flex-1 flex flex-col gap-3">
           <Btn small variant="ghost" onClick={() => fileRef.current.click()}>
-            <Upload size={14} /> Subir foto del empaque
+            <Upload size={14} aria-hidden="true" /> Subir foto del empaque
           </Btn>
-          <p className="text-[11px] text-faint leading-relaxed">
+          <p className="text-xs text-ink-faint leading-relaxed m-0">
             Ideal: el frente de la bolsa recortado, fondo transparente o plano.
           </p>
         </div>
@@ -220,7 +227,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         />
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em]">Disponibilidad</label>
+          <label className={LABEL}>Disponibilidad</label>
           <div className="flex gap-2 mt-0.5">
             <button onClick={() => set("status", "activo")} className={toggle(form.status === "activo")}>
               A la venta
@@ -232,7 +239,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em]">Visibilidad</label>
+          <label className={LABEL}>Visibilidad</label>
           <div className="flex gap-2 mt-0.5">
             <button onClick={() => set("active", true)} className={toggle(form.active === true)}>
               ✓ Visible
@@ -247,17 +254,15 @@ export default function ProductForm({ product, onSave, onCancel }) {
       {/* ── Formatos de venta ───────────────────────────────────────── */}
       <div>
         <div className="flex items-center justify-between mb-2.5">
-          <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em]">
-            Formatos de venta
-          </label>
+          <label className={LABEL}>Formatos de venta</label>
           <Btn small variant="ghost" onClick={addFormat}>
-            <Plus size={13} /> Agregar formato
+            <Plus size={13} aria-hidden="true" /> Agregar formato
           </Btn>
         </div>
-        <div className="bg-bg rounded-xl p-3 flex flex-col gap-2">
+        <div className="bg-cream-2 border-2 border-ink p-3 flex flex-col gap-2">
           <div className="hidden sm:grid grid-cols-[1fr_90px_90px_110px_32px] gap-2 px-1">
             {["Nombre", "Bolsas", "Stock", "Precio", ""].map(h => (
-              <span key={h} className="text-[10px] font-bold text-faint uppercase">{h}</span>
+              <span key={h} className="font-condensed text-[11px] uppercase tracking-[0.1em] text-ink-soft">{h}</span>
             ))}
           </div>
           {form.formats.map((f, i) => (
@@ -266,7 +271,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
                 value={f.label}
                 onChange={e => setFormat(i, "label", e.target.value)}
                 placeholder="Caja"
-                className="px-2.5 py-2 rounded-lg border border-border bg-surface-2 text-text text-sm outline-none focus:border-accent transition-colors placeholder:text-faint"
+                className={FIELD_SM}
               />
               <input
                 type="number"
@@ -274,15 +279,15 @@ export default function ProductForm({ product, onSave, onCancel }) {
                 value={f.units}
                 onChange={e => setFormat(i, "units", e.target.value)}
                 placeholder="24"
-                className="px-2.5 py-2 rounded-lg border border-border bg-surface-2 text-text text-sm text-center outline-none focus:border-accent transition-colors"
+                className={`${FIELD_SM} text-center`}
               />
               <input
                 type="number"
                 min="0"
                 value={f.stock}
                 onChange={e => setFormat(i, "stock", e.target.value)}
-                className={`px-2.5 py-2 rounded-lg border bg-surface-2 text-sm text-center outline-none transition-colors ${
-                  Number(f.stock) === 0 ? "border-red-500/40 text-red-400" : "border-border text-text"
+                className={`${FIELD_SM} text-center ${
+                  Number(f.stock) === 0 ? "!border-[#a32004] !text-[#8a1c03] !bg-[#ffece5]" : ""
                 }`}
               />
               <input
@@ -291,22 +296,22 @@ export default function ProductForm({ product, onSave, onCancel }) {
                 value={f.price ?? ""}
                 onChange={e => setFormat(i, "price", e.target.value)}
                 placeholder="a consultar"
-                className="px-2.5 py-2 rounded-lg border border-border bg-surface-2 text-text text-sm text-center outline-none focus:border-accent transition-colors placeholder:text-faint placeholder:text-[11px]"
+                className={`${FIELD_SM} text-center placeholder:text-[11px]`}
               />
               <button
                 onClick={() => removeFormat(i)}
-                className="p-2 rounded-lg text-faint hover:text-red-400 hover:bg-red-500/10 transition-all cursor-pointer justify-self-end"
+                className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-ink hover:bg-[#ffd9cc] transition-colors cursor-pointer justify-self-end"
                 aria-label={`Eliminar formato ${f.label || i + 1}`}
               >
-                <Trash2 size={14} />
+                <Trash2 size={15} aria-hidden="true" />
               </button>
             </div>
           ))}
           {form.formats.length === 0 && (
-            <p className="text-xs text-faint text-center py-3">Sin formatos. Agrega al menos uno.</p>
+            <p className="text-sm text-ink-soft text-center py-3 m-0">Sin formatos. Agrega al menos uno.</p>
           )}
         </div>
-        <p className="text-[11px] text-faint mt-2 leading-relaxed">
+        <p className="text-xs text-ink-faint mt-2 mb-0 leading-relaxed">
           "Bolsas" es cuántas unidades trae el bulto; "Stock" son cuántos bultos hay.
           Deja el precio vacío mientras siga en "a consultar".
         </p>
@@ -314,10 +319,8 @@ export default function ProductForm({ product, onSave, onCancel }) {
 
       {/* ── Declaraciones y sellos ──────────────────────────────────── */}
       <div>
-        <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em] block mb-2.5">
-          Declaraciones del empaque
-        </label>
-        <div className="flex gap-1.5 flex-wrap">
+        <label className={`${LABEL} block mb-2.5`}>Declaraciones del empaque</label>
+        <div className="flex gap-2 flex-wrap">
           {[
             { key: "baked", label: "Horneado, no frito" },
             { key: "glutenFree", label: "Libre de gluten" },
@@ -325,11 +328,8 @@ export default function ProductForm({ product, onSave, onCancel }) {
             <button
               key={c.key}
               onClick={() => setClaim(c.key, !form.claims[c.key])}
-              className={`px-3 py-1.5 rounded-lg text-xs cursor-pointer transition-all ${
-                form.claims[c.key]
-                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold"
-                  : "bg-surface-2 text-faint border border-border hover:border-muted"
-              }`}
+              aria-pressed={!!form.claims[c.key]}
+              className={claimChip(form.claims[c.key], TONES.green)}
             >
               {c.label}
             </button>
@@ -338,11 +338,8 @@ export default function ProductForm({ product, onSave, onCancel }) {
             <button
               key={s.id}
               onClick={() => toggleSeal(s.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs cursor-pointer transition-all ${
-                form.claims.seals?.includes(s.id)
-                  ? "bg-text text-bg border border-text font-bold"
-                  : "bg-surface-2 text-faint border border-border hover:border-muted"
-              }`}
+              aria-pressed={!!form.claims.seals?.includes(s.id)}
+              className={claimChip(form.claims.seals?.includes(s.id), "bg-ink text-cream")}
             >
               {s.label}
             </button>
@@ -353,13 +350,13 @@ export default function ProductForm({ product, onSave, onCancel }) {
       {/* ── Ficha técnica ───────────────────────────────────────────── */}
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em]">Ingredientes</label>
+          <label className={LABEL}>Ingredientes</label>
           <textarea
             value={form.ingredients}
             onChange={e => set("ingredients", e.target.value)}
             rows={3}
             placeholder="Gritz de maíz, Aceite vegetal, Sal…"
-            className="w-full px-3 py-2.5 rounded-xl border border-border bg-bg text-text text-sm outline-none transition-colors focus:border-accent resize-vertical placeholder:text-faint"
+            className={`${FIELD} py-2.5 resize-y`}
           />
         </div>
         <Input
@@ -370,10 +367,8 @@ export default function ProductForm({ product, onSave, onCancel }) {
         />
 
         <div>
-          <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em] block mb-2.5">
-            Tabla nutricional (por 100 g)
-          </label>
-          <div className="bg-bg rounded-xl p-3 flex flex-col gap-3">
+          <label className={`${LABEL} block mb-2.5`}>Tabla nutricional (por 100 g)</label>
+          <div className="bg-cream-2 border-2 border-ink p-3 flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-2">
               <Input
                 label="Porción"
@@ -392,18 +387,18 @@ export default function ProductForm({ product, onSave, onCancel }) {
             <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2">
               {NUTRIENTS.map(n => (
                 <div key={n.key} className="flex flex-col gap-1">
-                  <label className="text-[10px] text-faint font-bold">{n.label}</label>
+                  <label className="text-[11px] text-ink-soft font-bold">{n.label}</label>
                   <input
                     type="number"
                     step="0.01"
                     value={form.nutrition?.per100g?.[n.key] ?? ""}
                     onChange={e => setNutrient(n.key, e.target.value)}
-                    className="w-full px-2 py-1.5 rounded-lg border border-border bg-surface-2 text-text text-sm text-center outline-none focus:border-accent transition-colors"
+                    className={`${FIELD_SM} w-full text-center`}
                   />
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-faint">
+            <p className="text-xs text-ink-faint m-0">
               Deja todo vacío si la ficha todavía no está lista.
             </p>
           </div>
@@ -411,10 +406,10 @@ export default function ProductForm({ product, onSave, onCancel }) {
       </div>
 
       {error && (
-        <p className="text-xs text-red-400 text-right" role="alert">{error}</p>
+        <p className={`${ERROR_TEXT} text-right m-0`} role="alert">{error}</p>
       )}
 
-      <div className="flex gap-2 justify-end pt-3 border-t border-border">
+      <div className="flex gap-3 justify-end pt-4 border-t-[3px] border-ink">
         <Btn variant="ghost" onClick={onCancel}>Cancelar</Btn>
         <Btn onClick={handleSubmit}>{isEdit ? "Guardar cambios" : "Crear producto"}</Btn>
       </div>

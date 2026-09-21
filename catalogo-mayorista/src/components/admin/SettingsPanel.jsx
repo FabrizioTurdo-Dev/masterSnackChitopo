@@ -1,12 +1,14 @@
 import { useState } from "react";
 import Input from "./ui/Input";
 import Btn from "./ui/Btn";
-import { STORE_CONFIG, SELLER_PHONE } from "../../data/store";
+import PageHeader from "./ui/PageHeader";
+import { CARD, LABEL, PILL, TONES } from "./ui/styles";
+import { STORE_CONFIG, SELLER_PHONE, DEV_CREDIT } from "../../data/store";
 
 function Card({ title, children }) {
   return (
-    <div className="bg-surface rounded-xl border border-border p-6">
-      <h3 className="text-sm font-bold text-text mb-4">{title}</h3>
+    <div className={`${CARD} p-5 sm:p-6`}>
+      <h3 className="font-title uppercase tracking-[0.06em] text-xl text-ink m-0 mb-4 pb-2 border-b-2 border-ink/15">{title}</h3>
       {children}
     </div>
   );
@@ -15,8 +17,8 @@ function Card({ title, children }) {
 function ReadOnly({ label, value }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em]">{label}</label>
-      <div className="px-3.5 py-2.5 rounded-xl border border-border bg-bg text-muted text-sm">
+      <span className={LABEL}>{label}</span>
+      <div className="min-h-[42px] px-3 flex items-center bg-cream-2 border-2 border-dashed border-ink/50 text-ink-soft text-sm">
         {value}
       </div>
     </div>
@@ -37,13 +39,11 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
 
   return (
     <div>
-      <div className="mb-5">
-        <h2 className="font-display text-lg font-bold text-text">Configuración</h2>
-        <p className="text-xs text-muted">
-          Los datos de la marca viven en <code className="text-accent">src/data/store.js</code>.
-          Acá se ven en solo lectura.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Ajustes"
+        title="Configuración"
+        subtitle={`Datos del negocio y del catálogo. Si hay que cambiar alguno, avísale a ${DEV_CREDIT.name}.`}
+      />
 
       <div className="flex flex-col gap-4">
         <Card title="Datos del negocio">
@@ -61,24 +61,23 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
         <Card title="Precios en el catálogo">
           <div className="flex flex-col gap-3">
             <div
-              className={`px-4 py-3 rounded-xl border text-sm font-bold flex items-center gap-2 ${
-                STORE_CONFIG.showPrices
-                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25"
-                  : "bg-accent/10 text-accent border-accent/25"
+              className={`${PILL} self-start text-sm px-3 py-1.5 ${
+                STORE_CONFIG.showPrices ? TONES.green : TONES.gold
               }`}
             >
               {STORE_CONFIG.showPrices ? "● Precios visibles" : "● Modo precio a consultar"}
             </div>
-            <p className="text-xs text-muted leading-relaxed">
+            <p className="text-sm text-ink-soft leading-relaxed m-0">
               {STORE_CONFIG.showPrices
                 ? "El catálogo muestra los precios cargados en cada formato y el pedido llega con el monto calculado."
                 : "El catálogo no muestra precios: los pedidos llegan como cotización y el monto se cierra por WhatsApp."}
             </p>
-            <p className="text-xs text-faint leading-relaxed">
-              Para cambiarlo, carga el precio de cada formato en la pestaña Productos y pon{" "}
-              <code className="text-accent">showPrices: true</code> en{" "}
-              <code className="text-accent">src/data/store.js</code>.
-            </p>
+            {!STORE_CONFIG.showPrices && (
+              <p className="text-sm text-ink-faint leading-relaxed m-0">
+                Cuando tengan los precios cargados en cada formato (pestaña Productos), avísale a{" "}
+                {DEV_CREDIT.name} para que el catálogo empiece a mostrarlos.
+              </p>
+            )}
           </div>
         </Card>
 
@@ -93,17 +92,17 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
               placeholder="5"
             />
             <div className="flex flex-col gap-1.5 justify-end">
-              <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em]">Ayuda</label>
-              <p className="text-xs text-faint leading-relaxed">
+              <span className={LABEL}>Ayuda</span>
+              <p className="text-sm text-ink-soft leading-relaxed m-0">
                 Los formatos con esa cantidad de bultos o menos se marcan como{" "}
-                <span className="text-amber-400">stock bajo</span> en la tabla y en el catálogo.
+                <span className="font-semibold text-fire">stock bajo</span> en la tabla y en el catálogo.
               </p>
             </div>
           </div>
         </Card>
 
         <div className="flex justify-end items-center gap-3">
-          {saved && <span className="text-sm text-emerald-400 font-semibold">✓ Guardado</span>}
+          {saved && <span className="font-condensed uppercase tracking-[0.08em] text-[#14532d]" role="status">✓ Guardado</span>}
           <Btn onClick={handleSave}>Guardar cambios</Btn>
         </div>
       </div>

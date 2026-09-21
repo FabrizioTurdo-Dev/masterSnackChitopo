@@ -84,7 +84,7 @@ export default function RedesSociales() {
             <p className="font-condensed uppercase tracking-[0.22em] text-ink text-xs sm:text-sm mb-3 before:content-['★'] before:text-fire before:mr-2">
               Síguenos
             </p>
-            <h2 className="font-condensed uppercase text-3xl sm:text-5xl leading-[0.95] text-ink m-0">
+            <h2 className="font-title uppercase text-3xl sm:text-5xl leading-[0.95] text-ink m-0">
               Todo lo bueno pasa
               <br />
               en el Instagram

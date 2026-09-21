@@ -74,7 +74,7 @@ export default function ProductoCard({ product }) {
       </div>
 
       <div className="p-5 flex flex-col gap-2 flex-1">
-        <h3 className="font-condensed uppercase text-2xl leading-tight text-ink m-0">
+        <h3 className="font-title uppercase text-2xl leading-tight text-ink m-0">
           {product.name}
         </h3>
         <p className="text-ink-soft text-sm leading-relaxed m-0 flex-1">{product.blurb}</p>

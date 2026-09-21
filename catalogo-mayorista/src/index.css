@@ -1,87 +1,14 @@
 @import "tailwindcss";
+/* Tokens, neubrutalismo, damero, grano, lettering y estallido: los
+   mismos de la landing, desde shared/chitopo-brand.css. */
+@import "../../shared/chitopo-brand.css";
 
-/* ═══════════════════════════════════════════════════════════════
-   CHITOPO — Tokens de marca
-   Paleta derivada del logo y los empaques (brief 22-08-2026):
-   dorado/mostaza #FBC610–#FDC008, café oscuro/vinotinto #5B1106,
-   y un color de acento por sabor.
-   ═══════════════════════════════════════════════════════════════ */
-
-@theme {
-  /* Superficies — café oscuro derivado del #5B1106 del logo */
-  --color-bg: #1a0704;
-  --color-surface: #2a0d06;
-  --color-surface-2: #3a150b;
-  --color-surface-3: #4a1f12;
-  --color-border: #4a1f12;
-  --color-border-soft: #351209;
-
-  /* Acento principal — dorado Chitopo */
-  --color-accent: #fbc610;
-  --color-accent-light: #ffd84d;
-  --color-accent-dark: #d9a600;
-
-  /* Texto */
-  --color-text: #fff6e5;
-  --color-muted: #c9a88f;
-  --color-faint: #8f6f5c;
-
-  /* Semánticos */
-  --color-green: #22c55e;
-  --color-red: #ef4444;
-
-  /* Acento por sabor */
-  --color-queso: #e23a2e;
-  --color-papa: #3fa34d;
-  --color-frutos: #b5179e;
-  --color-mani: #c98a2b;
-  --color-tocino: #ff3b14;
-
-  /* Tipografía — el brief avisa que no hay licencia de la fuente del
-     empaque; estas son alternativas libres de Google Fonts. */
-  --font-sans: "Archivo", system-ui, sans-serif;
-  --font-display: "Baloo 2", "Archivo", system-ui, sans-serif;
-  --font-condensed: "Anton", "Archivo", system-ui, sans-serif;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-surface-3);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #6b3220;
-}
-
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Chitopos sueltos (cabecera, estados vacíos): las formas de
+   ChitopoShapes pintadas con el color del sabor y contorno café. */
+.chitopo-sticker svg,
+svg.chitopo-sticker {
+  fill: currentColor;
+  stroke: var(--color-ink);
+  stroke-width: 2.4;
+  paint-order: stroke fill;
 }

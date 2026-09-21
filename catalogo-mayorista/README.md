@@ -4,7 +4,7 @@ Catálogo mayorista de snacks Chitopo (Master Snacks Inversiones SpA, La Pintana
 No hay checkout: el local arma su pedido eligiendo cajas o displays, y el pedido se deriva al
 WhatsApp del socio, donde se cierra precio, pago y despacho.
 
-React 18 · Vite 5 · Tailwind v4 · framer-motion · Supabase (opcional).
+React 18 · Vite 5 · Tailwind v4 · framer-motion · GSAP · Supabase (opcional).
 
 ## Correrlo
 
@@ -49,9 +49,10 @@ componente necesita condicionales sueltos.
 |---|---|
 | Nombre, tagline, WhatsApp, pedido mínimo, datos legales | `src/data/store.js` |
 | Los productos y sus formatos | `src/data/products.js` |
-| Colores, tipografías | `src/index.css` (bloque `@theme`) |
+| Colores, tipografías | `../shared/chitopo-brand.css` (bloque `@theme`, compartido con la landing) |
 | Color de un sabor | `FLAVOR_ACCENTS` en `src/data/store.js` |
 | Imágenes de empaque | `npm run assets` (originales en `../Logos vectorizados/`) |
+| Logo de Master Snacks (footer y landing) | `npm run media -- mastersnacks` (original en `../landing/src/assets/logo-mastersnacks.svg`) |
 
 ### Formatos de venta
 
@@ -77,8 +78,9 @@ El proyecto vive en la cuenta de Supabase del cliente (Master Snacks). Pasos, en
 1. **Crear el proyecto** en [supabase.com](https://supabase.com) y elegir la región más
    cercana (`South America (São Paulo)`).
 2. **SQL Editor**, en este orden:
-   `supabase/schema.sql` → `supabase/seed.sql` → `supabase/migration-auth.sql`
-   (antes de correr el último, editar la lista de emails que están adentro).
+   `supabase/schema.sql` → `supabase/seed.sql` → `supabase/migration-auth.sql` →
+   `supabase/migration-pedidos.sql` (antes de `migration-auth.sql`, editar la lista de
+   emails que está adentro).
 3. **Project Settings → API**: copiar la URL y la publishable key a `.env.local`:
 
    ```
@@ -92,8 +94,10 @@ El proyecto vive en la cuenta de Supabase del cliente (Master Snacks). Pasos, en
 > ⚠️ **No poner `MOCK_MODE = false` todavía.** El catálogo público lee los productos del
 > estado en memoria (`AppContext`), no de Supabase: con el flag apagado, los visitantes
 > verían el catálogo vacío. El login funciona igual con `MOCK_MODE` en `true` (solo depende
-> de que `.env.local` tenga las credenciales). Conectar el catálogo, los pedidos y la
-> configuración a la base es la etapa siguiente.
+> de que `.env.local` tenga las credenciales). Los pedidos tampoco dependen del flag: con
+> credenciales, cada pedido que un local manda por WhatsApp se guarda como "nuevo" y
+> aparece en el panel. Conectar el catálogo y la configuración a la base es la etapa
+> siguiente.
 
 La anon key es pública por diseño (viaja en el bundle del navegador). Lo que impide que
 alguien la use para escribir son las políticas RLS. **La service_role key nunca va al front

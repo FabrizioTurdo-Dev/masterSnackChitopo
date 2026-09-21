@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ShieldAlert } from "lucide-react";
 import Input from "../components/admin/ui/Input";
+import { ERROR_TEXT } from "../components/admin/ui/styles";
 import AdminApp from "../components/admin/AdminApp";
 import Logo from "../components/brand/Logo";
 import { AuthProvider, useAuth } from "../context/AuthContext";
@@ -20,7 +21,7 @@ function AdminGate() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-bg flex items-center justify-center gap-2 text-muted text-sm">
+      <div className="min-h-screen flex items-center justify-center gap-2 font-condensed uppercase tracking-[0.12em] text-ink">
         <Loader2 size={16} className="animate-spin" aria-hidden="true" />
         Verificando sesión…
       </div>
@@ -33,16 +34,22 @@ function AdminGate() {
 
 function Shell({ children }) {
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center font-sans px-4">
+    <div className="grain min-h-screen flex items-center justify-center font-sans px-4 py-10">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-surface rounded-2xl border border-border p-6 sm:p-8 w-full max-w-[380px] shadow-2xl"
+        initial={{ opacity: 0, y: 24, rotate: -1.5 }}
+        animate={{ opacity: 1, y: 0, rotate: 0 }}
+        transition={{ type: "spring", damping: 20, stiffness: 240 }}
+        className="relative z-10 bg-cream nb p-6 sm:p-8 w-full max-w-[400px]"
       >
-        <div className="text-center mb-8 flex flex-col items-center">
+        <div className="text-center mb-7 flex flex-col items-center">
           <Logo height={44} />
-          <h1 className="font-display text-lg font-bold text-text mt-4">Panel de administración</h1>
-          <p className="text-xs text-muted mt-1">{STORE_CONFIG.subtitle}</p>
+          <h1 className="hero-title font-title uppercase text-6xl leading-none mt-5 mb-0">
+            Panel
+            <span className="sr-only"> de administración</span>
+          </h1>
+          <p className="font-condensed uppercase tracking-[0.14em] text-sm text-ink-soft mt-3 mb-0" aria-hidden="true">
+            Administración · {STORE_CONFIG.subtitle}
+          </p>
         </div>
         {children}
       </motion.div>
@@ -74,16 +81,16 @@ function Login() {
     return (
       <Shell>
         <div className="flex flex-col gap-4">
-          <div className="flex gap-2.5 items-start rounded-xl border border-amber-500/30 bg-amber-500/10 p-3">
-            <ShieldAlert size={16} className="text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-xs text-amber-200/90 leading-relaxed">
+          <div className="flex gap-2.5 items-start border-2 border-ink bg-gold p-3">
+            <ShieldAlert size={18} className="text-ink shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-sm text-ink leading-relaxed m-0">
               Supabase no está configurado. Este acceso de prueba solo existe en
               desarrollo: los cambios no se guardan en ningún lado.
             </p>
           </div>
           <button
             onClick={enterDemo}
-            className="w-full py-3 rounded-xl bg-surface-2 text-text font-bold text-sm hover:bg-border transition-colors duration-200 cursor-pointer active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="w-full min-h-[50px] bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-[#c42904] cursor-pointer"
           >
             Entrar en modo demo →
           </button>
@@ -124,7 +131,7 @@ function Login() {
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="text-xs text-red-400 text-center"
+              className={`${ERROR_TEXT} text-center m-0`}
               role="alert"
             >
               {message}
@@ -135,13 +142,13 @@ function Login() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-xl bg-accent text-bg font-bold text-sm hover:bg-accent-light transition-colors duration-200 cursor-pointer active:scale-[0.98] mt-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+          className="w-full min-h-[50px] mt-1 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-[#c42904] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none flex items-center justify-center gap-2"
         >
           {loading && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
           {loading ? "Entrando…" : "Entrar →"}
         </button>
 
-        <p className="text-[11px] text-faint text-center mt-2 leading-relaxed">
+        <p className="text-xs text-ink-faint text-center mt-2 mb-0 leading-relaxed">
           Acceso solo para cuentas autorizadas de {STORE_CONFIG.producer}.
         </p>
       </form>

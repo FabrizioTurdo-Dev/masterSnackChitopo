@@ -18,6 +18,8 @@ En producción quedan bajo el mismo dominio: la landing en `/` y el catálogo en
 
 - Landing completa: hero, historia, productos destacados, FAQ, contacto, animaciones (GSAP + Lenis), responsive.
 - Catálogo: browse de productos, filtros, carrito, pedido derivado a WhatsApp.
+- Pedidos: al tocar "Enviar por WhatsApp" el pedido se guarda en Supabase como **nuevo**, con un código (`CH-XXXX`) que también va en el mensaje. En el panel los dueños lo avanzan: nuevo → pendiente (cotización enviada) → confirmado → enviado, o cancelado. Esto funciona apenas hay credenciales de Supabase, aunque `MOCK_MODE` siga en `true`. Límite: se registra al abrir WhatsApp; si el local no aprieta enviar, queda un "nuevo" sin mensaje, y se cancela desde el panel.
+- Catálogo y panel admin con la misma identidad visual que la landing (dorado con damero, tarjetas crema con borde café, Anton, estallido de chitopos con GSAP). Los tokens y utilidades de marca viven en un solo archivo, `shared/chitopo-brand.css`, que importan las dos apps: un cambio de color o tipografía se hace ahí y aplica a ambas.
 - Panel de admin (`/catalogo/#/admin`): dashboard, CRUD de productos, listado de pedidos, configuración de tienda — todo funcional en UI.
 - Login del panel con **Supabase Auth** (email + contraseña, sesión persistente, cerrar sesión): ya no hay credenciales hardcodeadas en el bundle. Falta conectar el proyecto de Supabase para que tenga contra qué autenticar.
 - Infra: repo unificado, build combinado (`build.mjs`) que compila ambas apps y las publica bajo un mismo dominio, `netlify.toml` con el redirect necesario para el panel admin.
@@ -33,7 +35,8 @@ código del front ya está escrito: falta correr el SQL y cargar las credenciale
 Pasos, en orden:
 
 1. **SQL Editor de Supabase**, uno detrás del otro:
-   `catalogo-mayorista/supabase/schema.sql` → `seed.sql` → `migration-auth.sql`.
+   `catalogo-mayorista/supabase/schema.sql` → `seed.sql` → `migration-auth.sql` →
+   `migration-pedidos.sql`.
    Antes de correr el último, editar adentro la lista de emails con acceso (hoy son dos
    placeholders: Alex y Fabrizio).
 2. **Authentication → Providers → Email**: desactivar *Enable email signups*.
@@ -43,11 +46,13 @@ Pasos, en orden:
 4. **Project Settings → API**: copiar URL y publishable key a
    `catalogo-mayorista/.env.local` y a las variables de entorno del sitio en Netlify.
 5. Probar el login: entrar al panel, recargar (la sesión se mantiene), cerrar sesión.
+   Después mandar un pedido de prueba desde el catálogo y revisar que aparezca en Pedidos
+   como "nuevo".
 6. **Todavía no poner `MOCK_MODE` en `false`.** El catálogo público lee los productos del
    estado en memoria, no de Supabase: con el flag apagado los visitantes verían el catálogo
-   vacío. Falta una etapa de código: que el catálogo cargue los productos desde la base, que
-   los pedidos se guarden al derivar a WhatsApp, y que el panel de configuración persista.
-   Hoy solo el CRUD de productos del panel habla con Supabase.
+   vacío. Falta una etapa de código: que el catálogo cargue los productos desde la base y
+   que el panel de configuración persista. Los pedidos ya no dependen de este flag: van a
+   Supabase en cuanto están las credenciales.
 
 Qué protege qué, para tenerlo claro:
 

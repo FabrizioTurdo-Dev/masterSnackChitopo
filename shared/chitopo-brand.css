@@ -1,0 +1,314 @@
+/* ═══════════════════════════════════════════════════════════════
+   CHITOPO — Sistema visual compartido por la landing y el catálogo
+   Lo importan los dos index.css justo después de Tailwind. Si algo de
+   la marca cambia, cambia acá: antes cada app tenía su propio @theme y
+   terminaron pareciendo dos sitios distintos.
+
+   Dorado con damero, como el post de Instagram que ya usa la marca.
+   Los nombres dicen el color y no el rol: con "bg" y "accent" el día
+   que cambió el fondo quedaron botones amarillos sobre amarillo.
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Dorado Chitopo — fondo base y casillas del damero */
+  --color-gold: #ffc20e;
+  --color-gold-2: #ffb800;
+
+  /* Café del logo — texto, bordes y sombras duras */
+  --color-ink: #3a0d04;
+  /* Secundarios medidos sobre el dorado: 6.6:1 y 5.3:1 */
+  --color-ink-soft: #6b2a12;
+  --color-ink-faint: #7a3a18;
+
+  /* Tarjetas */
+  --color-cream: #fff4d6;
+  --color-cream-2: #ffe9b0;
+
+  /* Rojo-naranja del fondo del logo, oscurecido lo justo para que el
+     texto crema dé 4.76:1 (con #d92e06 daba 4.41). `fire-light` no llega,
+     así que es solo para rellenos. */
+  --color-fire: #d02b05;
+  --color-fire-light: #f2460f;
+
+  /* Semánticos */
+  --color-green: #22c55e;
+  --color-red: #ef4444;
+
+  /* Acento por sabor. Sobre el dorado no llegan a 4.5:1 (queso da 2.7),
+     así que van en rellenos o en letra grande con contorno ink. */
+  --color-queso: #e23a2e;
+  --color-papa: #3fa34d;
+  --color-frutos: #b5179e;
+  --color-mani: #c98a2b;
+  --color-tocino: #ff3b14;
+
+  /* Tipografía — el brief avisa que no hay licencia de la fuente del
+     empaque; estas son alternativas libres de Google Fonts. */
+  --font-sans: "Archivo", system-ui, sans-serif;
+  --font-display: "Baloo 2", "Archivo", system-ui, sans-serif;
+  --font-condensed: "Anton", "Archivo", system-ui, sans-serif;
+  /* Solo títulos (clase font-title). Para volver a Anton en todos a la
+     vez, cambiar esta línea por la de --font-condensed. */
+  --font-title: "Lilita One", "Anton", system-ui, sans-serif;
+}
+
+/* Lilita One (OFL, ver fonts/OFL.txt), servida desde el repo: no pasa por
+   Google Fonts. */
+@font-face {
+  font-family: "Lilita One";
+  src: url("./fonts/LilitaOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  /* `clip` y no `hidden`: hidden crea un contenedor de scroll que
+     desestabiliza el position:fixed de ScrollTrigger. */
+  overflow-x: clip;
+
+  /* Damero sin imagen: un conic-gradient pinta las dos casillas oscuras
+     de cada baldosa de 2×2. */
+  background-color: var(--color-gold);
+  background-image: conic-gradient(
+    var(--color-gold-2) 25%,
+    transparent 0 50%,
+    var(--color-gold-2) 0 75%,
+    transparent 0
+  );
+  background-size: 96px 96px;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-gold);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gold-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Neubrutalismo: borde grueso y sombra dura café ─────────────── */
+
+.nb {
+  border: 3px solid var(--color-ink);
+  box-shadow: 5px 5px 0 var(--color-ink);
+}
+
+.nb-soft {
+  border: 3px solid var(--color-ink);
+  box-shadow: 4px 4px 0 var(--color-ink);
+}
+
+/* El botón se "hunde" al presionar: se mueve hacia la sombra. */
+.nb-press {
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out,
+    background-color 150ms ease-out;
+}
+.nb-press:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--color-ink);
+}
+.nb-press:active {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 var(--color-ink);
+}
+
+/* En bloques oscuros la sombra café no se ve: pasa a dorado. */
+.on-dark .nb,
+.on-dark .nb-soft {
+  border-color: var(--color-gold);
+  box-shadow: 5px 5px 0 var(--color-gold);
+}
+
+/* Foco visible siempre — nunca quitar el anillo de foco. */
+:where(a, button, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.on-dark :where(a, button, summary, [tabindex]):focus-visible {
+  outline-color: var(--color-gold);
+}
+
+/* Luz y viñeta fijas sobre el damero, más un grano muy leve: el
+   amarillo plano en pantalla grande se ve a papel de cuaderno. */
+.grain::before,
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.grain::before {
+  z-index: 0;
+  background:
+    radial-gradient(110% 70% at 50% -10%, rgb(255 255 255 / 0.32), transparent 60%),
+    radial-gradient(140% 110% at 50% 50%, transparent 55%, rgb(58 13 4 / 0.16));
+}
+.grain::after {
+  z-index: 1;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Damero de dos rojos para los bloques de llamado. */
+.damero-fire {
+  background-color: var(--color-fire);
+  background-image: conic-gradient(
+    rgb(0 0 0 / 0.08) 25%,
+    transparent 0 50%,
+    rgb(0 0 0 / 0.08) 0 75%,
+    transparent 0
+  );
+  background-size: 96px 96px;
+}
+
+/* Tramado de puntos para las franjas crema. */
+.dots-cream {
+  background-color: var(--color-cream);
+  background-image: radial-gradient(rgb(58 13 4 / 0.09) 1.5px, transparent 1.6px);
+  background-size: 18px 18px;
+}
+
+/* Titular: letra crema con contorno y sombra dura café, como el
+   lettering del empaque. */
+.hero-title {
+  color: var(--color-cream);
+  -webkit-text-stroke: 0.028em var(--color-ink);
+  paint-order: stroke fill;
+  text-shadow: 0.045em 0.05em 0 var(--color-ink);
+}
+/* SplitText enmascara cada palabra para que las letras suban desde
+   abajo; sin este margen la máscara corta la sombra y el contorno. */
+.hero-title .hw-mask {
+  padding: 0.04em 0.1em 0.12em 0.04em;
+  margin: -0.04em -0.1em -0.12em -0.04em;
+}
+
+/* Arte plano del envase convertido en bolsa: dientes de termosellado
+   arriba y abajo (conic-gradient repetido en la máscara), franjas del
+   sellado, volumen en los bordes y un brillo diagonal del laminado. */
+.bag-flat {
+  --tooth: clamp(6px, 1.6vw, 10px);
+  position: relative;
+  -webkit-mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg)
+      top / calc(var(--tooth) * 2) var(--tooth) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - var(--tooth) * 2 + 2px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+      bottom / calc(var(--tooth) * 2) var(--tooth) repeat-x;
+  mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg)
+      top / calc(var(--tooth) * 2) var(--tooth) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - var(--tooth) * 2 + 2px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+      bottom / calc(var(--tooth) * 2) var(--tooth) repeat-x;
+}
+.bag-flat::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.22) 0 2px, transparent 2px 7px)
+      top / 100% 6% no-repeat,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.22) 0 2px, transparent 2px 7px)
+      bottom / 100% 6% no-repeat,
+    linear-gradient(180deg, rgb(0 0 0 / 0.22) 0 6%, transparent 6% 94%, rgb(0 0 0 / 0.22) 94%),
+    linear-gradient(90deg, rgb(0 0 0 / 0.3), transparent 10%, transparent 88%, rgb(0 0 0 / 0.34)),
+    linear-gradient(112deg, transparent 26%, rgb(255 255 255 / 0.3) 33%, transparent 42%);
+}
+
+/* Sello circular que gira lento. */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+
+/* ── Estallido de chitopos ─────────────────────────────────────────
+   Las partículas viven en una capa fija sobre toda la página, así
+   escapan del overflow-hidden de las tarjetas sin tocar el layout. */
+.burst-particle {
+  will-change: transform, opacity;
+  visibility: hidden;
+}
+
+.burst-particle svg {
+  /* Siempre una pizca de dorado de marca mezclada con el sabor: aunque
+     el acento sea magenta, el estallido se sigue leyendo "Chitopo". */
+  color: color-mix(
+    in oklab,
+    var(--burst-accent, var(--color-fire)) var(--tone, 78%),
+    var(--color-gold)
+  );
+  fill: currentColor;
+  stroke: var(--color-ink);
+  stroke-width: 2;
+  paint-order: stroke fill;
+}
+
+.burst-particle:nth-child(3n) {
+  --tone: 100%;
+}
+.burst-particle:nth-child(3n + 1) {
+  --tone: 55%;
+}
+
+/* Sin animaciones para quien las pidió apagadas. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .nb-press {
+    transition: none;
+  }
+  .spin-slow {
+    animation: none;
+  }
+  .nb-press:hover,
+  .nb-press:active {
+    transform: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

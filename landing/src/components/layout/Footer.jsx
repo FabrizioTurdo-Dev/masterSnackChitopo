@@ -1,5 +1,6 @@
 import { MapPin, Clock, Truck, Globe, MessageCircle } from "lucide-react";
 import Logo from "../brand/Logo";
+import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import InstagramIcon from "../brand/InstagramIcon";
 import {
   STORE_CONFIG,
@@ -69,6 +70,11 @@ export default function Footer() {
           </div>
 
           <div>
+            <MasterSnacksLogo
+              alt=""
+              height={72}
+              className="mb-4 -rotate-3 transition-transform duration-300 hover:rotate-2 hover:scale-105"
+            />
             <h3 className="font-condensed text-sm text-gold uppercase tracking-[0.12em] mb-3 font-normal">
               {STORE_CONFIG.producer}
             </h3>

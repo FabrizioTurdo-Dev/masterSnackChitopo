@@ -1,6 +1,14 @@
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Factory, Users, Sparkles, ArrowDown } from "lucide-react";
 import Section from "../ui/Section";
 import Reveal from "../ui/Reveal";
+import MasterSnacksLogo from "../brand/MasterSnacksLogo";
+import { prefersReducedMotion } from "../../lib/useLenis";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const HITOS = [
   {
@@ -22,10 +30,30 @@ const HITOS = [
 ];
 
 export default function Historia() {
+  const sticker = useRef(null);
+
+  // El sticker de Master Snacks se pega en la esquina de la cita cuando
+  // aparece: llega grande y torcido, y asienta con rebote.
+  useGSAP(() => {
+    if (prefersReducedMotion()) return;
+    gsap.fromTo(
+      sticker.current,
+      { autoAlpha: 0, scale: 1.6, rotate: -20 },
+      {
+        autoAlpha: 1,
+        scale: 1,
+        rotate: 8,
+        duration: 0.5,
+        delay: 0.15,
+        ease: "back.out(2)",
+        scrollTrigger: { trigger: sticker.current, start: "top 92%", once: true },
+      }
+    );
+  });
+
   return (
     <Section
       id="nosotros"
-      eyebrow="Quiénes somos"
       title={
         <>
           Somos los nuevos
@@ -48,7 +76,7 @@ export default function Historia() {
             <span className="grid place-items-center size-12 bg-gold border-[3px] border-ink" aria-hidden="true">
               <Icon size={24} className="text-ink" />
             </span>
-            <h3 className="font-condensed uppercase text-xl sm:text-2xl text-ink m-0 leading-tight">
+            <h3 className="font-title uppercase text-xl sm:text-2xl text-ink m-0 leading-tight">
               {title}
             </h3>
             <p className="text-ink-soft text-sm leading-relaxed m-0">{text}</p>
@@ -70,9 +98,26 @@ export default function Historia() {
           <p className="font-condensed uppercase text-2xl sm:text-4xl leading-[1.05] m-0">
             “Si lo hacemos nosotros, tiene que quedar bueno de verdad.”
           </p>
-          <cite className="block font-sans text-sm not-italic mt-4 opacity-90">
-            — El equipo de Master Snacks
-          </cite>
+          <div className="flex items-end justify-between gap-4 mt-4">
+            <cite className="block font-sans text-sm not-italic opacity-90">
+              — El equipo de Master Snacks
+            </cite>
+            {/* Sobresale de la esquina de la tarjeta, como un sticker pegado
+                encima. La inclinación va inline porque la anima GSAP. Gira y
+                escala desde abajo a la derecha: desde el centro, el estado
+                inicial agrandado se salía de la pantalla en mobile. */}
+            <span
+              ref={sticker}
+              className="block shrink-0 origin-bottom-right -mb-12 sm:-mb-20 -mr-5 sm:-mr-14"
+              style={{ transform: "rotate(8deg)" }}
+            >
+              <MasterSnacksLogo
+                variant="transparente"
+                alt=""
+                className="h-20 sm:h-28 w-auto transition-transform duration-300 hover:scale-105 hover:-rotate-6"
+              />
+            </span>
+          </div>
         </blockquote>
       </Reveal>
     </Section>

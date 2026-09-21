@@ -5,4 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: '/',
+  // El dev server tiene que poder servir shared/ (fuentes del CSS compartido).
+  server: { fs: { allow: ['..'] } },
 })

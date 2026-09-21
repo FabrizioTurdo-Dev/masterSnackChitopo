@@ -35,7 +35,7 @@ export default function CtaCatalogo() {
         <div className="cta-box nb damero-fire text-cream p-7 sm:p-14 text-center">
           <Store size={40} className="mx-auto mb-5" aria-hidden="true" />
 
-          <h2 className="font-condensed uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] m-0">
+          <h2 className="font-title uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] m-0">
             ¿Tenís un almacén?
           </h2>
 

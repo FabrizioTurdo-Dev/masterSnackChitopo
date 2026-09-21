@@ -4,8 +4,11 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Pause, Play, Factory, ShieldCheck, Flame } from "lucide-react";
 import InstagramIcon from "../brand/InstagramIcon";
+import StampBadge from "../brand/StampBadge";
+import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import { STORE_CONFIG } from "../../data/store";
 import { prefersReducedMotion } from "../../lib/useLenis";
+import { useBurst } from "../../lib/burst";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -33,7 +36,6 @@ const PASOS = [
 const DATOS = [
   { icon: Factory, text: "Galpón propio en La Pintana" },
   { icon: ShieldCheck, text: "Resolución sanitaria SESMA al día" },
-  { icon: Flame, text: "Horneado, no frito" },
 ];
 
 // Un video en loop que solo corre mientras se ve. Sin animaciones
@@ -143,6 +145,7 @@ function VideoFabrica({ paso, className = "" }) {
 
 export default function Fabrica() {
   const root = useRef(null);
+  const fire = useBurst();
 
   useGSAP(
     () => {
@@ -193,6 +196,31 @@ export default function Fabrica() {
             }
           );
 
+          // El sello de Master Snacks cae acelerando y se estampa sobre los
+          // videos: en el golpe se aplasta, la grilla acusa el impacto y
+          // saltan chitopos.
+          const sello = root.current.querySelector(".fab-sello");
+          gsap
+            .timeline({ scrollTrigger: { trigger: ".fab-videos", start: "top 65%", once: true } })
+            .fromTo(
+              sello,
+              { autoAlpha: 0, scale: 2.6, rotate: -38 },
+              { autoAlpha: 1, scale: 1, rotate: -12, duration: 0.42, ease: "power4.in" }
+            )
+            .addLabel("golpe")
+            .add(() => {
+              const r = sello.getBoundingClientRect();
+              fire(r.left + r.width / 2, r.top + r.height / 2, "var(--color-fire)");
+            }, "golpe")
+            .to(sello, { scale: 0.9, duration: 0.07, ease: "power1.out" }, "golpe")
+            .to(sello, { scale: 1, duration: 0.6, ease: "elastic.out(1, 0.4)" })
+            .fromTo(
+              ".fab-videos",
+              { y: 0 },
+              { y: 6, duration: 0.06, yoyo: true, repeat: 1, ease: "power1.inOut" },
+              "golpe"
+            );
+
           if (!desktop) return;
 
           // Dos velocidades distintas y la inclinación que se endereza al
@@ -240,7 +268,7 @@ export default function Fabrica() {
           <p className="fab-fade font-condensed uppercase tracking-[0.22em] text-gold text-xs sm:text-sm mb-3">
             La fábrica
           </p>
-          <h2 className="fab-fade font-condensed uppercase text-5xl sm:text-7xl lg:text-8xl leading-[0.9] text-cream m-0">
+          <h2 className="fab-fade font-title uppercase text-5xl sm:text-7xl lg:text-8xl leading-[0.9] text-cream m-0">
             La máquina
             <br />
             que no para
@@ -257,7 +285,7 @@ export default function Fabrica() {
                   {p.n}
                 </span>
                 <div>
-                  <h3 className="font-condensed uppercase text-xl sm:text-2xl text-cream m-0 leading-tight">
+                  <h3 className="font-title uppercase text-xl sm:text-2xl text-cream m-0 leading-tight">
                     {p.title}
                   </h3>
                   <p className="text-cream/75 text-sm sm:text-base leading-relaxed m-0 mt-1">{p.text}</p>
@@ -289,9 +317,21 @@ export default function Fabrica() {
           </a>
         </div>
 
-        <div className="fab-videos grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 items-start">
+        <div className="fab-videos relative grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 items-start">
           <VideoFabrica paso={PASOS[0]} />
           <VideoFabrica paso={PASOS[1]} className="mt-10 sm:mt-16" />
+
+          {/* Va en el hueco que deja la segunda tarjeta, que arranca más abajo.
+              La inclinación va inline y no con una clase: Tailwind usa la
+              propiedad `rotate`, que se sumaría al transform de GSAP. */}
+          <div
+            className="fab-sello absolute z-20 -top-2 -right-2 w-24 sm:-top-8 sm:right-0 sm:w-36 lg:w-44 lg:-top-12 lg:-right-6"
+            style={{ transform: "rotate(-12deg)" }}
+          >
+            <StampBadge text="Hecho por Master Snacks · La Pintana · " className="relative w-full">
+              <MasterSnacksLogo variant="plain" alt="" className="w-full h-auto" />
+            </StampBadge>
+          </div>
         </div>
       </div>
     </section>

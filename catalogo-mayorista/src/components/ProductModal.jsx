@@ -1,20 +1,24 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { X, Plus, Minus, Bell, WheatOff, Flame, Maximize2 } from "lucide-react";
+import { X, Plus, Bell, WheatOff, Flame, Maximize2 } from "lucide-react";
 import SelloAdvertencia from "./brand/SelloAdvertencia";
 import NutritionTable from "./brand/NutritionTable";
 import ImageLightbox from "./ImageLightbox";
+import { Bag, QtyStepper } from "./ProductCard";
+import { useBurst } from "../lib/burst";
 import { formatPrice, hasPrice, flavorAccent, formatsOf, SELLER_PHONE } from "../data/store";
 
 function Dato({ label, children }) {
   if (!children) return null;
   return (
     <div>
-      <h4 className="text-[11px] font-bold text-muted uppercase tracking-[0.08em] mb-1">{label}</h4>
-      <p className="text-xs text-text/90 leading-relaxed">{children}</p>
+      <h4 className="font-condensed uppercase tracking-[0.1em] text-sm text-ink m-0 mb-1">{label}</h4>
+      <p className="text-sm text-ink-soft leading-relaxed m-0">{children}</p>
     </div>
   );
 }
+
+const CLAIM = "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1.5 bg-cream-2 text-ink border-2 border-ink";
 
 export default function ProductModal({ product, onClose, onAdd, stockThreshold }) {
   const prefersReduced = useReducedMotion();
@@ -25,6 +29,19 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
   const [viewIdx, setViewIdx] = useState(0);
   const [zoomed, setZoomed] = useState(false);
   const zoomTrigger = useRef(null);
+  const closeBtn = useRef(null);
+  const addBtn = useRef(null);
+  const fire = useBurst();
+
+  // Escape cierra la ficha (el visor de imagen ataja su propio Escape).
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    closeBtn.current?.focus();
+    const onKey = e => e.key === "Escape" && closeRef.current();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   if (!product) return null;
 
@@ -49,68 +66,90 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
     window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 
+  function add() {
+    const r = addBtn.current?.getBoundingClientRect();
+    if (r) fire(r.left + r.width / 2, r.top + 6, accent);
+    onAdd(product, selected, qty);
+    onClose();
+  }
+
   return (
     <motion.div
       initial={prefersReduced ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: prefersReduced ? 0 : 0.2 }}
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-[300] p-4"
+      className="fixed inset-0 bg-ink/70 backdrop-blur-[2px] flex items-center justify-center z-[300] p-3 sm:p-6"
       onClick={e => e.target === e.currentTarget && onClose()}
       role="dialog"
       aria-modal="true"
       aria-label={`Ficha de ${product.name}`}
     >
       <motion.div
-        initial={prefersReduced ? false : { scale: 0.92, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={prefersReduced ? { scale: 1, opacity: 1 } : { scale: 0.92, opacity: 0 }}
-        transition={{ duration: prefersReduced ? 0 : 0.2 }}
-        className="bg-surface rounded-2xl border border-border w-full max-w-lg max-h-[90vh] overflow-y-auto"
-        style={{ overscrollBehavior: "contain", borderTopColor: accent, borderTopWidth: 3 }}
+        initial={prefersReduced ? false : { scale: 0.94, y: 24, rotate: -1, opacity: 0 }}
+        animate={{ scale: 1, y: 0, rotate: 0, opacity: 1 }}
+        exit={prefersReduced ? { opacity: 1 } : { scale: 0.96, y: 12, opacity: 0 }}
+        transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 22, stiffness: 300 }}
+        className="bg-cream nb w-full max-w-lg md:max-w-4xl max-h-[92vh] overflow-y-auto"
+        style={{ overscrollBehavior: "contain" }}
       >
-        <div className="sticky top-0 bg-surface z-10 flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="font-display text-base font-bold text-text truncate pr-4">{product.name}</h2>
+        <div className="sticky top-0 z-20 bg-cream flex items-center justify-between gap-4 pl-5 pr-3 py-3 border-b-[3px] border-ink">
+          <h2 className="font-title uppercase text-xl text-ink truncate m-0">{product.name}</h2>
           <button
+            ref={closeBtn}
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-surface-2 flex items-center justify-center text-muted hover:bg-surface-3 hover:text-text transition-all cursor-pointer shrink-0 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="size-10 shrink-0 grid place-items-center bg-cream text-ink border-2 border-ink hover:bg-cream-2 transition-colors cursor-pointer"
             aria-label="Cerrar ficha"
           >
-            <X size={16} aria-hidden="true" />
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 
-        <div className="p-5 flex flex-col gap-5">
-          <div>
-            <div
-              className="relative h-72 rounded-xl overflow-hidden flex items-center justify-center p-4"
-              style={{ background: `radial-gradient(circle at 50% 40%, ${accent}2e, transparent 70%)` }}
-            >
+        <div className="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+          <div className="p-5 md:sticky md:top-[67px] md:self-start">
+            <div className="relative h-72 md:h-[420px] bg-cream-2 border-[3px] border-ink overflow-hidden flex items-center justify-center p-5">
+              <div
+                className="absolute inset-0 opacity-30"
+                style={{ background: `radial-gradient(circle at 50% 45%, ${accent}, transparent 68%)` }}
+                aria-hidden="true"
+              />
               {current && !(viewIdx === 0 && imgError) ? (
                 <AnimatePresence mode="wait" initial={false}>
-                  <motion.img
+                  <motion.div
                     key={current.src}
-                    src={current.src}
-                    alt={current.alt}
-                    onError={() => viewIdx === 0 && setImgError(true)}
-                    initial={prefersReduced ? false : { opacity: 0, scale: 0.97 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.97 }}
-                    transition={{ duration: prefersReduced ? 0 : 0.18 }}
-                    className="max-h-full w-auto max-w-full object-contain drop-shadow-2xl"
-                  />
+                    initial={prefersReduced ? false : { opacity: 0, scale: 0.94, rotate: -3 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    exit={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.94, rotate: 3 }}
+                    transition={{ duration: prefersReduced ? 0 : 0.2 }}
+                    className="relative"
+                  >
+                    <Bag
+                      src={current.src}
+                      alt={current.alt}
+                      onError={() => viewIdx === 0 && setImgError(true)}
+                      imgClassName={`h-56 md:h-80 ${soon ? "opacity-80" : ""}`}
+                    />
+                  </motion.div>
                 </AnimatePresence>
               ) : (
-                <div className="text-7xl" aria-hidden="true">{product.emoji}</div>
+                <div className="relative text-7xl" aria-hidden="true">{product.emoji}</div>
+              )}
+
+              {product.claims?.seals?.length > 0 && (
+                <div className="absolute top-3 right-3 flex flex-col gap-1.5">
+                  {product.claims.seals.map(s => (
+                    <SelloAdvertencia key={s} seal={s} size={46} />
+                  ))}
+                </div>
               )}
 
               {views.length > 1 && current && (
                 <button
                   ref={zoomTrigger}
                   onClick={() => setZoomed(true)}
-                  className="absolute bottom-2 right-2 inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg bg-bg/85 text-text text-[11px] font-bold border border-border hover:border-accent hover:text-accent transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 min-h-[40px] px-3 bg-cream text-ink font-condensed uppercase tracking-[0.06em] text-xs border-2 border-ink [box-shadow:3px_3px_0_var(--color-ink)] nb-press cursor-pointer"
                 >
-                  <Maximize2 size={13} aria-hidden="true" />
+                  <Maximize2 size={14} aria-hidden="true" />
                   Ver en grande
                 </button>
               )}
@@ -125,13 +164,16 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                       key={v.src}
                       onClick={() => setViewIdx(i)}
                       aria-pressed={on}
-                      className={`flex items-center gap-2 pr-3 rounded-lg border overflow-hidden text-[11px] font-bold uppercase tracking-[0.06em] transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent ${
-                        on
-                          ? "border-accent text-accent bg-accent/10"
-                          : "border-border text-muted hover:border-muted hover:text-text"
+                      className={`flex items-center gap-2 pr-3 border-2 border-ink overflow-hidden font-condensed uppercase tracking-[0.06em] text-xs transition-colors cursor-pointer ${
+                        on ? "bg-ink text-gold" : "bg-cream text-ink hover:bg-cream-2"
                       }`}
                     >
-                      <img src={v.src} alt="" aria-hidden="true" className="size-11 object-cover bg-bg" />
+                      <img
+                        src={v.src}
+                        alt=""
+                        aria-hidden="true"
+                        className="size-11 object-cover bg-cream-2 border-r-2 border-ink"
+                      />
                       {v.label}
                     </button>
                   );
@@ -140,177 +182,144 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
             )}
           </div>
 
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className="text-[11px] uppercase tracking-[0.15em] font-bold"
-                style={{ color: accent }}
-              >
-                {product.grams} g
-              </span>
-              {soon && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-surface-3 text-accent border border-accent/30">
-                  Próximamente
-                </span>
+          <div className="p-5 pt-0 md:pt-5 md:border-l-[3px] md:border-ink flex flex-col gap-5">
+            <div>
+              <div className="flex items-center gap-3 flex-wrap text-xs text-ink-faint">
+                <span className="font-semibold text-ink">{product.grams} g</span>
+                {soon && (
+                  <span className="font-condensed uppercase tracking-[0.08em] text-xs px-2 py-0.5 bg-ink text-gold">
+                    Próximamente
+                  </span>
+                )}
+              </div>
+              <h3 className="font-title uppercase text-3xl sm:text-4xl leading-[1.02] text-ink mt-1.5 mb-0 text-pretty">
+                {product.name}
+              </h3>
+              {hasPrice(selected?.price) ? (
+                <p className="font-condensed text-3xl text-fire mt-2 mb-0 tabular-nums">
+                  {formatPrice(selected.price)}
+                </p>
+              ) : (
+                <p className="text-sm font-semibold text-ink-soft mt-2 mb-0">
+                  Precio a consultar por WhatsApp
+                </p>
               )}
             </div>
-            <h3 className="font-display text-2xl font-bold text-text mt-1 text-pretty">
-              {product.name}
-            </h3>
-            {hasPrice(selected?.price) ? (
-              <div className="text-2xl font-bold text-accent mt-2 tabular-nums">
-                {formatPrice(selected.price)}
-              </div>
-            ) : (
-              <div className="text-sm font-bold text-muted mt-2">
-                Precio a consultar por WhatsApp
-              </div>
-            )}
-          </div>
 
-          <div className="flex gap-2 flex-wrap items-center">
-            {product.claims?.baked && (
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-surface-2 text-muted border border-border">
-                <Flame size={12} aria-hidden="true" /> Horneado, no frito
-              </span>
+            {(product.claims?.baked || product.claims?.glutenFree) && (
+              <div className="flex gap-2 flex-wrap items-center">
+                {product.claims?.baked && (
+                  <span className={CLAIM}>
+                    <Flame size={13} aria-hidden="true" /> Horneado, no frito
+                  </span>
+                )}
+                {product.claims?.glutenFree && (
+                  <span className={CLAIM}>
+                    <WheatOff size={13} aria-hidden="true" /> Libre de gluten
+                  </span>
+                )}
+              </div>
             )}
-            {product.claims?.glutenFree && (
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-surface-2 text-muted border border-border">
-                <WheatOff size={12} aria-hidden="true" /> Libre de gluten
-              </span>
-            )}
-            {product.claims?.seals?.map(s => (
-              <SelloAdvertencia key={s} seal={s} size={46} />
-            ))}
-          </div>
 
-          {soon ? (
-            <div className="rounded-xl border border-accent/25 bg-accent/5 px-4 py-4 flex flex-col gap-3">
-              <p className="text-xs text-muted leading-relaxed">
-                Este sabor está en camino. Si quieres reservar cajas para el lanzamiento,
-                escríbenos y te avisamos apenas salga.
+            {soon ? (
+              <div className="dots-cream border-[3px] border-ink px-4 py-4 flex flex-col gap-3">
+                <p className="text-sm text-ink-soft leading-relaxed m-0">
+                  Este sabor está en camino. Si quieres reservar cajas para el lanzamiento,
+                  escríbenos y te avisamos apenas salga.
+                </p>
+                <button
+                  onClick={notifyMe}
+                  className="w-full min-h-[50px] inline-flex items-center justify-center gap-2 bg-cream text-ink font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-cream-2 cursor-pointer"
+                >
+                  <Bell size={18} aria-hidden="true" />
+                  Avísame cuando llegue
+                </button>
+              </div>
+            ) : available.length === 0 ? (
+              <p
+                className="px-4 py-3 bg-cream-2 text-fire font-condensed uppercase tracking-[0.06em] border-[3px] border-ink text-center m-0"
+                role="alert"
+              >
+                Sin stock por ahora
               </p>
-              <button
-                onClick={notifyMe}
-                className="w-full py-3 rounded-xl text-sm font-bold border border-accent/40 text-accent hover:bg-accent/10 transition-colors flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-              >
-                <Bell size={16} aria-hidden="true" />
-                Avísame cuando llegue
-              </button>
-            </div>
-          ) : available.length === 0 ? (
-            <div
-              className="px-4 py-3 rounded-xl bg-red-500/10 text-red-400 text-sm font-bold border border-red-500/30 text-center"
-              role="alert"
-            >
-              Sin stock por ahora
-            </div>
-          ) : (
-            <>
-              <div>
-                <label className="text-[11px] font-bold text-muted uppercase tracking-[0.05em] block mb-2">
-                  Elige el formato
-                </label>
-                <div className="flex gap-2 flex-wrap" role="radiogroup" aria-label="Formatos disponibles">
-                  {available.map(f => {
-                    const isLow = f.stock <= stockThreshold;
-                    const isSel = selectedId === f.id;
-                    return (
-                      <button
-                        key={f.id}
-                        onClick={() => { setSelectedId(f.id); setQty(1); }}
-                        role="radio"
-                        aria-checked={isSel}
-                        aria-label={`${f.label} de ${f.units} unidades, ${f.stock} disponibles`}
-                        className={`px-3.5 py-2.5 text-sm font-bold rounded-xl border transition-all duration-150 cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
-                          isSel
-                            ? "bg-accent text-bg border-accent"
-                            : "bg-transparent text-text border-border hover:border-muted"
-                        }`}
-                      >
-                        <span>{f.label} ×{f.units}</span>
-                        <div className={`text-[9px] font-bold mt-0.5 ${isSel ? "text-bg/60" : "text-faint"}`}>
-                          {isLow ? `quedan ${f.stock}` : `${f.stock} disponibles`}
-                        </div>
-                      </button>
-                    );
-                  })}
+            ) : (
+              <>
+                <div>
+                  <p className="font-condensed uppercase tracking-[0.12em] text-sm text-ink-soft m-0 mb-2">
+                    Elige el formato
+                  </p>
+                  <div className="flex gap-2.5 flex-wrap" role="radiogroup" aria-label="Formatos disponibles">
+                    {available.map(f => {
+                      const isLow = f.stock <= stockThreshold;
+                      const isSel = selectedId === f.id;
+                      return (
+                        <button
+                          key={f.id}
+                          onClick={() => { setSelectedId(f.id); setQty(1); }}
+                          role="radio"
+                          aria-checked={isSel}
+                          aria-label={`${f.label} de ${f.units} unidades, ${f.stock} disponibles`}
+                          className={`px-4 py-2 text-left border-[3px] border-ink transition-colors cursor-pointer ${
+                            isSel ? "bg-ink text-gold" : "bg-cream text-ink hover:bg-cream-2"
+                          }`}
+                        >
+                          <span className="font-condensed uppercase tracking-[0.04em] text-lg leading-none">
+                            {f.label} ×{f.units}
+                          </span>
+                          <span className={`block text-[11px] font-semibold mt-1 ${isSel ? "text-gold/75" : isLow ? "text-fire" : "text-ink-faint"}`}>
+                            {isLow ? `Quedan ${f.stock}` : `${f.stock} disponibles`}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
 
-              {selected && (
-                <div className="bg-bg rounded-xl p-4 border border-border">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-xs text-muted font-medium">
-                        {selected.label} de {selected.units} bolsas
-                      </span>
-                      <div className="text-[10px] text-faint tabular-nums">
-                        Stock: {selected.stock} {selected.stock === 1 ? "bulto" : "bultos"}
+                {selected && (
+                  <div className="bg-cream-2 border-2 border-ink p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <span className="text-sm text-ink font-semibold">
+                          {selected.label} de {selected.units} bolsas
+                        </span>
+                        <span className="block text-xs text-ink-faint tabular-nums">
+                          Stock: {selected.stock} {selected.stock === 1 ? "bulto" : "bultos"}
+                        </span>
                       </div>
+                      <QtyStepper qty={qty} max={maxQty} onChange={setQty} size="lg" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setQty(q => Math.max(1, q - 1))}
-                        disabled={qty <= 1}
-                        className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted hover:bg-surface-2 hover:text-text transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-                        aria-label="Disminuir cantidad"
-                      >
-                        <Minus size={14} aria-hidden="true" />
-                      </button>
-                      <span
-                        className="text-lg font-bold text-text min-w-[24px] text-center tabular-nums"
-                        aria-live="polite"
-                        aria-atomic="true"
-                      >
-                        {qty}
+                    <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-ink/20">
+                      <span className="text-sm text-ink-soft">{selected.units * qty} bolsas en total</span>
+                      <span className="font-condensed text-xl text-fire tabular-nums">
+                        {hasPrice(selected.price) ? formatPrice(selected.price * qty) : "A consultar"}
                       </span>
-                      <button
-                        onClick={() => setQty(q => Math.min(q + 1, maxQty))}
-                        disabled={qty >= maxQty}
-                        className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted hover:bg-surface-2 hover:text-text transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-                        aria-label="Aumentar cantidad"
-                      >
-                        <Plus size={14} aria-hidden="true" />
-                      </button>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center mt-3 pt-3 border-t border-border-soft">
-                    <span className="text-sm text-muted">
-                      {selected.units * qty} bolsas en total
-                    </span>
-                    <span className="text-lg font-bold text-accent tabular-nums">
-                      {hasPrice(selected.price) ? formatPrice(selected.price * qty) : "A consultar"}
-                    </span>
-                  </div>
-                </div>
-              )}
+                )}
 
-              <button
-                disabled={!selected}
-                onClick={() => { onAdd(product, selected, qty); onClose(); }}
-                className={`w-full py-3.5 rounded-xl text-sm font-bold transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
-                  selected
-                    ? "bg-accent text-bg hover:bg-accent-light active:scale-[0.97]"
-                    : "bg-surface-2 text-faint cursor-not-allowed"
-                }`}
-                aria-label={selected ? `Agregar ${qty} ${selected.label}` : "Elige un formato primero"}
-              >
-                <Plus size={16} aria-hidden="true" />
-                Agregar al pedido{qty > 1 ? ` (×${qty})` : ""}
-              </button>
-            </>
-          )}
-
-          <div className="flex flex-col gap-4 border-t border-border-soft pt-4">
-            <NutritionTable nutrition={product.nutrition} />
-            <Dato label="Ingredientes">{product.ingredients}</Dato>
-            <Dato label="Alérgenos">{product.allergens}</Dato>
-            {product.barcode && (
-              <Dato label="Código de barras">
-                <span className="tabular-nums">{product.barcode}</span>
-              </Dato>
+                <button
+                  ref={addBtn}
+                  disabled={!selected}
+                  onClick={add}
+                  className="w-full min-h-[54px] inline-flex items-center justify-center gap-2 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-xl nb nb-press hover:bg-[#c42904] cursor-pointer disabled:bg-cream-2 disabled:text-ink-faint disabled:cursor-not-allowed"
+                  aria-label={selected ? `Agregar ${qty} ${selected.label}` : "Elige un formato primero"}
+                >
+                  <Plus size={22} aria-hidden="true" />
+                  Agregar al pedido{qty > 1 ? ` (×${qty})` : ""}
+                </button>
+              </>
             )}
+
+            <div className="flex flex-col gap-4 border-t-[3px] border-ink pt-5">
+              <NutritionTable nutrition={product.nutrition} />
+              <Dato label="Ingredientes">{product.ingredients}</Dato>
+              <Dato label="Alérgenos">{product.allergens}</Dato>
+              {product.barcode && (
+                <Dato label="Código de barras">
+                  <span className="tabular-nums">{product.barcode}</span>
+                </Dato>
+              )}
+            </div>
           </div>
         </div>
       </motion.div>

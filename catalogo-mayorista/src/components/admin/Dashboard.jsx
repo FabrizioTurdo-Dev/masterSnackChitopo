@@ -1,29 +1,49 @@
 import { useMemo } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Package, AlertCircle, Boxes, ShoppingCart, Sparkles } from "lucide-react";
+import Btn from "./ui/Btn";
+import PageHeader from "./ui/PageHeader";
+import { CARD, TONES } from "./ui/styles";
 import { STORE_CONFIG, lineLabel, totalStock } from "../../data/store";
 
-function KpiCard({ icon, label, value, sub, color }) {
+function KpiCard({ icon, label, value, sub, tone, index = 0 }) {
+  const prefersReduced = useReducedMotion();
   return (
-    <div className="bg-surface rounded-xl border border-border p-4 sm:p-5 flex flex-col gap-2">
-      <div className={color}>{icon}</div>
-      <div>
-        <div className="text-xl sm:text-2xl font-bold text-text tabular-nums">{value}</div>
-        <div className="text-[11px] text-muted">{label}</div>
-        {sub && <div className="text-[10px] text-faint mt-0.5">{sub}</div>}
+    <motion.div
+      initial={prefersReduced ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: prefersReduced ? 0 : 0.4, delay: prefersReduced ? 0 : index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      className={`${CARD} p-4 sm:p-5 flex flex-col gap-3`}
+    >
+      <div className={`size-10 grid place-items-center border-2 border-ink ${tone}`} aria-hidden="true">
+        {icon}
       </div>
-    </div>
+      <div>
+        <div className="font-condensed text-4xl sm:text-5xl leading-none text-ink tabular-nums">{value}</div>
+        <div className="font-condensed uppercase tracking-[0.1em] text-xs text-ink-soft mt-2">{label}</div>
+        {sub && <div className="text-xs text-ink-faint mt-0.5">{sub}</div>}
+      </div>
+    </motion.div>
+  );
+}
+
+function CardTitle({ children }) {
+  return (
+    <h3 className="font-condensed uppercase tracking-[0.1em] text-sm text-ink m-0 mb-3 pb-2 border-b-2 border-ink/15">
+      {children}
+    </h3>
   );
 }
 
 function StatCard({ label, items }) {
   return (
-    <div className="bg-surface rounded-xl border border-border p-4 sm:p-5">
-      <h3 className="text-xs font-bold text-muted uppercase tracking-[0.08em] mb-3">{label}</h3>
+    <div className={`${CARD} p-4 sm:p-5`}>
+      <CardTitle>{label}</CardTitle>
       <div className="space-y-2">
         {items.map((item, i) => (
           <div key={i} className="flex items-center justify-between text-sm">
-            <span className="text-text font-medium">{item.label}</span>
-            <span className="text-accent font-bold tabular-nums">{item.value}</span>
+            <span className="text-ink font-medium">{item.label}</span>
+            <span className="font-condensed text-lg text-fire tabular-nums">{item.value}</span>
           </div>
         ))}
       </div>
@@ -34,26 +54,20 @@ function StatCard({ label, items }) {
 function QuickActions({ setPage }) {
   const actions = [
     { label: "Nuevo producto", icon: Package, onClick: () => setPage("products"), variant: "primary" },
-    { label: "Pedidos pendientes", icon: ShoppingCart, onClick: () => setPage("orders"), variant: "ghost" },
+    { label: "Ver pedidos", icon: ShoppingCart, onClick: () => setPage("orders"), variant: "ghost" },
     { label: "Configuración", icon: Sparkles, onClick: () => setPage("settings"), variant: "ghost" },
   ];
 
-  const base = "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5";
-  const styles = {
-    primary: `${base} bg-accent text-bg hover:bg-accent-light`,
-    ghost: `${base} bg-surface-2 text-muted border border-border hover:border-muted hover:text-text`,
-  };
-
   return (
-    <div className="bg-surface rounded-xl border border-border p-4 sm:p-5">
-      <h3 className="text-xs font-bold text-muted uppercase tracking-[0.08em] mb-3">Acceso rápido</h3>
-      <div className="flex gap-2 flex-wrap">
+    <div className={`${CARD} p-4 sm:p-5`}>
+      <CardTitle>Acceso rápido</CardTitle>
+      <div className="flex gap-2.5 flex-wrap">
         {actions.map((a, i) => {
           const Icon = a.icon;
           return (
-            <button key={i} onClick={a.onClick} className={styles[a.variant]}>
-              <Icon size={14} /> {a.label}
-            </button>
+            <Btn key={i} small variant={a.variant} onClick={a.onClick}>
+              <Icon size={14} aria-hidden="true" /> {a.label}
+            </Btn>
           );
         })}
       </div>
@@ -83,51 +97,66 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
       value: products.filter(p => p.line === l.id).length,
     }));
 
-    const pendingOrders = orders.filter(o => o.status === "pendiente").length;
-    const confirmedOrders = orders.filter(o => o.status === "confirmado").length;
+    const byStatus = status => orders.filter(o => o.status === status).length;
+    const ordersBy = {
+      nuevo: byStatus("nuevo"),
+      pendiente: byStatus("pendiente"),
+      confirmado: byStatus("confirmado"),
+      enviado: byStatus("enviado"),
+    };
 
-    return { total, visible, hidden, soon, onSale, units, zeroFormats, lowStock, byLine, pendingOrders, confirmedOrders };
+    return { total, visible, hidden, soon, onSale, units, zeroFormats, lowStock, byLine, ordersBy };
   }, [products, orders, stockThreshold]);
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="font-display text-lg font-bold text-text">Dashboard</h2>
-        <p className="text-xs text-muted">Resumen del catálogo mayorista</p>
-      </div>
+      <PageHeader eyebrow="Panel" title="Dashboard" subtitle="Resumen del catálogo mayorista" />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <KpiCard
           icon={<Package size={18} />}
           label="Productos"
           value={metrics.total}
           sub={`${metrics.visible} visibles · ${metrics.hidden} ocultos`}
-          color="text-accent"
+          tone={TONES.gold}
+          index={0}
         />
         <KpiCard
           icon={<Boxes size={18} />}
           label="Bolsas en stock"
           value={metrics.units.toLocaleString(STORE_CONFIG.currency.locale)}
           sub={`${metrics.onSale} a la venta`}
-          color="text-blue-400"
+          tone={TONES.blue}
+          index={1}
         />
         <KpiCard
           icon={<AlertCircle size={18} />}
           label="Stock crítico"
           value={metrics.lowStock}
           sub={`${metrics.zeroFormats} formatos sin stock`}
-          color={metrics.lowStock > 0 ? "text-red-400" : "text-emerald-400"}
+          tone={metrics.lowStock > 0 ? TONES.red : TONES.green}
+          index={2}
         />
         <KpiCard
           icon={<ShoppingCart size={18} />}
-          label="Pedidos"
-          value={metrics.pendingOrders}
-          sub={metrics.confirmedOrders > 0 ? `${metrics.confirmedOrders} confirmados` : "Sin confirmar"}
-          color="text-amber-400"
+          label="Pedidos nuevos"
+          value={metrics.ordersBy.nuevo}
+          sub={metrics.ordersBy.nuevo > 0 ? "Falta mandarles la cotización" : "Todos respondidos"}
+          tone="bg-fire text-cream"
+          index={3}
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <StatCard
+          label="Pedidos"
+          items={[
+            { label: "Nuevos", value: metrics.ordersBy.nuevo },
+            { label: "Esperando respuesta", value: metrics.ordersBy.pendiente },
+            { label: "Por despachar", value: metrics.ordersBy.confirmado },
+            { label: "Enviados", value: metrics.ordersBy.enviado },
+          ]}
+        />
         <StatCard label="Por línea" items={metrics.byLine} />
         <StatCard
           label="Estado del catálogo"
@@ -139,15 +168,6 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
         />
         <QuickActions setPage={setPage} />
       </div>
-
-      {!STORE_CONFIG.showPrices && (
-        <div className="rounded-xl border border-accent/25 bg-accent/5 px-4 py-3 text-xs text-muted leading-relaxed">
-          <strong className="text-accent">Modo "precio a consultar" activo.</strong> El catálogo
-          público no muestra precios y los pedidos llegan como cotización. Para prenderlos, cargá
-          los precios de cada formato y poné <code className="text-accent">showPrices: true</code> en{" "}
-          <code className="text-accent">src/data/store.js</code>.
-        </div>
-      )}
     </div>
   );
 }

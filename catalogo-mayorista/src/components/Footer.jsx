@@ -1,6 +1,14 @@
-import { MapPin, Clock, Truck, Globe } from "lucide-react";
+import { MapPin, Clock, Truck, Globe, MessageCircle, ArrowLeft } from "lucide-react";
 import Logo from "./brand/Logo";
-import { SELLER_PHONE, STORE_CONFIG } from "../data/store";
+import MasterSnacksLogo from "./brand/MasterSnacksLogo";
+import { LANDING_URL } from "../lib/landingUrl";
+import {
+  STORE_CONFIG,
+  WHATSAPP_LINK,
+  SELLER_PHONE_PRETTY,
+  DEV_CREDIT,
+  DEV_WHATSAPP_LINK,
+} from "../data/store";
 
 function InstagramIcon({ size = 14 }) {
   return (
@@ -24,41 +32,51 @@ function InstagramIcon({ size = 14 }) {
 
 function Item({ icon: Icon, children }) {
   return (
-    <li className="flex items-start gap-2 text-[12px] text-muted leading-relaxed">
-      <Icon size={14} className="mt-0.5 shrink-0 text-faint" aria-hidden="true" />
+    <li className="flex items-start gap-2 text-[13px] text-cream/80 leading-relaxed">
+      <Icon size={14} className="mt-1 shrink-0 text-gold" aria-hidden="true" />
       <span>{children}</span>
     </li>
   );
 }
 
-export default function Footer() {
-  const waLink = `https://wa.me/${SELLER_PHONE}`;
+// Los enlaces del footer necesitan área táctil propia: sin padding quedan
+// en ~13px de alto, muy poco para el pulgar.
+const FOOT_LINK =
+  "inline-flex items-center gap-2 min-h-[32px] py-1.5 text-[13px] no-underline transition-colors";
 
+// Mismo footer que la landing, con el link cruzado al revés (acá lleva al
+// sitio) y el aviso legal propio de un catálogo mayorista.
+export default function Footer() {
   return (
-    <footer className="border-t border-border-soft bg-bg mt-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <footer className="on-dark relative z-10 border-t-[3px] border-ink bg-ink text-cream">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          <div>
-            <Logo height={40} withTagline />
-            <p className="text-[11px] text-faint leading-relaxed mt-3 max-w-[260px]">
+          <div className="text-gold">
+            <Logo height={44} withTagline />
+            <p className="text-[13px] text-cream/75 leading-relaxed mt-4 max-w-[280px]">
               Snacks horneados hechos en Chile. Catálogo mayorista para almacenes,
               distribuidoras y locales de barrio.
             </p>
           </div>
 
           <div>
-            <h4 className="text-[11px] font-bold text-muted uppercase tracking-[0.08em] mb-3">
+            <h3 className="font-condensed text-sm text-gold uppercase tracking-[0.12em] mb-3 font-normal">
               Pedidos
-            </h4>
+            </h3>
             <ul className="flex flex-col gap-2 list-none p-0 m-0">
               <li>
                 <a
-                  href={waLink}
+                  href={WHATSAPP_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[12px] text-muted hover:text-green transition-colors no-underline font-semibold"
+                  className={`${FOOT_LINK} text-cream hover:text-green font-semibold`}
                 >
-                  WhatsApp +56 9 7863 2055
+                  WhatsApp {SELLER_PHONE_PRETTY}
+                </a>
+              </li>
+              <li>
+                <a href={LANDING_URL} className={`${FOOT_LINK} text-cream hover:text-gold font-semibold`}>
+                  <ArrowLeft size={14} aria-hidden="true" /> Ir al sitio de Chitopo
                 </a>
               </li>
               <Item icon={Clock}>{STORE_CONFIG.schedule}</Item>
@@ -68,9 +86,14 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[11px] font-bold text-muted uppercase tracking-[0.08em] mb-3">
+            <MasterSnacksLogo
+              alt=""
+              height={72}
+              className="mb-4 -rotate-3 transition-transform duration-300 hover:rotate-2 hover:scale-105"
+            />
+            <h3 className="font-condensed text-sm text-gold uppercase tracking-[0.12em] mb-3 font-normal">
               {STORE_CONFIG.producer}
-            </h4>
+            </h3>
             <ul className="flex flex-col gap-2 list-none p-0 m-0">
               <Item icon={MapPin}>{STORE_CONFIG.address}</Item>
               <li>
@@ -78,9 +101,9 @@ export default function Footer() {
                   href={`https://instagram.com/${STORE_CONFIG.instagram}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-[12px] text-muted hover:text-accent transition-colors no-underline"
+                  className={`${FOOT_LINK} text-cream hover:text-gold`}
                 >
-                  <InstagramIcon /> @{STORE_CONFIG.instagram}
+                  <InstagramIcon size={14} /> @{STORE_CONFIG.instagram}
                 </a>
               </li>
               <li>
@@ -88,7 +111,7 @@ export default function Footer() {
                   href={`https://${STORE_CONFIG.website}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-[12px] text-muted hover:text-accent transition-colors no-underline"
+                  className={`${FOOT_LINK} text-cream hover:text-gold`}
                 >
                   <Globe size={14} aria-hidden="true" /> {STORE_CONFIG.website}
                 </a>
@@ -97,15 +120,43 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-border-soft flex flex-col gap-3">
-          <p className="text-[10px] text-faint leading-relaxed max-w-3xl">
+        <div className="mt-10 pt-6 border-t-2 border-cream/15 flex flex-col gap-4">
+          <p className="text-[11px] text-cream/70 leading-relaxed max-w-3xl m-0">
             {STORE_CONFIG.sesma} · Hecho en Chile. Productos con sello de advertencia según la
             Ley 20.606 de Etiquetado de Alimentos. Este catálogo es mayorista y está dirigido a
             comerciantes adultos: no constituye publicidad dirigida a menores de 14 años.
           </p>
-          <p className="text-[10px] text-faint">
-            &copy; {STORE_CONFIG.copyrightYear} {STORE_CONFIG.name} — {STORE_CONFIG.producer}
-          </p>
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <p className="text-[11px] text-cream/70 m-0">
+              &copy; {STORE_CONFIG.copyrightYear} {STORE_CONFIG.name} — {STORE_CONFIG.producer}
+            </p>
+
+            <a
+              href={DEV_WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Desarrollado por ${DEV_CREDIT.name} — escríbele por WhatsApp`}
+              className="group self-start sm:self-auto inline-flex items-center gap-2 min-h-[44px] text-[12px] text-cream/80 hover:text-cream no-underline transition-colors"
+            >
+              <MessageCircle
+                size={15}
+                className="text-green transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110"
+                aria-hidden="true"
+              />
+              <span>
+                Desarrollado por{" "}
+                {/* El subrayado crece desde la izquierda al pasar el mouse. */}
+                <span className="relative font-semibold text-gold">
+                  {DEV_CREDIT.name}
+                  <span
+                    className="absolute left-0 -bottom-0.5 h-[2px] w-full bg-gold origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100 group-focus-visible:scale-x-100"
+                    aria-hidden="true"
+                  />
+                </span>
+              </span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,27 +1,15 @@
-import { MOCK_MODE } from "../data/store";
-import { supabase } from "../config/supabase";
+import { supabase, isSupabaseConfigured } from "../config/supabase";
 
+// Lo usa solo el panel. El alta la hace el catálogo con src/lib/sendOrder.js,
+// sin cargar supabase-js en el sitio público.
+//
+// Los pedidos dependen de que haya credenciales y no de MOCK_MODE: el local
+// los crea desde su celular y el panel los lee desde otro navegador, así que
+// en memoria nunca llegarían.
 export const ordersService = {
-  async create(orderData) {
-    if (MOCK_MODE) {
-      return { success: true, data: { id: Date.now(), ...orderData } };
-    }
-    try {
-      // Sin .select(): quien manda el pedido es un visitante anónimo, que
-      // puede insertar pero no leer pedidos (ni siquiera el suyo). Pedir la
-      // fila de vuelta haría fallar el insert por RLS.
-      const { error } = await supabase.from("pedidos").insert([orderData]);
-      if (error) throw error;
-      return { success: true, data: orderData };
-    } catch (error) {
-      console.error("Error al crear pedido:", error.message);
-      return { success: false, error: error.message };
-    }
-  },
-
   async list() {
-    if (MOCK_MODE) {
-      return { success: true, data: [] };
+    if (!isSupabaseConfigured) {
+      return { success: true, data: null }; // null = seguir con lo que hay en memoria
     }
     try {
       const { data, error } = await supabase
@@ -37,7 +25,7 @@ export const ordersService = {
   },
 
   async update(id, updates) {
-    if (MOCK_MODE) {
+    if (!isSupabaseConfigured) {
       return { success: true, data: { id, ...updates } };
     }
     try {
@@ -47,6 +35,8 @@ export const ordersService = {
         .eq("id", id)
         .select();
       if (error) throw error;
+      // RLS no da error cuando filtra: sin filas es que no se pudo escribir.
+      if (!data?.length) throw new Error("La base no aceptó el cambio (¿la cuenta está en admins?)");
       return { success: true, data };
     } catch (error) {
       console.error("Error al actualizar pedido:", error.message);

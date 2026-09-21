@@ -50,17 +50,17 @@ export default function ImageLightbox({ src, alt, title, onClose }) {
       animate={{ opacity: 1 }}
       exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: prefersReduced ? 0 : 0.18 }}
-      className="fixed inset-0 z-[400] bg-black/90 flex flex-col"
+      className="on-dark fixed inset-0 z-[400] bg-ink/95 flex flex-col"
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
-      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-border bg-bg/80">
-        <p className="text-sm font-bold text-text truncate">{title}</p>
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b-[3px] border-gold bg-ink">
+        <p className="font-condensed uppercase tracking-[0.06em] text-cream truncate m-0">{title}</p>
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setFull(f => !f)}
-            className="hidden sm:inline-flex items-center gap-1.5 h-10 px-3 rounded-lg bg-surface-2 text-muted text-xs font-bold hover:text-text hover:bg-surface-3 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
+            className="hidden sm:inline-flex items-center gap-1.5 h-10 px-3 bg-ink text-gold font-condensed uppercase tracking-[0.06em] text-xs border-2 border-gold hover:bg-gold hover:text-ink transition-colors cursor-pointer"
           >
             {full ? <ZoomOut size={15} aria-hidden="true" /> : <ZoomIn size={15} aria-hidden="true" />}
             {full ? "Ajustar a pantalla" : "Tamaño real"}
@@ -68,7 +68,7 @@ export default function ImageLightbox({ src, alt, title, onClose }) {
           <button
             ref={closeBtn}
             onClick={onClose}
-            className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center text-muted hover:bg-surface-3 hover:text-text transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
+            className="size-10 grid place-items-center bg-gold text-ink border-2 border-gold hover:bg-cream transition-colors cursor-pointer"
             aria-label="Cerrar imagen"
           >
             <X size={18} aria-hidden="true" />

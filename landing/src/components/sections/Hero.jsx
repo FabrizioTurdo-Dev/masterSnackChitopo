@@ -441,7 +441,7 @@ export default function Hero() {
               En teléfono quedan apiladas arriba. */}
           <h1
             ref={headline}
-            className="hero-title font-condensed uppercase m-0 leading-[0.86] text-[clamp(4.2rem,21vw,7rem)] lg:text-[clamp(7rem,min(14.5vw,24svh),15rem)] text-center w-full lg:absolute lg:inset-0 lg:flex lg:flex-col lg:justify-between"
+            className="hero-title font-title uppercase m-0 leading-[0.86] text-[clamp(4.2rem,21vw,7rem)] lg:text-[clamp(7rem,min(14.5vw,24svh),15rem)] text-center w-full lg:absolute lg:inset-0 lg:flex lg:flex-col lg:justify-between"
           >
             <span className="block whitespace-nowrap">El sufle,</span>
             <span className="block whitespace-nowrap translate-x-[20%] lg:translate-x-[27%]">po'</span>
