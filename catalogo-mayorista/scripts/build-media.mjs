@@ -321,9 +321,13 @@ async function buildPost() {
 
 // ── Videos de fábrica ───────────────────────────────────────────────────
 // Sin audio (se reproducen en silencio igual), a 30 fps y con faststart
-// para que empiecen a verse antes de terminar de bajar.
+// para que empiecen a verse antes de terminar de bajar. La tarjeta es 3:4
+// con object-cover: lo que sobre de un video más alto se recorta al centro
+// acá, así no se baja lo que igual no se ve.
+const CROP_3_4 = "crop='trunc(min(iw,ih*3/4)/2)*2':'trunc(min(ih,iw*4/3)/2)*2'";
+
 const VIDEOS = [
-  { src: "fabrica3.mp4", out: "fabrica-produccion", poster: 13 },
+  { src: "fabrica-extrusora.mp4", out: "fabrica-produccion", poster: 5 },
   { src: "Fabrica.mp4", out: "fabrica-envasado", poster: 4 },
 ];
 
@@ -346,7 +350,7 @@ async function buildVideos() {
     ffmpeg([
       "-i", input,
       "-an",
-      "-vf", "fps=30",
+      "-vf", `fps=30,${CROP_3_4}`,
       "-c:v", "libx264",
       "-profile:v", "high",
       "-crf", "26",
@@ -359,6 +363,7 @@ async function buildVideos() {
     const frame = ffmpeg([
       "-ss", String(poster),
       "-i", input,
+      "-vf", CROP_3_4,
       "-frames:v", "1",
       "-f", "image2pipe",
       "-vcodec", "png",

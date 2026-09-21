@@ -13,6 +13,12 @@ export default function StampBadge({
   children,
 }) {
   const id = useId();
+  // Radio de la línea base del texto. Con logo va centrado en el anillo
+  // entre el borde de afuera (55.5) y el círculo interior (38): las
+  // mayúsculas de Anton miden 0.875 em, ~11 a este tamaño, y sobran ~3.3
+  // por lado. El largo acompaña al radio para que el texto cierre la vuelta.
+  const r = children ? 41.3 : 44;
+  const textLength = Math.round(2 * Math.PI * r * 0.991);
 
   return (
     <div className={`aspect-square ${className}`} aria-hidden="true">
@@ -47,7 +53,7 @@ export default function StampBadge({
           con transform-box, un elemento HTML gira sobre su centro solo. */}
       <svg viewBox="0 0 120 120" className="spin-slow absolute inset-0 w-full h-full">
         <defs>
-          <path id={id} d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
+          <path id={id} d={`M60,60 m-${r},0 a${r},${r} 0 1,1 ${2 * r},0 a${r},${r} 0 1,1 -${2 * r},0`} />
         </defs>
         <text
           fontFamily="Anton, sans-serif"
@@ -56,7 +62,7 @@ export default function StampBadge({
           fill="var(--color-ink)"
           style={{ textTransform: "uppercase" }}
         >
-          <textPath href={`#${id}`} textLength="274" lengthAdjust="spacing">
+          <textPath href={`#${id}`} textLength={textLength} lengthAdjust="spacing">
             {text}
           </textPath>
         </text>
