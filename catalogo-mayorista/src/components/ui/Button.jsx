@@ -3,9 +3,9 @@ import gsap from "gsap";
 import { prefersReducedMotion } from "../../lib/motion";
 
 const VARIANTS = {
-  primary: "bg-fire text-cream nb nb-press hover:bg-[#c42904]",
-  secondary: "bg-cream text-ink nb nb-press hover:bg-cream-2",
-  gold: "bg-gold text-ink nb nb-press hover:bg-[#ffcf3d]",
+  primary: "bg-electric text-snow nb nb-press hover:bg-royal",
+  secondary: "bg-snow text-night nb nb-press hover:bg-snow-2",
+  gold: "bg-gold text-night nb nb-press hover:bg-[#ffcf3d]",
   whatsapp: "bg-green text-[#06300f] nb nb-press hover:brightness-105",
 };
 

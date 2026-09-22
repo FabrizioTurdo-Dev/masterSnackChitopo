@@ -19,7 +19,7 @@ export default function App() {
             element={
               <Suspense
                 fallback={
-                  <div className="min-h-screen flex items-center justify-center font-condensed uppercase tracking-[0.12em] text-ink">
+                  <div className="min-h-screen flex items-center justify-center font-condensed uppercase tracking-[0.12em] text-night">
                     Cargando panel…
                   </div>
                 }

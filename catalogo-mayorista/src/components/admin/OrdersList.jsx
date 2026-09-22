@@ -53,17 +53,17 @@ function Stepper({ order, onSet }) {
               onClick={() => onSet(order, s.id)}
               aria-pressed={isCurrent}
               title={s.hint}
-              className={`w-full flex items-center gap-1.5 min-h-[38px] px-2 border-2 border-ink font-condensed uppercase tracking-[0.04em] text-xs transition-colors cursor-pointer ${
+              className={`w-full flex items-center gap-1.5 min-h-[38px] px-2 border-2 border-night font-condensed uppercase tracking-[0.04em] text-xs transition-colors cursor-pointer ${
                 isCurrent
-                  ? "bg-fire text-cream"
+                  ? "bg-electric text-snow"
                   : done
-                    ? "bg-ink text-gold hover:bg-ink/90"
-                    : "bg-cream text-ink-soft hover:bg-cream-2"
+                    ? "bg-night text-gold hover:bg-night/90"
+                    : "bg-snow text-night-soft hover:bg-snow-2"
               } ${cancelled ? "opacity-50" : ""}`}
             >
               <span
                 className={`shrink-0 size-5 grid place-items-center border-2 text-[11px] leading-none ${
-                  isCurrent ? "border-cream" : done ? "border-gold" : "border-ink"
+                  isCurrent ? "border-snow" : done ? "border-gold" : "border-night"
                 }`}
                 aria-hidden="true"
               >
@@ -139,7 +139,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
 
       {(error || sync.error) && (
         <div
-          className="mb-5 px-4 py-3 border-[3px] border-ink bg-[#ffd9cc] text-[#8a1c03] text-sm font-semibold"
+          className="mb-5 px-4 py-3 border-[3px] border-night bg-[#ffd9cc] text-[#8a1c03] text-sm font-semibold"
           role="alert"
         >
           {error || `No se pudieron cargar los pedidos: ${sync.error}`}
@@ -147,11 +147,11 @@ export default function OrdersList({ sync = {}, onRefresh }) {
       )}
 
       {/* Cómo se usa: los dueños van moviendo cada pedido a medida que responden. */}
-      <ol className="dots-cream border-[3px] border-ink p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-5 gap-y-3 list-none m-0">
+      <ol className="dots-snow border-[3px] border-night p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-5 gap-y-3 list-none m-0">
         {ORDER_STEPS.map(s => (
           <li key={s.id} className="flex items-start gap-2">
             <Badge status={s.id}>{s.label}</Badge>
-            <span className="text-xs text-ink-soft leading-snug">{s.hint}</span>
+            <span className="text-xs text-night-soft leading-snug">{s.hint}</span>
           </li>
         ))}
       </ol>
@@ -174,19 +174,19 @@ export default function OrdersList({ sync = {}, onRefresh }) {
           <div className={`${CARD} text-center py-14 px-6`}>
             {orders.length === 0 ? (
               <>
-                <Package size={44} className="mx-auto mb-3 text-ink-faint" aria-hidden="true" />
-                <p className="font-condensed uppercase text-xl text-ink m-0">
+                <Package size={44} className="mx-auto mb-3 text-night-faint" aria-hidden="true" />
+                <p className="font-condensed uppercase text-xl text-night m-0">
                   {sync.loading ? "Cargando pedidos…" : "Sin pedidos todavía"}
                 </p>
-                <p className="text-sm text-ink-soft mt-1 mb-0">
+                <p className="text-sm text-night-soft mt-1 mb-0">
                   Aparecen acá apenas un local manda su pedido por WhatsApp desde el catálogo.
                 </p>
               </>
             ) : (
               <>
-                <ShoppingCart size={44} className="mx-auto mb-3 text-ink-faint" aria-hidden="true" />
-                <p className="font-condensed uppercase text-xl text-ink m-0">Sin resultados</p>
-                <p className="text-sm text-ink-soft mt-1 mb-0">No hay pedidos en este estado</p>
+                <ShoppingCart size={44} className="mx-auto mb-3 text-night-faint" aria-hidden="true" />
+                <p className="font-condensed uppercase text-xl text-night m-0">Sin resultados</p>
+                <p className="text-sm text-night-soft mt-1 mb-0">No hay pedidos en este estado</p>
               </>
             )}
           </div>
@@ -208,14 +208,14 @@ export default function OrdersList({ sync = {}, onRefresh }) {
               <div className="flex justify-between items-start gap-4">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="font-condensed uppercase text-xl leading-tight text-ink">
+                    <span className="font-condensed uppercase text-xl leading-tight text-night">
                       {order.client}
                     </span>
                     <Badge status={order.status} />
                   </div>
-                  <div className="text-xs text-ink-faint mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                  <div className="text-xs text-night-faint mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                     {order.ref && (
-                      <span className="font-condensed tracking-[0.06em] text-sm text-ink">{order.ref}</span>
+                      <span className="font-condensed tracking-[0.06em] text-sm text-night">{order.ref}</span>
                     )}
                     <span>{formatDate(order)}</span>
                     {order.contact && <span>· {order.contact}</span>}
@@ -224,9 +224,9 @@ export default function OrdersList({ sync = {}, onRefresh }) {
                 </div>
                 <div className="text-right shrink-0">
                   {hasPrice(order.total) && (
-                    <div className="font-condensed text-2xl text-fire tabular-nums">{formatPrice(order.total)}</div>
+                    <div className="font-condensed text-2xl text-electric tabular-nums">{formatPrice(order.total)}</div>
                   )}
-                  <div className="font-condensed uppercase tracking-[0.06em] text-sm text-ink-soft tabular-nums">
+                  <div className="font-condensed uppercase tracking-[0.06em] text-sm text-night-soft tabular-nums">
                     {order.units} bolsas
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
 
               <div className="flex gap-1.5 flex-wrap">
                 {(order.items || []).map((item, i) => (
-                  <span key={i} className="text-xs px-2 py-1 bg-cream-2 text-ink border border-ink/30">
+                  <span key={i} className="text-xs px-2 py-1 bg-snow-2 text-night border border-night/30">
                     {item.name} · {item.format} ×{item.units} · {item.qty}
                   </span>
                 ))}
@@ -242,7 +242,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
 
               <div className="flex flex-col gap-2">
                 <Stepper order={order} onSet={setStatus} />
-                <p className="text-xs text-ink-soft m-0">
+                <p className="text-xs text-night-soft m-0">
                   {cancelled ? "Pedido cancelado." : step?.hint}
                 </p>
               </div>

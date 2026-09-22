@@ -15,13 +15,13 @@ function KpiCard({ icon, label, value, sub, tone, index = 0 }) {
       transition={{ duration: prefersReduced ? 0 : 0.4, delay: prefersReduced ? 0 : index * 0.06, ease: [0.22, 1, 0.36, 1] }}
       className={`${CARD} p-4 sm:p-5 flex flex-col gap-3`}
     >
-      <div className={`size-10 grid place-items-center border-2 border-ink ${tone}`} aria-hidden="true">
+      <div className={`size-10 grid place-items-center border-2 border-night ${tone}`} aria-hidden="true">
         {icon}
       </div>
       <div>
-        <div className="font-condensed text-4xl sm:text-5xl leading-none text-ink tabular-nums">{value}</div>
-        <div className="font-condensed uppercase tracking-[0.1em] text-xs text-ink-soft mt-2">{label}</div>
-        {sub && <div className="text-xs text-ink-faint mt-0.5">{sub}</div>}
+        <div className="font-condensed text-4xl sm:text-5xl leading-none text-night tabular-nums">{value}</div>
+        <div className="font-condensed uppercase tracking-[0.1em] text-xs text-night-soft mt-2">{label}</div>
+        {sub && <div className="text-xs text-night-faint mt-0.5">{sub}</div>}
       </div>
     </motion.div>
   );
@@ -29,7 +29,7 @@ function KpiCard({ icon, label, value, sub, tone, index = 0 }) {
 
 function CardTitle({ children }) {
   return (
-    <h3 className="font-condensed uppercase tracking-[0.1em] text-sm text-ink m-0 mb-3 pb-2 border-b-2 border-ink/15">
+    <h3 className="font-condensed uppercase tracking-[0.1em] text-sm text-night m-0 mb-3 pb-2 border-b-2 border-night/15">
       {children}
     </h3>
   );
@@ -42,8 +42,8 @@ function StatCard({ label, items }) {
       <div className="space-y-2">
         {items.map((item, i) => (
           <div key={i} className="flex items-center justify-between text-sm">
-            <span className="text-ink font-medium">{item.label}</span>
-            <span className="font-condensed text-lg text-fire tabular-nums">{item.value}</span>
+            <span className="text-night font-medium">{item.label}</span>
+            <span className="font-condensed text-lg text-electric tabular-nums">{item.value}</span>
           </div>
         ))}
       </div>
@@ -142,7 +142,7 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
           label="Pedidos nuevos"
           value={metrics.ordersBy.nuevo}
           sub={metrics.ordersBy.nuevo > 0 ? "Falta mandarles la cotización" : "Todos respondidos"}
-          tone="bg-fire text-cream"
+          tone="bg-electric text-snow"
           index={3}
         />
       </div>

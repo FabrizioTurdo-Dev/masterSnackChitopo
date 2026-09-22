@@ -32,7 +32,7 @@ function InstagramIcon({ size = 14 }) {
 
 function Item({ icon: Icon, children }) {
   return (
-    <li className="flex items-start gap-2 text-[13px] text-cream/80 leading-relaxed">
+    <li className="flex items-start gap-2 text-[13px] text-snow/80 leading-relaxed">
       <Icon size={14} className="mt-1 shrink-0 text-gold" aria-hidden="true" />
       <span>{children}</span>
     </li>
@@ -48,12 +48,12 @@ const FOOT_LINK =
 // sitio) y el aviso legal propio de un catálogo mayorista.
 export default function Footer() {
   return (
-    <footer className="on-dark relative z-10 border-t-[3px] border-ink bg-ink text-cream">
+    <footer className="on-dark relative z-10 border-t-[3px] border-night bg-night text-snow">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div className="text-gold">
             <Logo height={44} withTagline />
-            <p className="text-[13px] text-cream/75 leading-relaxed mt-4 max-w-[280px]">
+            <p className="text-[13px] text-snow/75 leading-relaxed mt-4 max-w-[280px]">
               Snacks horneados hechos en Chile. Catálogo mayorista para almacenes,
               distribuidoras y locales de barrio.
             </p>
@@ -69,13 +69,13 @@ export default function Footer() {
                   href={WHATSAPP_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${FOOT_LINK} text-cream hover:text-green font-semibold`}
+                  className={`${FOOT_LINK} text-snow hover:text-green font-semibold`}
                 >
                   WhatsApp {SELLER_PHONE_PRETTY}
                 </a>
               </li>
               <li>
-                <a href={LANDING_URL} className={`${FOOT_LINK} text-cream hover:text-gold font-semibold`}>
+                <a href={LANDING_URL} className={`${FOOT_LINK} text-snow hover:text-gold font-semibold`}>
                   <ArrowLeft size={14} aria-hidden="true" /> Ir al sitio de Chitopo
                 </a>
               </li>
@@ -101,7 +101,7 @@ export default function Footer() {
                   href={`https://instagram.com/${STORE_CONFIG.instagram}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${FOOT_LINK} text-cream hover:text-gold`}
+                  className={`${FOOT_LINK} text-snow hover:text-gold`}
                 >
                   <InstagramIcon size={14} /> @{STORE_CONFIG.instagram}
                 </a>
@@ -111,7 +111,7 @@ export default function Footer() {
                   href={`https://${STORE_CONFIG.website}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${FOOT_LINK} text-cream hover:text-gold`}
+                  className={`${FOOT_LINK} text-snow hover:text-gold`}
                 >
                   <Globe size={14} aria-hidden="true" /> {STORE_CONFIG.website}
                 </a>
@@ -120,15 +120,15 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t-2 border-cream/15 flex flex-col gap-4">
-          <p className="text-[11px] text-cream/70 leading-relaxed max-w-3xl m-0">
+        <div className="mt-10 pt-6 border-t-2 border-snow/15 flex flex-col gap-4">
+          <p className="text-[11px] text-snow/70 leading-relaxed max-w-3xl m-0">
             {STORE_CONFIG.sesma} · Hecho en Chile. Productos con sello de advertencia según la
             Ley 20.606 de Etiquetado de Alimentos. Este catálogo es mayorista y está dirigido a
             comerciantes adultos: no constituye publicidad dirigida a menores de 14 años.
           </p>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <p className="text-[11px] text-cream/70 m-0">
+            <p className="text-[11px] text-snow/70 m-0">
               &copy; {STORE_CONFIG.copyrightYear} {STORE_CONFIG.name} — {STORE_CONFIG.producer}
             </p>
 
@@ -137,7 +137,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Desarrollado por ${DEV_CREDIT.name} — escríbele por WhatsApp`}
-              className="group self-start sm:self-auto inline-flex items-center gap-2 min-h-[44px] text-[12px] text-cream/80 hover:text-cream no-underline transition-colors"
+              className="group self-start sm:self-auto inline-flex items-center gap-2 min-h-[44px] text-[12px] text-snow/80 hover:text-snow no-underline transition-colors"
             >
               <MessageCircle
                 size={15}

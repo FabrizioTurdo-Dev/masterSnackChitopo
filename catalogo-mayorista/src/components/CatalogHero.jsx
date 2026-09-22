@@ -103,7 +103,7 @@ export default function CatalogHero() {
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-8 sm:pt-12 sm:pb-14">
-        <p className="ch-fade font-condensed uppercase tracking-[0.12em] sm:tracking-[0.22em] text-ink text-xs sm:text-sm m-0 mb-3 pr-24 sm:pr-0 before:content-['★'] before:text-fire before:mr-2">
+        <p className="ch-fade font-condensed uppercase tracking-[0.12em] sm:tracking-[0.22em] text-night text-xs sm:text-sm m-0 mb-3 pr-24 sm:pr-0 before:content-['★'] before:text-electric before:mr-2">
           Para almacenes, distribuidoras y locales de barrio
         </p>
 
@@ -116,25 +116,25 @@ export default function CatalogHero() {
         </h1>
 
         <div className="mt-4 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)] xl:items-end">
-          <p className="ch-fade text-ink-soft text-base sm:text-lg leading-relaxed font-medium m-0 max-w-xl">
+          <p className="ch-fade text-night-soft text-base sm:text-lg leading-relaxed font-medium m-0 max-w-xl">
             Snacks horneados hechos en Chile, al por mayor. Arma tu pedido acá y lo cerramos
             por WhatsApp: precio, pago y despacho, al tiro.
           </p>
 
           <ol className="grid grid-cols-3 gap-2 sm:gap-3 list-none p-0 m-0">
             {STEPS.map((s, i) => (
-              <li key={s.title} className="ch-step nb-soft bg-cream p-2 sm:p-3 flex flex-col sm:flex-row items-start gap-1.5 sm:gap-3">
+              <li key={s.title} className="ch-step nb-soft bg-snow p-2 sm:p-3 flex flex-col sm:flex-row items-start gap-1.5 sm:gap-3">
                 <span
-                  className="shrink-0 grid place-items-center size-7 sm:size-9 bg-fire text-cream border-2 border-ink font-condensed text-base sm:text-xl leading-none"
+                  className="shrink-0 grid place-items-center size-7 sm:size-9 bg-electric text-snow border-2 border-night font-condensed text-base sm:text-xl leading-none"
                   aria-hidden="true"
                 >
                   {i + 1}
                 </span>
                 <span className="min-w-0">
-                  <span className="block font-condensed uppercase text-base sm:text-lg leading-tight text-ink">
+                  <span className="block font-condensed uppercase text-base sm:text-lg leading-tight text-night">
                     {s.title}
                   </span>
-                  <span className="hidden sm:block text-xs text-ink-soft leading-snug mt-0.5">{s.text}</span>
+                  <span className="hidden sm:block text-xs text-night-soft leading-snug mt-0.5">{s.text}</span>
                 </span>
               </li>
             ))}

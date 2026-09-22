@@ -8,7 +8,7 @@ import { STORE_CONFIG, SELLER_PHONE, DEV_CREDIT } from "../../data/store";
 function Card({ title, children }) {
   return (
     <div className={`${CARD} p-5 sm:p-6`}>
-      <h3 className="font-title uppercase tracking-[0.06em] text-xl text-ink m-0 mb-4 pb-2 border-b-2 border-ink/15">{title}</h3>
+      <h3 className="font-title uppercase tracking-[0.06em] text-xl text-night m-0 mb-4 pb-2 border-b-2 border-night/15">{title}</h3>
       {children}
     </div>
   );
@@ -18,7 +18,7 @@ function ReadOnly({ label, value }) {
   return (
     <div className="flex flex-col gap-1.5">
       <span className={LABEL}>{label}</span>
-      <div className="min-h-[42px] px-3 flex items-center bg-cream-2 border-2 border-dashed border-ink/50 text-ink-soft text-sm">
+      <div className="min-h-[42px] px-3 flex items-center bg-snow-2 border-2 border-dashed border-night/50 text-night-soft text-sm">
         {value}
       </div>
     </div>
@@ -67,13 +67,13 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
             >
               {STORE_CONFIG.showPrices ? "● Precios visibles" : "● Modo precio a consultar"}
             </div>
-            <p className="text-sm text-ink-soft leading-relaxed m-0">
+            <p className="text-sm text-night-soft leading-relaxed m-0">
               {STORE_CONFIG.showPrices
                 ? "El catálogo muestra los precios cargados en cada formato y el pedido llega con el monto calculado."
                 : "El catálogo no muestra precios: los pedidos llegan como cotización y el monto se cierra por WhatsApp."}
             </p>
             {!STORE_CONFIG.showPrices && (
-              <p className="text-sm text-ink-faint leading-relaxed m-0">
+              <p className="text-sm text-night-faint leading-relaxed m-0">
                 Cuando tengan los precios cargados en cada formato (pestaña Productos), avísale a{" "}
                 {DEV_CREDIT.name} para que el catálogo empiece a mostrarlos.
               </p>
@@ -93,9 +93,9 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
             />
             <div className="flex flex-col gap-1.5 justify-end">
               <span className={LABEL}>Ayuda</span>
-              <p className="text-sm text-ink-soft leading-relaxed m-0">
+              <p className="text-sm text-night-soft leading-relaxed m-0">
                 Los formatos con esa cantidad de bultos o menos se marcan como{" "}
-                <span className="font-semibold text-fire">stock bajo</span> en la tabla y en el catálogo.
+                <span className="font-semibold text-electric">stock bajo</span> en la tabla y en el catálogo.
               </p>
             </div>
           </div>

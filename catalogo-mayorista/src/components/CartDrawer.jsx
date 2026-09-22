@@ -34,18 +34,18 @@ function MinOrderMeter({ units }) {
   return (
     <div role="status" aria-live="polite">
       <div className="flex items-baseline justify-between gap-3 mb-1.5">
-        <span className="font-condensed uppercase tracking-[0.06em] text-base text-ink">
+        <span className="font-condensed uppercase tracking-[0.06em] text-base text-night">
           {done ? `¡Listo! ${units} bolsas` : `Llevas ${units} de ${min} bolsas`}
         </span>
-        <span className="text-xs font-semibold text-ink-soft tabular-nums">
+        <span className="text-xs font-semibold text-night-soft tabular-nums">
           {done ? "Pedido mínimo cumplido" : `Te faltan ${min - units}`}
         </span>
       </div>
-      <div className="h-4 bg-cream border-2 border-ink overflow-hidden">
+      <div className="h-4 bg-snow border-2 border-night overflow-hidden">
         <div
           className={`h-full transition-[width,background-color] duration-500 ease-out ${
-            done ? "bg-green" : "bg-fire"
-          } ${pct > 0 && pct < 100 ? "border-r-2 border-ink" : ""}`}
+            done ? "bg-green" : "bg-electric"
+          } ${pct > 0 && pct < 100 ? "border-r-2 border-night" : ""}`}
           style={{
             width: `${pct}%`,
             backgroundImage:
@@ -152,10 +152,10 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
   // text-base y no text-sm: con menos de 16px Safari de iPhone hace zoom
   // al enfocar el campo.
   const inputBase =
-    "w-full min-h-[46px] px-3.5 bg-cream text-ink text-base font-medium border-2 outline-none transition-shadow duration-150 placeholder:text-ink-faint/70 focus:[box-shadow:3px_3px_0_var(--color-ink)]";
-  const labelBase = "font-condensed uppercase tracking-[0.1em] text-xs text-ink-soft mb-1.5 block";
+    "w-full min-h-[46px] px-3.5 bg-snow text-night text-base font-medium border-2 outline-none transition-shadow duration-150 placeholder:text-night-faint/70 focus:[box-shadow:3px_3px_0_var(--color-night)]";
+  const labelBase = "font-condensed uppercase tracking-[0.1em] text-xs text-night-soft mb-1.5 block";
   const stepBtn =
-    "size-9 grid place-items-center text-ink hover:bg-cream-2 transition-colors cursor-pointer";
+    "size-9 grid place-items-center text-night hover:bg-snow-2 transition-colors cursor-pointer";
 
   return (
     <AnimatePresence>
@@ -166,7 +166,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
             animate={{ opacity: 1 }}
             exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: prefersReduced ? 0 : 0.2 }}
-            className="fixed inset-0 bg-ink/60 backdrop-blur-[2px] z-[200]"
+            className="fixed inset-0 bg-night/60 backdrop-blur-[2px] z-[200]"
             onClick={sent ? resetCart : handleClose}
             aria-hidden="true"
           />
@@ -175,7 +175,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
             animate={{ x: 0 }}
             exit={prefersReduced ? { x: 0 } : { x: "100%" }}
             transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 26, stiffness: 260 }}
-            className="fixed top-0 right-0 bottom-0 w-full sm:w-[460px] bg-cream z-[201] sm:border-l-[3px] border-ink flex flex-col font-sans"
+            className="fixed top-0 right-0 bottom-0 w-full sm:w-[460px] bg-snow z-[201] sm:border-l-[3px] border-night flex flex-col font-sans"
             style={{ overscrollBehavior: "contain" }}
             role="dialog"
             aria-modal="true"
@@ -183,7 +183,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
           >
             {sent ? (
               <div
-                className="flex flex-col items-center justify-center flex-1 px-8 text-center dots-cream"
+                className="flex flex-col items-center justify-center flex-1 px-8 text-center dots-snow"
                 role="status"
                 aria-live="polite"
               >
@@ -191,43 +191,43 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                   initial={prefersReduced ? false : { scale: 0, rotate: -90 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 12, stiffness: 220, delay: 0.1 }}
-                  className="size-20 grid place-items-center bg-green text-[#06300f] border-[3px] border-ink rounded-full [box-shadow:5px_5px_0_var(--color-ink)] mb-7"
+                  className="size-20 grid place-items-center bg-green text-[#06300f] border-[3px] border-night rounded-full [box-shadow:5px_5px_0_var(--color-night)] mb-7"
                 >
                   <Check size={40} strokeWidth={3} aria-hidden="true" />
                 </motion.div>
                 <h2 className="hero-title font-title uppercase text-6xl leading-[0.95] m-0">¡Listo!</h2>
-                <p className="font-condensed uppercase tracking-[0.06em] text-xl text-ink mt-3 mb-0">
+                <p className="font-condensed uppercase tracking-[0.06em] text-xl text-night mt-3 mb-0">
                   Pedido enviado
                 </p>
-                <p className="text-sm text-ink-soft mt-3 mb-5 max-w-xs leading-relaxed">
+                <p className="text-sm text-night-soft mt-3 mb-5 max-w-xs leading-relaxed">
                   Se abrió WhatsApp con tu pedido. Solo falta que aprietes enviar ahí y te
                   confirmamos precios y despacho al tiro.
                 </p>
-                <p className="inline-flex items-baseline gap-2 px-3 py-1.5 mb-8 bg-cream border-2 border-ink">
-                  <span className="font-condensed uppercase tracking-[0.1em] text-xs text-ink-soft">
+                <p className="inline-flex items-baseline gap-2 px-3 py-1.5 mb-8 bg-snow border-2 border-night">
+                  <span className="font-condensed uppercase tracking-[0.1em] text-xs text-night-soft">
                     Código de pedido
                   </span>
-                  <span className="font-condensed text-lg text-ink tracking-[0.06em]">{sent}</span>
+                  <span className="font-condensed text-lg text-night tracking-[0.06em]">{sent}</span>
                 </p>
                 <button
                   onClick={resetCart}
-                  className="inline-flex items-center justify-center min-h-[50px] px-8 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-[#c42904] cursor-pointer"
+                  className="inline-flex items-center justify-center min-h-[50px] px-8 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-royal cursor-pointer"
                 >
                   Volver al catálogo
                 </button>
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-gold border-b-[3px] border-ink">
-                  <h2 className="font-title uppercase text-2xl text-ink m-0 leading-none">
+                <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-gold border-b-[3px] border-night">
+                  <h2 className="font-title uppercase text-2xl text-night m-0 leading-none">
                     Tu pedido{" "}
-                    <span className="font-sans normal-case font-semibold text-sm text-ink-soft tabular-nums">
+                    <span className="font-sans normal-case font-semibold text-sm text-night-soft tabular-nums">
                       ({units} {units === 1 ? "bolsa" : "bolsas"})
                     </span>
                   </h2>
                   <button
                     onClick={handleClose}
-                    className="size-10 shrink-0 grid place-items-center bg-cream text-ink border-2 border-ink hover:bg-cream-2 transition-colors cursor-pointer"
+                    className="size-10 shrink-0 grid place-items-center bg-snow text-night border-2 border-night hover:bg-snow-2 transition-colors cursor-pointer"
                     aria-label="Cerrar pedido"
                   >
                     <X size={20} aria-hidden="true" />
@@ -237,19 +237,19 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                 <div className="flex-1 overflow-auto px-4 sm:px-6 py-3" aria-live="polite">
                   {cart.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full px-6 text-center">
-                      <svg viewBox="0 0 40 40" className="chitopo-sticker size-16 text-fire" aria-hidden="true">
+                      <svg viewBox="0 0 40 40" className="chitopo-sticker size-16 text-electric" aria-hidden="true">
                         <use href="#chitopo-b" />
                       </svg>
-                      <p className="font-condensed uppercase text-2xl text-ink mt-4 mb-0">
+                      <p className="font-condensed uppercase text-2xl text-night mt-4 mb-0">
                         Todavía no hay nada
                       </p>
-                      <p className="text-sm text-ink-soft mt-2 mb-6 max-w-[240px] leading-relaxed">
+                      <p className="text-sm text-night-soft mt-2 mb-6 max-w-[240px] leading-relaxed">
                         Elige cajas o displays del catálogo y arma tu pedido. Los precios los
                         cerramos por WhatsApp.
                       </p>
                       <button
                         onClick={onClose}
-                        className="inline-flex items-center min-h-[46px] px-6 bg-fire text-cream font-condensed uppercase tracking-[0.06em] nb nb-press hover:bg-[#c42904] cursor-pointer"
+                        className="inline-flex items-center min-h-[46px] px-6 bg-electric text-snow font-condensed uppercase tracking-[0.06em] nb nb-press hover:bg-royal cursor-pointer"
                       >
                         Ver productos
                       </button>
@@ -265,10 +265,10 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                             duration: prefersReduced ? 0 : 0.3,
                             delay: prefersReduced ? 0 : i * 0.04,
                           }}
-                          className="flex items-center gap-3 py-3 border-b-2 border-ink/15 last:border-0"
+                          className="flex items-center gap-3 py-3 border-b-2 border-night/15 last:border-0"
                         >
                           <div
-                            className="size-14 shrink-0 bg-cream-2 border-2 border-ink overflow-hidden grid place-items-center"
+                            className="size-14 shrink-0 bg-snow-2 border-2 border-night overflow-hidden grid place-items-center"
                             style={{ boxShadow: `inset 0 -5px 0 ${flavorAccent(item.flavor)}` }}
                           >
                             {item.image ? (
@@ -278,19 +278,19 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-condensed uppercase text-base leading-tight text-ink truncate">
+                            <div className="font-condensed uppercase text-base leading-tight text-night truncate">
                               {item.name}
                             </div>
-                            <div className="text-xs text-ink-faint tabular-nums">
+                            <div className="text-xs text-night-faint tabular-nums">
                               {item.formatLabel} ×{item.units} · {itemUnits(item)} bolsas
                             </div>
                             {hasPrice(item.price) && (
-                              <div className="font-condensed text-fire tabular-nums">
+                              <div className="font-condensed text-electric tabular-nums">
                                 {formatPrice(item.price * item.qty)}
                               </div>
                             )}
                           </div>
-                          <div className="inline-flex items-stretch border-2 border-ink bg-cream">
+                          <div className="inline-flex items-stretch border-2 border-night bg-snow">
                             <button
                               onClick={() => onChangeQty(item, -1)}
                               className={stepBtn}
@@ -298,7 +298,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                             >
                               <Minus size={14} aria-hidden="true" />
                             </button>
-                            <span className="min-w-8 px-1 grid place-items-center border-x-2 border-ink font-condensed text-ink tabular-nums">
+                            <span className="min-w-8 px-1 grid place-items-center border-x-2 border-night font-condensed text-night tabular-nums">
                               {item.qty}
                             </span>
                             <button
@@ -311,7 +311,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           </div>
                           <button
                             onClick={() => onRemove(item)}
-                            className="size-9 shrink-0 grid place-items-center text-ink-faint hover:text-fire hover:bg-cream-2 transition-colors cursor-pointer"
+                            className="size-9 shrink-0 grid place-items-center text-night-faint hover:text-electric hover:bg-snow-2 transition-colors cursor-pointer"
                             aria-label={`Eliminar ${item.name} ${item.formatLabel}`}
                           >
                             <X size={16} aria-hidden="true" />
@@ -323,24 +323,24 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                 </div>
 
                 {cart.length > 0 && (
-                  <div className="px-4 sm:px-6 py-5 border-t-[3px] border-ink bg-cream-2 flex flex-col gap-4 max-h-[62vh] overflow-y-auto">
+                  <div className="px-4 sm:px-6 py-5 border-t-[3px] border-night bg-snow-2 flex flex-col gap-4 max-h-[62vh] overflow-y-auto">
                     <MinOrderMeter units={units} />
 
-                    <div className="flex justify-between items-center gap-3 px-4 py-3 bg-cream border-2 border-ink">
+                    <div className="flex justify-between items-center gap-3 px-4 py-3 bg-snow border-2 border-night">
                       <div>
-                        <span className="font-condensed uppercase tracking-[0.06em] text-ink">
+                        <span className="font-condensed uppercase tracking-[0.06em] text-night">
                           {priced ? "Total estimado" : "Total del pedido"}
                         </span>
-                        <div className="text-xs text-ink-faint tabular-nums">
+                        <div className="text-xs text-night-faint tabular-nums">
                           {cart.length} {cart.length === 1 ? "producto" : "productos"} · {units} bolsas
                         </div>
                       </div>
                       {priced ? (
-                        <span className="font-condensed text-3xl text-fire tabular-nums">
+                        <span className="font-condensed text-3xl text-electric tabular-nums">
                           {formatPrice(total)}
                         </span>
                       ) : (
-                        <span className="font-condensed uppercase tracking-[0.04em] text-fire text-right leading-tight">
+                        <span className="font-condensed uppercase tracking-[0.04em] text-electric text-right leading-tight">
                           Precios a confirmar
                         </span>
                       )}
@@ -360,7 +360,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           value={shop}
                           spellCheck={false}
                           onChange={e => { setShop(e.target.value); setErrors(p => ({ ...p, shop: null })); }}
-                          className={`${inputBase} ${errors.shop ? "border-[#a32004]" : "border-ink"}`}
+                          className={`${inputBase} ${errors.shop ? "border-[#a32004]" : "border-night"}`}
                           aria-invalid={!!errors.shop}
                           aria-describedby={errors.shop ? "cart-shop-error" : undefined}
                         />
@@ -384,7 +384,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           value={name}
                           spellCheck={false}
                           onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: null })); }}
-                          className={`${inputBase} ${errors.name ? "border-[#a32004]" : "border-ink"}`}
+                          className={`${inputBase} ${errors.name ? "border-[#a32004]" : "border-night"}`}
                           aria-invalid={!!errors.name}
                           aria-describedby={errors.name ? "cart-name-error" : undefined}
                         />
@@ -409,7 +409,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           value={phone}
                           spellCheck={false}
                           onChange={e => { setPhone(e.target.value); setErrors(p => ({ ...p, phone: null })); }}
-                          className={`${inputBase} ${errors.phone ? "border-[#a32004]" : "border-ink"}`}
+                          className={`${inputBase} ${errors.phone ? "border-[#a32004]" : "border-night"}`}
                           aria-invalid={!!errors.phone}
                           aria-describedby={errors.phone ? "cart-phone-error" : undefined}
                         />
@@ -424,7 +424,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                     <div className="flex gap-3">
                       <button
                         onClick={handleClear}
-                        className="size-[52px] shrink-0 grid place-items-center bg-cream text-fire border-[3px] border-ink [box-shadow:3px_3px_0_var(--color-ink)] nb-press hover:bg-[#ffe1d6] cursor-pointer"
+                        className="size-[52px] shrink-0 grid place-items-center bg-snow text-electric border-[3px] border-night [box-shadow:3px_3px_0_var(--color-night)] nb-press hover:bg-[#ffe1d6] cursor-pointer"
                         aria-label="Vaciar pedido"
                       >
                         <Trash2 size={20} aria-hidden="true" />
@@ -433,17 +433,17 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                         ref={sendBtn}
                         onClick={sendToWhatsApp}
                         disabled={belowMin}
-                        className={`flex-1 min-h-[52px] inline-flex items-center justify-center gap-2.5 font-condensed uppercase tracking-[0.06em] text-lg border-[3px] border-ink ${
+                        className={`flex-1 min-h-[52px] inline-flex items-center justify-center gap-2.5 font-condensed uppercase tracking-[0.06em] text-lg border-[3px] border-night ${
                           belowMin
-                            ? "bg-cream text-ink-faint border-dashed cursor-not-allowed"
-                            : "bg-green text-[#06300f] [box-shadow:5px_5px_0_var(--color-ink)] nb-press hover:brightness-105 cursor-pointer"
+                            ? "bg-snow text-night-faint border-dashed cursor-not-allowed"
+                            : "bg-green text-[#06300f] [box-shadow:5px_5px_0_var(--color-night)] nb-press hover:brightness-105 cursor-pointer"
                         }`}
                       >
                         <WhatsAppIcon size={20} />
                         Enviar por WhatsApp
                       </button>
                     </div>
-                    <p className="text-center text-xs text-ink-soft leading-relaxed m-0">
+                    <p className="text-center text-xs text-night-soft leading-relaxed m-0">
                       Se abre WhatsApp con el resumen. Ahí coordinamos precio, pago y despacho.
                     </p>
                   </div>

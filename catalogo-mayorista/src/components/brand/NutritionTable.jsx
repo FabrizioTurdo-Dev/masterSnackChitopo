@@ -14,7 +14,7 @@ const ROWS = [
 export default function NutritionTable({ nutrition }) {
   if (!nutrition) {
     return (
-      <p className="text-sm text-ink-soft italic m-0">
+      <p className="text-sm text-night-soft italic m-0">
         Tabla nutricional en preparación — este producto todavía no sale a la venta.
       </p>
     );
@@ -23,28 +23,28 @@ export default function NutritionTable({ nutrition }) {
   const rows = ROWS.filter(r => nutrition.per100g?.[r.key] !== undefined);
 
   return (
-    <div className="border-[3px] border-ink bg-cream">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 px-3 py-2 bg-ink text-cream">
+    <div className="border-[3px] border-night bg-snow">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 px-3 py-2 bg-night text-snow">
         <span className="font-condensed uppercase tracking-[0.1em] text-sm">
           Información nutricional
         </span>
-        <span className="text-[11px] text-cream/80 tabular-nums">
+        <span className="text-[11px] text-snow/80 tabular-nums">
           Porción {nutrition.serving}
           {nutrition.portions ? ` · ${nutrition.portions} por envase` : ""}
         </span>
       </div>
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="border-b-[3px] border-ink text-ink">
+          <tr className="border-b-[3px] border-night text-night">
             <th className="text-left font-bold px-3 py-1.5">Por 100 g</th>
             <th className="text-right font-bold px-3 py-1.5">Cantidad</th>
           </tr>
         </thead>
         <tbody>
           {rows.map(r => (
-            <tr key={r.key} className="border-t border-ink/20 first:border-t-0">
-              <td className="px-3 py-1.5 text-ink">{r.label}</td>
-              <td className="px-3 py-1.5 text-right text-ink font-semibold tabular-nums">
+            <tr key={r.key} className="border-t border-night/20 first:border-t-0">
+              <td className="px-3 py-1.5 text-night">{r.label}</td>
+              <td className="px-3 py-1.5 text-right text-night font-semibold tabular-nums">
                 {nutrition.per100g[r.key]} {r.unit}
               </td>
             </tr>

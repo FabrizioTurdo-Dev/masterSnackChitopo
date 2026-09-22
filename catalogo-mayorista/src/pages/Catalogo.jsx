@@ -28,27 +28,27 @@ const CINTA = [
 // Chip de filtro. El elegido queda "hundido" (corrido hacia donde estaría
 // la sombra), así se lee como un botón que ya se apretó.
 const chip = (active, small = false) =>
-  `inline-flex items-center justify-center font-condensed uppercase tracking-[0.06em] border-ink cursor-pointer transition-colors ${
+  `inline-flex items-center justify-center font-condensed uppercase tracking-[0.06em] border-night cursor-pointer transition-colors ${
     small ? "min-h-[34px] px-3 text-xs border-2" : "min-h-[40px] px-4 text-sm border-[3px]"
   } ${
     active
-      ? "bg-ink text-gold translate-x-[3px] translate-y-[3px]"
-      : "bg-cream text-ink hover:bg-cream-2 nb-press [box-shadow:3px_3px_0_var(--color-ink)]"
+      ? "bg-night text-gold translate-x-[3px] translate-y-[3px]"
+      : "bg-snow text-night hover:bg-snow-2 nb-press [box-shadow:3px_3px_0_var(--color-night)]"
   }`;
 
 function ProductCardSkeleton() {
   return (
-    <div className="nb-soft bg-cream flex flex-col overflow-hidden" aria-hidden="true">
-      <div className="h-60 bg-cream-2 border-b-[3px] border-ink animate-pulse" />
+    <div className="nb-soft bg-snow flex flex-col overflow-hidden" aria-hidden="true">
+      <div className="h-60 bg-snow-2 border-b-[3px] border-night animate-pulse" />
       <div className="p-5 flex flex-col gap-3">
-        <div className="h-3 bg-cream-2 animate-pulse w-1/3" />
-        <div className="h-6 bg-cream-2 animate-pulse w-2/3" />
+        <div className="h-3 bg-snow-2 animate-pulse w-1/3" />
+        <div className="h-6 bg-snow-2 animate-pulse w-2/3" />
         <div className="flex gap-1.5">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-9 w-20 bg-cream-2 animate-pulse" />
+            <div key={i} className="h-9 w-20 bg-snow-2 animate-pulse" />
           ))}
         </div>
-        <div className="h-12 bg-cream-2 animate-pulse w-full" />
+        <div className="h-12 bg-snow-2 animate-pulse w-full" />
       </div>
     </div>
   );
@@ -199,13 +199,13 @@ function CatalogoPage() {
 
   return (
     <div className="grain min-h-screen font-sans flex flex-col">
-      <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur border-b-[3px] border-ink">
+      <header className="sticky top-0 z-50 bg-snow/95 backdrop-blur border-b-[3px] border-night">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <a href={LANDING_URL} className="shrink-0" aria-label="Chitopo — ir al sitio">
               <Logo height={32} />
             </a>
-            <span className="hidden md:inline-flex items-center font-condensed uppercase tracking-[0.12em] text-xs px-2.5 py-1 bg-ink text-gold">
+            <span className="hidden md:inline-flex items-center font-condensed uppercase tracking-[0.12em] text-xs px-2.5 py-1 bg-night text-gold">
               {STORE_CONFIG.subtitle}
             </span>
           </div>
@@ -213,7 +213,7 @@ function CatalogoPage() {
           <div className="flex items-center gap-1 sm:gap-2">
             <a
               href={LANDING_URL}
-              className="inline-flex items-center gap-1.5 min-h-[44px] min-w-[44px] justify-center px-1 sm:px-2 font-condensed uppercase tracking-[0.1em] text-sm text-ink hover:text-fire no-underline transition-colors"
+              className="inline-flex items-center gap-1.5 min-h-[44px] min-w-[44px] justify-center px-1 sm:px-2 font-condensed uppercase tracking-[0.1em] text-sm text-night hover:text-electric no-underline transition-colors"
             >
               <ArrowLeft size={18} aria-hidden="true" />
               <span className="sr-only sm:not-sr-only">Volver al sitio</span>
@@ -224,7 +224,7 @@ function CatalogoPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Escríbenos por WhatsApp"
-              className="inline-flex items-center justify-center size-11 text-ink hover:text-[#15803d] transition-colors"
+              className="inline-flex items-center justify-center size-11 text-night hover:text-[#15803d] transition-colors"
             >
               <MessageCircle size={22} aria-hidden="true" />
             </a>
@@ -232,13 +232,13 @@ function CatalogoPage() {
             <span ref={cartBump} className="inline-block">
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative inline-flex items-center gap-2 min-h-[44px] px-3 sm:px-4 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-sm border-[3px] border-ink [box-shadow:3px_3px_0_var(--color-ink)] nb-press cursor-pointer"
+                className="relative inline-flex items-center gap-2 min-h-[44px] px-3 sm:px-4 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-sm border-[3px] border-night [box-shadow:3px_3px_0_var(--color-night)] nb-press cursor-pointer"
                 aria-label={`Ver pedido, ${units} bolsas`}
               >
                 <ShoppingCart size={18} aria-hidden="true" />
                 <span className="hidden sm:inline">Mi pedido</span>
                 {units > 0 && (
-                  <span className="min-w-[26px] h-6 px-1.5 grid place-items-center bg-gold text-ink border-2 border-ink font-sans text-xs font-bold tabular-nums">
+                  <span className="min-w-[26px] h-6 px-1.5 grid place-items-center bg-gold text-night border-2 border-night font-sans text-xs font-bold tabular-nums">
                     {units}
                   </span>
                 )}
@@ -260,7 +260,7 @@ function CatalogoPage() {
           <div className="relative mb-5 sm:mb-6">
             <Search
               size={18}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-night-soft pointer-events-none"
               aria-hidden="true"
             />
             <input
@@ -269,7 +269,7 @@ function CatalogoPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               aria-label="Buscar productos"
-              className="w-full min-h-[50px] pl-12 pr-4 bg-cream text-ink text-base font-medium border-[3px] border-ink [box-shadow:4px_4px_0_var(--color-ink)] outline-none transition-shadow duration-200 placeholder:text-ink-faint/80 focus:[box-shadow:5px_5px_0_var(--color-fire)]"
+              className="w-full min-h-[50px] pl-12 pr-4 bg-snow text-night text-base font-medium border-[3px] border-night [box-shadow:4px_4px_0_var(--color-night)] outline-none transition-shadow duration-200 placeholder:text-night-faint/80 focus:[box-shadow:5px_5px_0_var(--color-electric)]"
             />
           </div>
 
@@ -292,12 +292,12 @@ function CatalogoPage() {
               </div>
 
               <label className="flex items-center gap-2">
-                <ArrowUpDown size={16} className="text-ink-soft" aria-hidden="true" />
+                <ArrowUpDown size={16} className="text-night-soft" aria-hidden="true" />
                 <span className="sr-only">Ordenar productos</span>
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value)}
-                  className="min-h-[40px] pl-3 pr-2 bg-cream text-ink font-condensed uppercase tracking-[0.06em] text-sm border-[3px] border-ink [box-shadow:3px_3px_0_var(--color-ink)] outline-none cursor-pointer focus:[box-shadow:3px_3px_0_var(--color-fire)]"
+                  className="min-h-[40px] pl-3 pr-2 bg-snow text-night font-condensed uppercase tracking-[0.06em] text-sm border-[3px] border-night [box-shadow:3px_3px_0_var(--color-night)] outline-none cursor-pointer focus:[box-shadow:3px_3px_0_var(--color-electric)]"
                 >
                   <option value="default">Orden</option>
                   <option value="disponibles">Disponibles primero</option>
@@ -308,7 +308,7 @@ function CatalogoPage() {
 
             {allFormats.length > 0 && (
               <div className="flex gap-2 items-center flex-wrap" role="group" aria-label="Formato">
-                <span className="font-condensed text-xs text-ink-soft uppercase tracking-[0.14em] shrink-0 mr-1">
+                <span className="font-condensed text-xs text-night-soft uppercase tracking-[0.14em] shrink-0 mr-1">
                   Formato
                 </span>
                 <button
@@ -332,7 +332,7 @@ function CatalogoPage() {
             )}
           </div>
 
-          <p className="font-condensed uppercase tracking-[0.14em] text-sm text-ink-soft mb-5 m-0" aria-live="polite">
+          <p className="font-condensed uppercase tracking-[0.14em] text-sm text-night-soft mb-5 m-0" aria-live="polite">
             {filtered.length} producto{filtered.length !== 1 ? "s" : ""}
             {formatFilter ? ` en ${formatFilter}` : ""}
             {search ? ` · "${search}"` : ""}
@@ -353,20 +353,20 @@ function CatalogoPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
                   transition={{ duration: prefersReduced ? 0 : 0.3 }}
-                  className="nb-soft bg-cream max-w-md mx-auto text-center px-6 py-10"
+                  className="nb-soft bg-snow max-w-md mx-auto text-center px-6 py-10"
                 >
-                  <svg viewBox="0 0 40 40" className="chitopo-sticker mx-auto size-16 text-fire" aria-hidden="true">
+                  <svg viewBox="0 0 40 40" className="chitopo-sticker mx-auto size-16 text-electric" aria-hidden="true">
                     <use href="#chitopo-a" />
                   </svg>
-                  <p className="font-condensed uppercase text-2xl text-ink mt-4 mb-0 leading-tight">
+                  <p className="font-condensed uppercase text-2xl text-night mt-4 mb-0 leading-tight">
                     {search ? `Nada por acá con "${search}"` : "No hay productos con esos filtros"}
                   </p>
-                  <p className="text-sm text-ink-soft mt-2 mb-0">
+                  <p className="text-sm text-night-soft mt-2 mb-0">
                     {search ? "Prueba con otra palabra o limpia los filtros." : "Cambia los filtros para ver más."}
                   </p>
                   <button
                     onClick={clearFilters}
-                    className="mt-6 inline-flex items-center min-h-[44px] px-5 bg-fire text-cream font-condensed uppercase tracking-[0.06em] nb nb-press cursor-pointer"
+                    className="mt-6 inline-flex items-center min-h-[44px] px-5 bg-electric text-snow font-condensed uppercase tracking-[0.06em] nb nb-press cursor-pointer"
                   >
                     Limpiar filtros
                   </button>
@@ -429,7 +429,7 @@ function CatalogoPage() {
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             exit={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
             transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 18, stiffness: 320 }}
-            className="fixed bottom-6 inset-x-0 mx-auto w-fit max-w-[90vw] z-[999] bg-ink text-gold px-5 py-3 border-[3px] border-ink [box-shadow:4px_4px_0_var(--color-fire)] font-condensed uppercase tracking-[0.04em] text-sm sm:text-base text-center"
+            className="fixed bottom-6 inset-x-0 mx-auto w-fit max-w-[90vw] z-[999] bg-night text-gold px-5 py-3 border-[3px] border-night [box-shadow:4px_4px_0_var(--color-electric)] font-condensed uppercase tracking-[0.04em] text-sm sm:text-base text-center"
             role="status"
           >
             {toast}

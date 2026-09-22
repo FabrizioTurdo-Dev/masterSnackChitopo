@@ -155,14 +155,14 @@ export default function ProductForm({ product, onSave, onCancel }) {
   }
 
   const toggle = (on) =>
-    `flex-1 min-h-[40px] font-condensed uppercase tracking-[0.06em] text-sm border-2 border-ink cursor-pointer transition-colors ${
-      on ? "bg-ink text-gold" : "bg-cream text-ink hover:bg-cream-2"
+    `flex-1 min-h-[40px] font-condensed uppercase tracking-[0.06em] text-sm border-2 border-night cursor-pointer transition-colors ${
+      on ? "bg-night text-gold" : "bg-snow text-night hover:bg-snow-2"
     }`;
 
   // Chip de declaración o sello: se prende con el color que corresponde.
   const claimChip = (on, onClass) =>
-    `px-3 min-h-[34px] text-xs font-bold border-2 border-ink cursor-pointer transition-colors ${
-      on ? onClass : "bg-cream text-ink-soft hover:bg-cream-2"
+    `px-3 min-h-[34px] text-xs font-bold border-2 border-night cursor-pointer transition-colors ${
+      on ? onClass : "bg-snow text-night-soft hover:bg-snow-2"
     }`;
 
   return (
@@ -170,7 +170,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
       <div className="flex gap-4 items-start">
         <div
           onClick={() => fileRef.current.click()}
-          className="size-[100px] border-2 border-dashed border-ink bg-cream-2 flex items-center justify-center cursor-pointer overflow-hidden shrink-0 hover:bg-gold/40 transition-colors duration-200"
+          className="size-[100px] border-2 border-dashed border-night bg-snow-2 flex items-center justify-center cursor-pointer overflow-hidden shrink-0 hover:bg-gold/40 transition-colors duration-200"
         >
           {imgPreview ? (
             <img src={imgPreview} alt="" className="w-full h-full object-contain p-1" />
@@ -183,7 +183,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
           <Btn small variant="ghost" onClick={() => fileRef.current.click()}>
             <Upload size={14} aria-hidden="true" /> Subir foto del empaque
           </Btn>
-          <p className="text-xs text-ink-faint leading-relaxed m-0">
+          <p className="text-xs text-night-faint leading-relaxed m-0">
             Ideal: el frente de la bolsa recortado, fondo transparente o plano.
           </p>
         </div>
@@ -259,10 +259,10 @@ export default function ProductForm({ product, onSave, onCancel }) {
             <Plus size={13} aria-hidden="true" /> Agregar formato
           </Btn>
         </div>
-        <div className="bg-cream-2 border-2 border-ink p-3 flex flex-col gap-2">
+        <div className="bg-snow-2 border-2 border-night p-3 flex flex-col gap-2">
           <div className="hidden sm:grid grid-cols-[1fr_90px_90px_110px_32px] gap-2 px-1">
             {["Nombre", "Bolsas", "Stock", "Precio", ""].map(h => (
-              <span key={h} className="font-condensed text-[11px] uppercase tracking-[0.1em] text-ink-soft">{h}</span>
+              <span key={h} className="font-condensed text-[11px] uppercase tracking-[0.1em] text-night-soft">{h}</span>
             ))}
           </div>
           {form.formats.map((f, i) => (
@@ -300,7 +300,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
               />
               <button
                 onClick={() => removeFormat(i)}
-                className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-ink hover:bg-[#ffd9cc] transition-colors cursor-pointer justify-self-end"
+                className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-night hover:bg-[#ffd9cc] transition-colors cursor-pointer justify-self-end"
                 aria-label={`Eliminar formato ${f.label || i + 1}`}
               >
                 <Trash2 size={15} aria-hidden="true" />
@@ -308,10 +308,10 @@ export default function ProductForm({ product, onSave, onCancel }) {
             </div>
           ))}
           {form.formats.length === 0 && (
-            <p className="text-sm text-ink-soft text-center py-3 m-0">Sin formatos. Agrega al menos uno.</p>
+            <p className="text-sm text-night-soft text-center py-3 m-0">Sin formatos. Agrega al menos uno.</p>
           )}
         </div>
-        <p className="text-xs text-ink-faint mt-2 mb-0 leading-relaxed">
+        <p className="text-xs text-night-faint mt-2 mb-0 leading-relaxed">
           "Bolsas" es cuántas unidades trae el bulto; "Stock" son cuántos bultos hay.
           Deja el precio vacío mientras siga en "a consultar".
         </p>
@@ -339,7 +339,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
               key={s.id}
               onClick={() => toggleSeal(s.id)}
               aria-pressed={!!form.claims.seals?.includes(s.id)}
-              className={claimChip(form.claims.seals?.includes(s.id), "bg-ink text-cream")}
+              className={claimChip(form.claims.seals?.includes(s.id), "bg-night text-snow")}
             >
               {s.label}
             </button>
@@ -368,7 +368,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
 
         <div>
           <label className={`${LABEL} block mb-2.5`}>Tabla nutricional (por 100 g)</label>
-          <div className="bg-cream-2 border-2 border-ink p-3 flex flex-col gap-3">
+          <div className="bg-snow-2 border-2 border-night p-3 flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-2">
               <Input
                 label="Porción"
@@ -387,7 +387,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
             <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2">
               {NUTRIENTS.map(n => (
                 <div key={n.key} className="flex flex-col gap-1">
-                  <label className="text-[11px] text-ink-soft font-bold">{n.label}</label>
+                  <label className="text-[11px] text-night-soft font-bold">{n.label}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -398,7 +398,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-ink-faint m-0">
+            <p className="text-xs text-night-faint m-0">
               Deja todo vacío si la ficha todavía no está lista.
             </p>
           </div>
@@ -409,7 +409,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         <p className={`${ERROR_TEXT} text-right m-0`} role="alert">{error}</p>
       )}
 
-      <div className="flex gap-3 justify-end pt-4 border-t-[3px] border-ink">
+      <div className="flex gap-3 justify-end pt-4 border-t-[3px] border-night">
         <Btn variant="ghost" onClick={onCancel}>Cancelar</Btn>
         <Btn onClick={handleSubmit}>{isEdit ? "Guardar cambios" : "Crear producto"}</Btn>
       </div>

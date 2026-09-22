@@ -7,8 +7,8 @@ import { prefersReducedMotion } from "../../lib/motion";
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const TONES = {
-  fire: { band: "bg-fire text-cream", star: "text-gold" },
-  ink: { band: "bg-ink text-gold", star: "text-fire-light" },
+  electric: { band: "bg-electric text-snow", star: "text-gold" },
+  night: { band: "bg-night text-gold", star: "text-electric-light" },
 };
 
 // Cinta infinita. El track tiene dos grupos idénticos y se corre -50%: al
@@ -24,7 +24,7 @@ export default function Marquee({
   duration = 30,
   reverse = false,
   tilted = false,
-  tone = "fire",
+  tone = "electric",
   className = "",
 }) {
   const root = useRef(null);
@@ -89,13 +89,13 @@ export default function Marquee({
     { scope: root, dependencies: [reps, duration, reverse], revertOnUpdate: true }
   );
 
-  const { band, star } = TONES[tone] ?? TONES.fire;
+  const { band, star } = TONES[tone] ?? TONES.electric;
 
   return (
     <div
       ref={root}
-      className={`relative overflow-hidden border-y-[3px] border-ink py-3 ${band} ${
-        tilted ? "z-20 -mx-[5%] -my-5 sm:-my-7 -rotate-2 shadow-[0_6px_0_var(--color-ink)]" : ""
+      className={`relative overflow-hidden border-y-[3px] border-night py-3 ${band} ${
+        tilted ? "z-20 -mx-[5%] -my-5 sm:-my-7 -rotate-2 shadow-[0_6px_0_var(--color-night)]" : ""
       } ${className}`}
       aria-hidden="true"
     >

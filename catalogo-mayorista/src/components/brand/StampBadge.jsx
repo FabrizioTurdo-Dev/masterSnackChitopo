@@ -13,15 +13,15 @@ export default function StampBadge({
   return (
     <div className={`aspect-square ${className}`} aria-hidden="true">
       <svg viewBox="0 0 120 120" className="absolute inset-0 w-full h-full">
-        <circle cx="60" cy="60" r="57" fill="var(--color-cream)" stroke="var(--color-ink)" strokeWidth="3" />
-        <circle cx="60" cy="60" r="30" fill="var(--color-fire)" stroke="var(--color-ink)" strokeWidth="3" />
+        <circle cx="60" cy="60" r="57" fill="var(--color-snow)" stroke="var(--color-night)" strokeWidth="3" />
+        <circle cx="60" cy="60" r="30" fill="var(--color-electric)" stroke="var(--color-night)" strokeWidth="3" />
         <text
           x="60"
           y="71"
           textAnchor="middle"
           fontSize="32"
           fill="var(--color-gold)"
-          stroke="var(--color-ink)"
+          stroke="var(--color-night)"
           strokeWidth="1.5"
           paintOrder="stroke"
         >
@@ -39,7 +39,7 @@ export default function StampBadge({
           fontFamily="Anton, sans-serif"
           fontSize="12.5"
           letterSpacing="1.2"
-          fill="var(--color-ink)"
+          fill="var(--color-night)"
           style={{ textTransform: "uppercase" }}
         >
           <textPath href={`#${id}`} textLength="274" lengthAdjust="spacing">

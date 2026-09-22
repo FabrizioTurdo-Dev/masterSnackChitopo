@@ -12,13 +12,13 @@ function Dato({ label, children }) {
   if (!children) return null;
   return (
     <div>
-      <h4 className="font-condensed uppercase tracking-[0.1em] text-sm text-ink m-0 mb-1">{label}</h4>
-      <p className="text-sm text-ink-soft leading-relaxed m-0">{children}</p>
+      <h4 className="font-condensed uppercase tracking-[0.1em] text-sm text-night m-0 mb-1">{label}</h4>
+      <p className="text-sm text-night-soft leading-relaxed m-0">{children}</p>
     </div>
   );
 }
 
-const CLAIM = "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1.5 bg-cream-2 text-ink border-2 border-ink";
+const CLAIM = "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1.5 bg-snow-2 text-night border-2 border-night";
 
 export default function ProductModal({ product, onClose, onAdd, stockThreshold }) {
   const prefersReduced = useReducedMotion();
@@ -79,7 +79,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
       animate={{ opacity: 1 }}
       exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: prefersReduced ? 0 : 0.2 }}
-      className="fixed inset-0 bg-ink/70 backdrop-blur-[2px] flex items-center justify-center z-[300] p-3 sm:p-6"
+      className="fixed inset-0 bg-night/70 backdrop-blur-[2px] flex items-center justify-center z-[300] p-3 sm:p-6"
       onClick={e => e.target === e.currentTarget && onClose()}
       role="dialog"
       aria-modal="true"
@@ -90,15 +90,15 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
         animate={{ scale: 1, y: 0, rotate: 0, opacity: 1 }}
         exit={prefersReduced ? { opacity: 1 } : { scale: 0.96, y: 12, opacity: 0 }}
         transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 22, stiffness: 300 }}
-        className="bg-cream nb w-full max-w-lg md:max-w-4xl max-h-[92vh] overflow-y-auto"
+        className="bg-snow nb w-full max-w-lg md:max-w-4xl max-h-[92vh] overflow-y-auto"
         style={{ overscrollBehavior: "contain" }}
       >
-        <div className="sticky top-0 z-20 bg-cream flex items-center justify-between gap-4 pl-5 pr-3 py-3 border-b-[3px] border-ink">
-          <h2 className="font-title uppercase text-xl text-ink truncate m-0">{product.name}</h2>
+        <div className="sticky top-0 z-20 bg-snow flex items-center justify-between gap-4 pl-5 pr-3 py-3 border-b-[3px] border-night">
+          <h2 className="font-title uppercase text-xl text-night truncate m-0">{product.name}</h2>
           <button
             ref={closeBtn}
             onClick={onClose}
-            className="size-10 shrink-0 grid place-items-center bg-cream text-ink border-2 border-ink hover:bg-cream-2 transition-colors cursor-pointer"
+            className="size-10 shrink-0 grid place-items-center bg-snow text-night border-2 border-night hover:bg-snow-2 transition-colors cursor-pointer"
             aria-label="Cerrar ficha"
           >
             <X size={20} aria-hidden="true" />
@@ -107,7 +107,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
 
         <div className="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
           <div className="p-5 md:sticky md:top-[67px] md:self-start">
-            <div className="relative h-72 md:h-[420px] bg-cream-2 border-[3px] border-ink overflow-hidden flex items-center justify-center p-5">
+            <div className="relative h-72 md:h-[420px] bg-snow-2 border-[3px] border-night overflow-hidden flex items-center justify-center p-5">
               <div
                 className="absolute inset-0 opacity-30"
                 style={{ background: `radial-gradient(circle at 50% 45%, ${accent}, transparent 68%)` }}
@@ -147,7 +147,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                 <button
                   ref={zoomTrigger}
                   onClick={() => setZoomed(true)}
-                  className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 min-h-[40px] px-3 bg-cream text-ink font-condensed uppercase tracking-[0.06em] text-xs border-2 border-ink [box-shadow:3px_3px_0_var(--color-ink)] nb-press cursor-pointer"
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 min-h-[40px] px-3 bg-snow text-night font-condensed uppercase tracking-[0.06em] text-xs border-2 border-night [box-shadow:3px_3px_0_var(--color-night)] nb-press cursor-pointer"
                 >
                   <Maximize2 size={14} aria-hidden="true" />
                   Ver en grande
@@ -164,15 +164,15 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                       key={v.src}
                       onClick={() => setViewIdx(i)}
                       aria-pressed={on}
-                      className={`flex items-center gap-2 pr-3 border-2 border-ink overflow-hidden font-condensed uppercase tracking-[0.06em] text-xs transition-colors cursor-pointer ${
-                        on ? "bg-ink text-gold" : "bg-cream text-ink hover:bg-cream-2"
+                      className={`flex items-center gap-2 pr-3 border-2 border-night overflow-hidden font-condensed uppercase tracking-[0.06em] text-xs transition-colors cursor-pointer ${
+                        on ? "bg-night text-gold" : "bg-snow text-night hover:bg-snow-2"
                       }`}
                     >
                       <img
                         src={v.src}
                         alt=""
                         aria-hidden="true"
-                        className="size-11 object-cover bg-cream-2 border-r-2 border-ink"
+                        className="size-11 object-cover bg-snow-2 border-r-2 border-night"
                       />
                       {v.label}
                     </button>
@@ -182,25 +182,25 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
             )}
           </div>
 
-          <div className="p-5 pt-0 md:pt-5 md:border-l-[3px] md:border-ink flex flex-col gap-5">
+          <div className="p-5 pt-0 md:pt-5 md:border-l-[3px] md:border-night flex flex-col gap-5">
             <div>
-              <div className="flex items-center gap-3 flex-wrap text-xs text-ink-faint">
-                <span className="font-semibold text-ink">{product.grams} g</span>
+              <div className="flex items-center gap-3 flex-wrap text-xs text-night-faint">
+                <span className="font-semibold text-night">{product.grams} g</span>
                 {soon && (
-                  <span className="font-condensed uppercase tracking-[0.08em] text-xs px-2 py-0.5 bg-ink text-gold">
+                  <span className="font-condensed uppercase tracking-[0.08em] text-xs px-2 py-0.5 bg-night text-gold">
                     Próximamente
                   </span>
                 )}
               </div>
-              <h3 className="font-title uppercase text-3xl sm:text-4xl leading-[1.02] text-ink mt-1.5 mb-0 text-pretty">
+              <h3 className="font-title uppercase text-3xl sm:text-4xl leading-[1.02] text-night mt-1.5 mb-0 text-pretty">
                 {product.name}
               </h3>
               {hasPrice(selected?.price) ? (
-                <p className="font-condensed text-3xl text-fire mt-2 mb-0 tabular-nums">
+                <p className="font-condensed text-3xl text-electric mt-2 mb-0 tabular-nums">
                   {formatPrice(selected.price)}
                 </p>
               ) : (
-                <p className="text-sm font-semibold text-ink-soft mt-2 mb-0">
+                <p className="text-sm font-semibold text-night-soft mt-2 mb-0">
                   Precio a consultar por WhatsApp
                 </p>
               )}
@@ -222,14 +222,14 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
             )}
 
             {soon ? (
-              <div className="dots-cream border-[3px] border-ink px-4 py-4 flex flex-col gap-3">
-                <p className="text-sm text-ink-soft leading-relaxed m-0">
+              <div className="dots-snow border-[3px] border-night px-4 py-4 flex flex-col gap-3">
+                <p className="text-sm text-night-soft leading-relaxed m-0">
                   Este sabor está en camino. Si quieres reservar cajas para el lanzamiento,
                   escríbenos y te avisamos apenas salga.
                 </p>
                 <button
                   onClick={notifyMe}
-                  className="w-full min-h-[50px] inline-flex items-center justify-center gap-2 bg-cream text-ink font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-cream-2 cursor-pointer"
+                  className="w-full min-h-[50px] inline-flex items-center justify-center gap-2 bg-snow text-night font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-snow-2 cursor-pointer"
                 >
                   <Bell size={18} aria-hidden="true" />
                   Avísame cuando llegue
@@ -237,7 +237,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
               </div>
             ) : available.length === 0 ? (
               <p
-                className="px-4 py-3 bg-cream-2 text-fire font-condensed uppercase tracking-[0.06em] border-[3px] border-ink text-center m-0"
+                className="px-4 py-3 bg-snow-2 text-electric font-condensed uppercase tracking-[0.06em] border-[3px] border-night text-center m-0"
                 role="alert"
               >
                 Sin stock por ahora
@@ -245,7 +245,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
             ) : (
               <>
                 <div>
-                  <p className="font-condensed uppercase tracking-[0.12em] text-sm text-ink-soft m-0 mb-2">
+                  <p className="font-condensed uppercase tracking-[0.12em] text-sm text-night-soft m-0 mb-2">
                     Elige el formato
                   </p>
                   <div className="flex gap-2.5 flex-wrap" role="radiogroup" aria-label="Formatos disponibles">
@@ -259,14 +259,14 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                           role="radio"
                           aria-checked={isSel}
                           aria-label={`${f.label} de ${f.units} unidades, ${f.stock} disponibles`}
-                          className={`px-4 py-2 text-left border-[3px] border-ink transition-colors cursor-pointer ${
-                            isSel ? "bg-ink text-gold" : "bg-cream text-ink hover:bg-cream-2"
+                          className={`px-4 py-2 text-left border-[3px] border-night transition-colors cursor-pointer ${
+                            isSel ? "bg-night text-gold" : "bg-snow text-night hover:bg-snow-2"
                           }`}
                         >
                           <span className="font-condensed uppercase tracking-[0.04em] text-lg leading-none">
                             {f.label} ×{f.units}
                           </span>
-                          <span className={`block text-[11px] font-semibold mt-1 ${isSel ? "text-gold/75" : isLow ? "text-fire" : "text-ink-faint"}`}>
+                          <span className={`block text-[11px] font-semibold mt-1 ${isSel ? "text-gold/75" : isLow ? "text-electric" : "text-night-faint"}`}>
                             {isLow ? `Quedan ${f.stock}` : `${f.stock} disponibles`}
                           </span>
                         </button>
@@ -276,21 +276,21 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                 </div>
 
                 {selected && (
-                  <div className="bg-cream-2 border-2 border-ink p-4">
+                  <div className="bg-snow-2 border-2 border-night p-4">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <span className="text-sm text-ink font-semibold">
+                        <span className="text-sm text-night font-semibold">
                           {selected.label} de {selected.units} bolsas
                         </span>
-                        <span className="block text-xs text-ink-faint tabular-nums">
+                        <span className="block text-xs text-night-faint tabular-nums">
                           Stock: {selected.stock} {selected.stock === 1 ? "bulto" : "bultos"}
                         </span>
                       </div>
                       <QtyStepper qty={qty} max={maxQty} onChange={setQty} size="lg" />
                     </div>
-                    <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-ink/20">
-                      <span className="text-sm text-ink-soft">{selected.units * qty} bolsas en total</span>
-                      <span className="font-condensed text-xl text-fire tabular-nums">
+                    <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-night/20">
+                      <span className="text-sm text-night-soft">{selected.units * qty} bolsas en total</span>
+                      <span className="font-condensed text-xl text-electric tabular-nums">
                         {hasPrice(selected.price) ? formatPrice(selected.price * qty) : "A consultar"}
                       </span>
                     </div>
@@ -301,7 +301,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                   ref={addBtn}
                   disabled={!selected}
                   onClick={add}
-                  className="w-full min-h-[54px] inline-flex items-center justify-center gap-2 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-xl nb nb-press hover:bg-[#c42904] cursor-pointer disabled:bg-cream-2 disabled:text-ink-faint disabled:cursor-not-allowed"
+                  className="w-full min-h-[54px] inline-flex items-center justify-center gap-2 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-xl nb nb-press hover:bg-royal cursor-pointer disabled:bg-snow-2 disabled:text-night-faint disabled:cursor-not-allowed"
                   aria-label={selected ? `Agregar ${qty} ${selected.label}` : "Elige un formato primero"}
                 >
                   <Plus size={22} aria-hidden="true" />
@@ -310,7 +310,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
               </>
             )}
 
-            <div className="flex flex-col gap-4 border-t-[3px] border-ink pt-5">
+            <div className="flex flex-col gap-4 border-t-[3px] border-night pt-5">
               <NutritionTable nutrition={product.nutrition} />
               <Dato label="Ingredientes">{product.ingredients}</Dato>
               <Dato label="Alérgenos">{product.allergens}</Dato>

@@ -21,7 +21,7 @@ function AdminGate() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center gap-2 font-condensed uppercase tracking-[0.12em] text-ink">
+      <div className="min-h-screen flex items-center justify-center gap-2 font-condensed uppercase tracking-[0.12em] text-night">
         <Loader2 size={16} className="animate-spin" aria-hidden="true" />
         Verificando sesión…
       </div>
@@ -39,7 +39,7 @@ function Shell({ children }) {
         initial={{ opacity: 0, y: 24, rotate: -1.5 }}
         animate={{ opacity: 1, y: 0, rotate: 0 }}
         transition={{ type: "spring", damping: 20, stiffness: 240 }}
-        className="relative z-10 bg-cream nb p-6 sm:p-8 w-full max-w-[400px]"
+        className="relative z-10 bg-snow nb p-6 sm:p-8 w-full max-w-[400px]"
       >
         <div className="text-center mb-7 flex flex-col items-center">
           <Logo height={44} />
@@ -47,7 +47,7 @@ function Shell({ children }) {
             Panel
             <span className="sr-only"> de administración</span>
           </h1>
-          <p className="font-condensed uppercase tracking-[0.14em] text-sm text-ink-soft mt-3 mb-0" aria-hidden="true">
+          <p className="font-condensed uppercase tracking-[0.14em] text-sm text-night-soft mt-3 mb-0" aria-hidden="true">
             Administración · {STORE_CONFIG.subtitle}
           </p>
         </div>
@@ -81,16 +81,16 @@ function Login() {
     return (
       <Shell>
         <div className="flex flex-col gap-4">
-          <div className="flex gap-2.5 items-start border-2 border-ink bg-gold p-3">
-            <ShieldAlert size={18} className="text-ink shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-sm text-ink leading-relaxed m-0">
+          <div className="flex gap-2.5 items-start border-2 border-night bg-gold p-3">
+            <ShieldAlert size={18} className="text-night shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-sm text-night leading-relaxed m-0">
               Supabase no está configurado. Este acceso de prueba solo existe en
               desarrollo: los cambios no se guardan en ningún lado.
             </p>
           </div>
           <button
             onClick={enterDemo}
-            className="w-full min-h-[50px] bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-[#c42904] cursor-pointer"
+            className="w-full min-h-[50px] bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-royal cursor-pointer"
           >
             Entrar en modo demo →
           </button>
@@ -142,13 +142,13 @@ function Login() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full min-h-[50px] mt-1 bg-fire text-cream font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-[#c42904] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none flex items-center justify-center gap-2"
+          className="w-full min-h-[50px] mt-1 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-royal cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none flex items-center justify-center gap-2"
         >
           {loading && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
           {loading ? "Entrando…" : "Entrar →"}
         </button>
 
-        <p className="text-xs text-ink-faint text-center mt-2 mb-0 leading-relaxed">
+        <p className="text-xs text-night-faint text-center mt-2 mb-0 leading-relaxed">
           Acceso solo para cuentas autorizadas de {STORE_CONFIG.producer}.
         </p>
       </form>

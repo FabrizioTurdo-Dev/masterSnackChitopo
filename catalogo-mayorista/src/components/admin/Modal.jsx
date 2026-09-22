@@ -9,7 +9,7 @@ export default function Modal({ title, onClose, children, wide }) {
       animate={{ opacity: 1 }}
       exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: prefersReduced ? 0 : 0.2 }}
-      className="fixed inset-0 bg-ink/70 backdrop-blur-[2px] flex items-center justify-center z-[200] p-3 sm:p-5"
+      className="fixed inset-0 bg-night/70 backdrop-blur-[2px] flex items-center justify-center z-[200] p-3 sm:p-5"
       onClick={e => e.target === e.currentTarget && onClose()}
       role="dialog"
       aria-modal="true"
@@ -20,15 +20,15 @@ export default function Modal({ title, onClose, children, wide }) {
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={prefersReduced ? { opacity: 1 } : { scale: 0.96, y: 10, opacity: 0 }}
         transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 24, stiffness: 320 }}
-        className="bg-cream nb w-full"
+        className="bg-snow nb w-full"
         style={{ maxWidth: wide ? 720 : 480, maxHeight: "90vh" }}
       >
         <div className="overflow-y-auto max-h-[90vh]" style={{ overscrollBehavior: "contain" }}>
-          <div className="flex items-center justify-between gap-4 pl-4 sm:pl-6 pr-3 py-3 border-b-[3px] border-ink sticky top-0 bg-cream z-10">
-            <h2 className="font-title uppercase text-xl text-ink m-0 truncate">{title}</h2>
+          <div className="flex items-center justify-between gap-4 pl-4 sm:pl-6 pr-3 py-3 border-b-[3px] border-night sticky top-0 bg-snow z-10">
+            <h2 className="font-title uppercase text-xl text-night m-0 truncate">{title}</h2>
             <button
               onClick={onClose}
-              className="size-10 shrink-0 grid place-items-center bg-cream text-ink border-2 border-ink hover:bg-cream-2 transition-colors cursor-pointer"
+              className="size-10 shrink-0 grid place-items-center bg-snow text-night border-2 border-night hover:bg-snow-2 transition-colors cursor-pointer"
               aria-label="Cerrar"
             >
               <X size={18} aria-hidden="true" />

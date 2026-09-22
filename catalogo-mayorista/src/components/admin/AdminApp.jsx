@@ -68,7 +68,7 @@ export default function AdminApp() {
   return (
     <div className="min-h-screen font-sans flex">
       {/* Sidebar desktop */}
-      <aside className="on-dark hidden sm:flex w-[232px] bg-ink text-cream border-r-[3px] border-ink flex-col px-3 py-5 sticky top-0 h-screen shrink-0">
+      <aside className="on-dark hidden sm:flex w-[232px] bg-night text-snow border-r-[3px] border-night flex-col px-3 py-5 sticky top-0 h-screen shrink-0">
         <Sidebar page={page} setPage={setPage} newOrders={newOrders} stockAlerts={stockAlerts} />
       </aside>
 
@@ -81,7 +81,7 @@ export default function AdminApp() {
               animate={{ opacity: 1 }}
               exit={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: prefersReduced ? 0 : 0.2 }}
-              className="fixed inset-0 bg-ink/60 z-[100] sm:hidden"
+              className="fixed inset-0 bg-night/60 z-[100] sm:hidden"
               onClick={() => setSidebarOpen(false)}
             />
             <motion.aside
@@ -89,7 +89,7 @@ export default function AdminApp() {
               animate={{ x: 0 }}
               exit={prefersReduced ? { x: 0 } : { x: "-100%" }}
               transition={prefersReduced ? { duration: 0 } : { type: "spring", damping: 25, stiffness: 250 }}
-              className="on-dark fixed top-0 left-0 bottom-0 w-[260px] bg-ink text-cream border-r-[3px] border-gold z-[101] flex flex-col px-3 py-5 sm:hidden"
+              className="on-dark fixed top-0 left-0 bottom-0 w-[260px] bg-night text-snow border-r-[3px] border-gold z-[101] flex flex-col px-3 py-5 sm:hidden"
             >
               <Sidebar page={page} setPage={(p) => { setPage(p); setSidebarOpen(false); }} newOrders={newOrders} stockAlerts={stockAlerts} />
             </motion.aside>
@@ -99,10 +99,10 @@ export default function AdminApp() {
 
       <main className="flex-1 min-w-0 overflow-auto py-5 px-4 sm:py-8 sm:px-8">
         {/* Mobile header */}
-        <div className="flex items-center gap-3 mb-6 sm:hidden -mx-4 -mt-5 px-4 py-3 bg-cream border-b-[3px] border-ink">
+        <div className="flex items-center gap-3 mb-6 sm:hidden -mx-4 -mt-5 px-4 py-3 bg-snow border-b-[3px] border-night">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="size-11 grid place-items-center bg-cream text-ink border-2 border-ink [box-shadow:3px_3px_0_var(--color-ink)] nb-press cursor-pointer"
+            className="size-11 grid place-items-center bg-snow text-night border-2 border-night [box-shadow:3px_3px_0_var(--color-night)] nb-press cursor-pointer"
             aria-label="Abrir menú"
           >
             <Menu size={20} aria-hidden="true" />
@@ -110,8 +110,8 @@ export default function AdminApp() {
           <div className="flex items-center gap-2.5">
             <Logo height={26} />
             <div>
-              <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-ink">Admin</div>
-              <div className="text-[11px] text-ink-soft">{STORE_CONFIG.name}</div>
+              <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-night">Admin</div>
+              <div className="text-[11px] text-night-soft">{STORE_CONFIG.name}</div>
             </div>
           </div>
         </div>

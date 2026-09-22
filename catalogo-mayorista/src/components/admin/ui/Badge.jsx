@@ -1,13 +1,13 @@
 import { PILL, TONES } from "./styles";
 
 const STYLES = {
-  nuevo:      "bg-fire text-cream",
+  nuevo:      "bg-electric text-snow",
   pendiente:  TONES.gold,
   confirmado: TONES.green,
   enviado:    TONES.blue,
   cancelado:  TONES.red,
   activo:     TONES.green,
-  oculto:     TONES.cream,
+  oculto:     TONES.snow,
   bajo:       TONES.red,
   alerta:     TONES.gold,
 };

@@ -28,12 +28,12 @@ function SortHeader({ label, field, current, direction, onSort }) {
   const Icon = active ? (direction === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
   return (
     <th
-      className={`${TH} cursor-pointer select-none hover:text-cream transition-colors`}
+      className={`${TH} cursor-pointer select-none hover:text-snow transition-colors`}
       onClick={() => onSort(field)}
     >
       <div className="flex items-center gap-1.5">
         {label}
-        <Icon size={12} className={active ? "text-cream" : "opacity-50"} aria-hidden="true" />
+        <Icon size={12} className={active ? "text-snow" : "opacity-50"} aria-hidden="true" />
       </div>
     </th>
   );
@@ -41,10 +41,10 @@ function SortHeader({ label, field, current, direction, onSort }) {
 
 function SkeletonRow() {
   return (
-    <tr className="border-t-2 border-ink/10 first:border-t-0">
+    <tr className="border-t-2 border-night/10 first:border-t-0">
       {[1, 2, 3, 4, 5, 6].map(i => (
         <td key={i} className="px-4 py-4">
-          <div className="h-4 bg-cream-2 animate-pulse" style={{ width: `${40 + i * 15}%` }} />
+          <div className="h-4 bg-snow-2 animate-pulse" style={{ width: `${40 + i * 15}%` }} />
         </td>
       ))}
     </tr>
@@ -54,8 +54,8 @@ function SkeletonRow() {
 function EmptyState({ hasFilters }) {
   return (
     <div className="py-16 text-center">
-      <Package size={40} className="mx-auto mb-3 text-ink-faint" aria-hidden="true" />
-      <p className="font-condensed uppercase tracking-[0.04em] text-lg text-ink-soft m-0">
+      <Package size={40} className="mx-auto mb-3 text-night-faint" aria-hidden="true" />
+      <p className="font-condensed uppercase tracking-[0.04em] text-lg text-night-soft m-0">
         {hasFilters ? "No hay productos para esos filtros" : "Todavía no hay productos. ¡Crea el primero!"}
       </p>
     </div>
@@ -239,7 +239,7 @@ export default function ProductsTable({ stockThreshold }) {
       <div className={`${CARD} mb-6 p-4`}>
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           <div className="relative flex-1 w-full">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none" aria-hidden="true" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-night-soft pointer-events-none" aria-hidden="true" />
             <input
               type="text"
               placeholder="Buscar por nombre o sabor…"
@@ -277,22 +277,22 @@ export default function ProductsTable({ stockThreshold }) {
         ) : (
           <>
             {/* Mobile */}
-            <div className="divide-y-2 divide-ink/15 sm:hidden">
+            <div className="divide-y-2 divide-night/15 sm:hidden">
               {paginated.map(p => (
                 <div key={p.id} className="p-4 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="size-11 bg-cream-2 border-2 border-ink flex items-center justify-center text-lg overflow-hidden shrink-0">
+                      <div className="size-11 bg-snow-2 border-2 border-night flex items-center justify-center text-lg overflow-hidden shrink-0">
                         {p.image ? <img src={p.image} alt="" className="w-full h-full object-contain p-0.5" /> : p.emoji}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-condensed uppercase text-base leading-tight text-ink truncate">{p.name}</div>
-                        <div className="text-xs text-ink-faint">
+                        <div className="font-condensed uppercase text-base leading-tight text-night truncate">{p.name}</div>
+                        <div className="text-xs text-night-faint">
                           {lineLabel(p.line)} · {p.grams} g
                         </div>
                       </div>
                     </div>
-                    <div className="text-xs font-bold text-fire shrink-0 text-right">{priceOf(p)}</div>
+                    <div className="text-xs font-bold text-electric shrink-0 text-right">{priceOf(p)}</div>
                   </div>
                   <div className="flex gap-1 flex-wrap">
                     {(p.formats || []).map(f => (
@@ -303,18 +303,18 @@ export default function ProductsTable({ stockThreshold }) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => toggleActive(p)}
-                        className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.cream}`}
+                        className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.snow}`}
                       >
                         {p.active ? "● Visible" : "○ Oculto"}
                       </button>
                       {statusPill(p)}
-                      <span className="text-xs text-ink-faint">{totalStock(p)} bolsas</span>
+                      <span className="text-xs text-night-faint">{totalStock(p)} bolsas</span>
                     </div>
                     <div className="flex gap-1.5">
                       <Btn small variant="ghost" onClick={() => setModal(p)}>Editar</Btn>
                       <button
                         onClick={() => deleteProduct(p.id)}
-                        className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-ink hover:bg-[#ffd9cc] transition-colors cursor-pointer"
+                        className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-night hover:bg-[#ffd9cc] transition-colors cursor-pointer"
                         aria-label={`Eliminar ${p.name}`}
                       >
                         <Trash2 size={15} aria-hidden="true" />
@@ -329,7 +329,7 @@ export default function ProductsTable({ stockThreshold }) {
             <div className="hidden sm:block overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-ink">
+                  <tr className="bg-night">
                     <SortHeader label="Producto" field="name" current={sortField} direction={sortDir} onSort={handleSort} />
                     <SortHeader label="Línea" field="line" current={sortField} direction={sortDir} onSort={handleSort} />
                     <SortHeader label="Gramaje" field="grams" current={sortField} direction={sortDir} onSort={handleSort} />
@@ -341,34 +341,34 @@ export default function ProductsTable({ stockThreshold }) {
                 </thead>
                 <tbody>
                   {paginated.map(p => (
-                    <tr key={p.id} className="border-t-2 border-ink/15 first:border-t-0 hover:bg-cream-2/60 transition-colors">
+                    <tr key={p.id} className="border-t-2 border-night/15 first:border-t-0 hover:bg-snow-2/60 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="size-10 bg-cream-2 border-2 border-ink flex items-center justify-center text-lg overflow-hidden shrink-0">
+                          <div className="size-10 bg-snow-2 border-2 border-night flex items-center justify-center text-lg overflow-hidden shrink-0">
                             {p.image ? <img src={p.image} alt="" className="w-full h-full object-contain p-0.5" /> : p.emoji}
                           </div>
                           <div>
-                            <div className="font-condensed uppercase text-base leading-tight text-ink">{p.name}</div>
-                            <div className="text-xs text-ink-faint">{p.flavor}</div>
+                            <div className="font-condensed uppercase text-base leading-tight text-night">{p.name}</div>
+                            <div className="text-xs text-night-faint">{p.flavor}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-ink-soft">{lineLabel(p.line)}</td>
-                      <td className="px-4 py-3 text-sm text-ink-soft tabular-nums">{p.grams} g</td>
-                      <td className="px-4 py-3 text-xs font-bold text-fire">{priceOf(p)}</td>
+                      <td className="px-4 py-3 text-sm text-night-soft">{lineLabel(p.line)}</td>
+                      <td className="px-4 py-3 text-sm text-night-soft tabular-nums">{p.grams} g</td>
+                      <td className="px-4 py-3 text-xs font-bold text-electric">{priceOf(p)}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1 flex-wrap max-w-[260px]">
                           {(p.formats || []).map(f => (
                             <FormatTag key={f.id} format={f} threshold={stockThreshold} />
                           ))}
                         </div>
-                        <div className="text-xs text-ink-faint mt-1">{totalStock(p)} bolsas</div>
+                        <div className="text-xs text-night-faint mt-1">{totalStock(p)} bolsas</div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-col gap-1 items-start">
                           <button
                             onClick={() => toggleActive(p)}
-                            className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.cream}`}
+                            className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.snow}`}
                           >
                             {p.active ? "● Visible" : "○ Oculto"}
                           </button>
@@ -380,7 +380,7 @@ export default function ProductsTable({ stockThreshold }) {
                           <Btn small variant="ghost" onClick={() => setModal(p)}>Editar</Btn>
                           <button
                             onClick={() => deleteProduct(p.id)}
-                            className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-ink hover:bg-[#ffd9cc] transition-colors cursor-pointer"
+                            className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-night hover:bg-[#ffd9cc] transition-colors cursor-pointer"
                             aria-label={`Eliminar ${p.name}`}
                           >
                             <Trash2 size={15} aria-hidden="true" />
