@@ -429,7 +429,7 @@ export default function Hero() {
       <HeroBackdrop baseRef={base} wipeRef={wipe} initial={PRODUCTS[0].stage} />
       <HeroFloaters layer="back" />
 
-      <div className="relative z-10 flex-1 flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-6 sm:pb-8">
+      <div className="relative z-10 flex-1 flex flex-col contenedor pt-20 sm:pt-24 pb-6 sm:pb-8">
         <p className="hero-fade self-center m-0 bg-cream border-[3px] border-ink px-3 py-1 font-condensed uppercase tracking-[0.2em] text-[11px] sm:text-xs text-ink shadow-[3px_3px_0_var(--color-ink)]">
           Snack 100% chileno · La Pintana
         </p>

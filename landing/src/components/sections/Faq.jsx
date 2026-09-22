@@ -40,7 +40,7 @@ export default function Faq() {
       title="Lo que siempre nos preguntan"
       intro="Si tienes un almacén, distribuidora o local de barrio, esto es lo que necesitas saber."
     >
-      <Reveal stagger className="flex flex-col gap-3 max-w-3xl">
+      <Reveal stagger className="flex flex-col gap-3 max-w-4xl">
         {PREGUNTAS.map(({ q, a }) => (
           <details key={q} className="group nb-soft bg-cream">
             <summary className="flex items-center justify-between gap-4 cursor-pointer list-none p-5 font-condensed uppercase text-lg sm:text-xl text-ink">

@@ -31,7 +31,7 @@ export default function CtaCatalogo() {
 
   return (
     <section id="catalogo" ref={root} className="relative scroll-mt-20 py-16 sm:py-24">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="contenedor">
         <div className="cta-box nb damero-fire text-cream p-7 sm:p-14 text-center">
           <Store size={40} className="mx-auto mb-5" aria-hidden="true" />
 

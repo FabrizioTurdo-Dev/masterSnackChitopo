@@ -13,7 +13,7 @@ export default function Section({
       id={id}
       className={`relative scroll-mt-20 py-16 sm:py-24 lg:py-32 ${className}`}
     >
-      <div className={`max-w-6xl mx-auto px-4 sm:px-6 ${innerClassName}`}>
+      <div className={`contenedor ${innerClassName}`}>
         {(eyebrow || title) && (
           <div className="mb-10 sm:mb-14">
             {eyebrow && (

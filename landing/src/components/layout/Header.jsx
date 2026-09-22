@@ -31,7 +31,7 @@ export default function Header() {
         scrolled ? "bg-cream/95 backdrop-blur border-b-[3px] border-ink" : "bg-transparent"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div className="contenedor h-16 flex items-center justify-between gap-4">
         <a href="#inicio" className="shrink-0" aria-label="Chitopo — ir al inicio">
           <Logo height={32} />
         </a>

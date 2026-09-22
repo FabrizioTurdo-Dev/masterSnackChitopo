@@ -6,6 +6,7 @@ import { Pause, Play, Factory, ShieldCheck, Flame } from "lucide-react";
 import InstagramIcon from "../brand/InstagramIcon";
 import StampBadge from "../brand/StampBadge";
 import MasterSnacksLogo from "../brand/MasterSnacksLogo";
+import WaveMarquee from "../ui/WaveMarquee";
 import { STORE_CONFIG } from "../../data/store";
 import { prefersReducedMotion } from "../../lib/useLenis";
 import { useBurst } from "../../lib/burst";
@@ -184,17 +185,8 @@ export default function Fabrica() {
             }
           );
 
-          // La palabra de fondo hace una onda vertical continua (arriba-abajo),
-          // independiente del scroll. Solo en desktop para no complicar mobile.
-          if (desktop) {
-            gsap.to(".fab-word", {
-              y: 40,        // Amplitud: sube/baja 40px desde el centro
-              duration: 5,  // Ciclo completo: 5 segundos
-              ease: "sine.inOut", // Movimiento natural, sinusoidal
-              repeat: -1,   // Infinito
-              yoyo: true,   // Arriba → abajo → arriba
-            });
-          }
+          // La palabra de fondo la mueve <WaveMarquee/>, que tiene su propio
+          // loop y su propio empujón con el scroll.
 
           // El sello de Master Snacks cae acelerando y se estampa sobre los
           // videos: en el golpe se aplasta, la grilla acusa el impacto y
@@ -226,9 +218,11 @@ export default function Fabrica() {
           // Dos velocidades distintas y la inclinación que se endereza al
           // llegar al centro: da profundidad sin pinear nada.
           const cards = gsap.utils.toArray(".fab-card");
+          // Recorrido corto: la sección ahora entra en 90vh y recorta lo que
+          // se salga, así que las tarjetas no pueden viajar tanto.
           const recorrido = [
-            { from: { y: 70, rotate: -5 }, to: { y: -50, rotate: -1.5 } },
-            { from: { y: 150, rotate: 5 }, to: { y: 10, rotate: 1.5 } },
+            { from: { y: 30, rotate: -4 }, to: { y: -25, rotate: -1.5 } },
+            { from: { y: 55, rotate: 4 }, to: { y: -5, rotate: 1.5 } },
           ];
           cards.forEach((card, i) => {
             const r = recorrido[i];
@@ -254,40 +248,50 @@ export default function Fabrica() {
     <section
       id="fabrica"
       ref={root}
-      className="on-dark relative scroll-mt-20 overflow-hidden max-h-[90vh] bg-ink text-cream border-y-[3px] border-ink py-8 sm:py-12 lg:py-16"
+      className="on-dark relative scroll-mt-20 overflow-hidden bg-ink text-cream border-y-[3px] border-ink py-12 sm:py-16 lg:py-[clamp(1.25rem,3.5svh,3rem)]"
     >
-      <div className="relative isolate max-w-6xl mx-auto px-3 sm:px-4 lg:px-5 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16 items-center">
+      {/* Carrusel de fondo, al medio de la sección. Va antes de la grilla y
+          sin z-index: los dos están posicionados, así que el que viene
+          después en el DOM queda encima. */}
+      <WaveMarquee
+        text="La Pintana"
+        className="absolute inset-x-0 top-1/2 -translate-y-1/2 font-condensed text-[clamp(3.5rem,min(11vw,16svh),9rem)]"
+      />
+
+      <div className="relative contenedor grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-14 items-center">
         <div>
           <p className="fab-fade font-condensed uppercase tracking-[0.22em] text-gold text-xs sm:text-sm mb-3">
             La fábrica
           </p>
-          <h2 className="fab-fade font-title uppercase text-5xl sm:text-7xl lg:text-8xl leading-[0.9] text-cream m-0">
+          {/* En escritorio el tamaño también depende del alto de pantalla:
+              la sección tiene que entrar en 90vh. */}
+          <h2 className="fab-fade font-title uppercase text-5xl sm:text-7xl lg:text-[clamp(3rem,min(5.6vw,10.5svh),5.5rem)] leading-[0.9] text-cream m-0">
             La máquina
             <br />
             que no para
           </h2>
-          <p className="fab-fade text-cream/80 text-base sm:text-lg leading-relaxed mt-5 max-w-md">
+          <p className="fab-fade text-cream/80 text-base sm:text-lg lg:text-base xl:text-lg leading-relaxed mt-5 lg:mt-[clamp(0.75rem,2.2svh,1.75rem)] max-w-md lg:max-w-xl">
             Así se ve el galpón un día cualquiera. Sin estudio ni actores: el maíz entra
             a la máquina, sale suflé, agarra sabor y cae directo a la bolsa.
           </p>
 
-          <ol className="list-none p-0 m-0 mt-8 flex flex-col gap-5">
+          <ol className="list-none p-0 m-0 mt-8 lg:mt-[clamp(0.75rem,2.2svh,1.75rem)] flex flex-col gap-5 lg:gap-[clamp(0.5rem,1.8svh,1.25rem)]">
             {PASOS.map((p) => (
               <li key={p.n} className="fab-fade flex gap-4">
                 <span className="font-condensed text-3xl sm:text-4xl leading-none text-gold shrink-0 w-12">
                   {p.n}
                 </span>
                 <div>
-                  <h3 className="font-title uppercase text-xl sm:text-2xl text-cream m-0 leading-tight">
+                  <h3 className="font-title uppercase text-xl sm:text-2xl lg:text-xl xl:text-2xl text-cream m-0 leading-tight">
                     {p.title}
                   </h3>
-                  <p className="text-cream/75 text-sm sm:text-base leading-relaxed m-0 mt-1">{p.text}</p>
+                  <p className="text-cream/75 text-sm sm:text-base lg:text-sm xl:text-base leading-relaxed m-0 mt-1">{p.text}</p>
                 </div>
               </li>
             ))}
           </ol>
 
-          <ul className="list-none p-0 m-0 mt-8 flex flex-wrap gap-2">
+          <ul className="list-none p-0 m-0 mt-8 lg:mt-[clamp(0.75rem,2.2svh,1.75rem)] flex flex-wrap gap-2">
             {DATOS.map(({ icon: Icon, text }) => (
               <li
                 key={text}
@@ -303,35 +307,25 @@ export default function Fabrica() {
             href={`https://instagram.com/${STORE_CONFIG.instagram}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="fab-fade mt-7 inline-flex items-center gap-2 min-h-[44px] font-condensed uppercase tracking-[0.08em] text-gold hover:text-cream no-underline"
+            className="fab-fade mt-7 lg:mt-[clamp(0.5rem,2svh,1.5rem)] inline-flex items-center gap-2 min-h-[44px] font-condensed uppercase tracking-[0.08em] text-gold hover:text-cream no-underline"
           >
             <InstagramIcon size={18} />
             Más del día a día en @{STORE_CONFIG.instagram}
           </a>
         </div>
 
-        {/* Palabra de fondo. En celular y tablet va en su propia franja,
-            de borde a borde entre el texto y los videos. En escritorio sale
-            del flujo y baja a la franja libre bajo los videos, pegada al
-            borde izquierdo de la pantalla: al medio de la sección los
-            videos la tapaban. El -z-10 (con el isolate de la grilla) la
-            deja detrás del texto. */}
-        <span
-          aria-hidden="true"
-          className="fab-word -z-10 pointer-events-none select-none block -mx-4 sm:-mx-6 -my-4 lg:m-0 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center whitespace-nowrap font-condensed uppercase leading-none text-gold/12 text-[clamp(4rem,15vw,15rem)] [-webkit-text-stroke:2px_rgb(255_194_14/0.50)]"
-        >
-          La Pintana · La Pintana · La Pintana
-        </span>
-
-        <div className="fab-videos relative grid grid-cols-2 gap-2 sm:gap-4 lg:gap-6 items-start">
+        {/* Las tarjetas son 3:4, así que el ancho manda sobre el alto: en
+            escritorio se limita según el alto de pantalla para que los dos
+            videos y su desfase entren en los 90vh. */}
+        <div className="fab-videos relative grid grid-cols-2 gap-3 sm:gap-5 lg:gap-6 items-start lg:max-w-[calc(117svh_-_108px)]">
           <VideoFabrica paso={PASOS[0]} />
-          <VideoFabrica paso={PASOS[1]} className="mt-10 sm:mt-16" />
+          <VideoFabrica paso={PASOS[1]} className="mt-8 sm:mt-12 lg:mt-8" />
 
           {/* Va en el hueco que deja la segunda tarjeta, que arranca más abajo.
               La inclinación va inline y no con una clase: Tailwind usa la
               propiedad `rotate`, que se sumaría al transform de GSAP. */}
           <div
-            className="fab-sello absolute z-20 -top-2 -right-2 w-24 sm:-top-8 sm:right-0 sm:w-36 lg:w-44 lg:-top-12 lg:-right-6"
+            className="fab-sello absolute z-20 -top-2 -right-2 w-24 sm:-top-8 sm:right-0 sm:w-36 lg:w-40 lg:-top-10 lg:-right-6"
             style={{ transform: "rotate(-12deg)" }}
           >
             <StampBadge text="Hecho por Master Snacks · La Pintana · " className="relative w-full">

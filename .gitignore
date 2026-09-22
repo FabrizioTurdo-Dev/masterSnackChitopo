@@ -12,4 +12,11 @@ page-snapshot.yml
 
 # Documentos de negocio / assets de diseño en bruto — no van al repo de código
 *.docx
+*.pdf
+!catalogo-mayorista/propuesta-comercial.pdf
 Logos vectorizados/
+Lilita_One/
+/mastesnack transparente.png
+
+# Instaladores y descargas sueltas
+*.exe
