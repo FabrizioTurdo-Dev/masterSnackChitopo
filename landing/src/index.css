@@ -1,7 +1,11 @@
 @import "tailwindcss";
-/* Tokens, neubrutalismo, damero, grano, lettering y estallido: todo lo
-   que comparte con el catálogo vive en shared/chitopo-brand.css. */
-@import "../../shared/chitopo-brand.css";
+/* Paletas, neubrutalismo, grano, lettering y estallido: todo lo que
+   comparte con el catálogo vive en shared/marca/. La home es de Master
+   Snacks y /chitopo/ de Chitopo; cada index.html elige con data-brand. */
+@import "../../shared/marca/tokens.css";
+@import "../../shared/marca/base.css";
+@import "../../shared/marca/chitopo.css";
+@import "../../shared/marca/master-snacks.css";
 
 /* Ancho del contenido en toda la landing: header, footer y cada sección
    usan esta clase, así el cambio de ancho se hace en un solo lugar. */

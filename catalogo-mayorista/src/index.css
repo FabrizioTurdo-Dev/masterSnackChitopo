@@ -1,14 +1,18 @@
 @import "tailwindcss";
-/* Tokens, neubrutalismo, damero, grano, lettering y estallido: los
-   mismos de la landing, desde shared/chitopo-brand.css. */
-@import "../../shared/chitopo-brand.css";
+/* Paletas, neubrutalismo, grano, lettering y estallido: los mismos de
+   la landing, desde shared/marca/. El catálogo es de Master Snacks
+   (data-brand en index.html); Chitopo entra como isla donde haga falta. */
+@import "../../shared/marca/tokens.css";
+@import "../../shared/marca/base.css";
+@import "../../shared/marca/chitopo.css";
+@import "../../shared/marca/master-snacks.css";
 
 /* Chitopos sueltos (cabecera, estados vacíos): las formas de
-   ChitopoShapes pintadas con el color del sabor y contorno café. */
+   ChitopoShapes pintadas con el color del sabor y contorno de tinta. */
 .chitopo-sticker svg,
 svg.chitopo-sticker {
   fill: currentColor;
-  stroke: var(--color-ink);
+  stroke: var(--line);
   stroke-width: 2.4;
   paint-order: stroke fill;
 }

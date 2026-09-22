@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════════════════════════════
+   Paletas de las marcas — compartidas por la landing y el catálogo
+   Master Snacks es la empresa; Chitopo, su marca de horneados. Cada
+   paleta vive acá entera y cada página elige su identidad con
+   data-brand (ver chitopo.css y master-snacks.css).
+
+   Los nombres dicen el color y no el rol: con "bg" y "accent" el día
+   que cambió el fondo quedaron botones amarillos sobre amarillo. Lo
+   que sí cambia según la marca (tinta de bordes, fondo de página,
+   lettering) son variables de rol que NO están en @theme, así no
+   generan clases que mientan.
+
+   `static`: se emiten todas, aunque solo se usen desde JS o un SVG.
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme static {
+  /* Amarillo de las dos marcas: el dorado de Chitopo y el "MASTER" del
+     logo de Master Snacks (#fbcd01) son casi el mismo color. */
+  --color-gold: #ffc20e;
+  --color-gold-2: #ffb800;
+
+  /* ── Chitopo ─────────────────────────────────────────────────── */
+
+  /* Café del logo — texto, bordes y sombras duras */
+  --color-ink: #3a0d04;
+  /* Secundarios medidos sobre el dorado: 6.6:1 y 5.3:1 */
+  --color-ink-soft: #6b2a12;
+  --color-ink-faint: #7a3a18;
+
+  /* Tarjetas */
+  --color-cream: #fff4d6;
+  --color-cream-2: #ffe9b0;
+
+  /* Rojo-naranja del fondo del logo, oscurecido lo justo para que el
+     texto crema dé 4.76:1 (con #d92e06 daba 4.41). `fire-light` no llega,
+     así que es solo para rellenos. */
+  --color-fire: #d02b05;
+  --color-fire-light: #f2460f;
+
+  /* ── Master Snacks ───────────────────────────────────────────── */
+
+  /* Azul de "SNACKS": llamados y bloques. Blanco encima da 8.3:1 y el
+     amarillo, 5.1:1. `electric-light` es solo para rellenos. */
+  --color-electric: #001bfa;
+  --color-electric-light: #3d52ff;
+  /* Azul del gorro de chef: hover de electric y bloques profundos. */
+  --color-royal: #0000b5;
+
+  /* Contorno del logo — texto, bordes y sombras duras. Negro con una
+     gota de azul para que no pelee con el eléctrico. */
+  --color-night: #0b0b1e;
+  /* Secundarios: sobre el amarillo dan 7.1:1 y 4.9:1. */
+  --color-night-soft: #33365e;
+  --color-night-faint: #4a4e7a;
+
+  /* Tarjetas: blanco frío, que sobre el amarillo se lee más limpio que
+     el crema de Chitopo. Nunca "night" sobre electric (2.4:1). */
+  --color-snow: #f5f7ff;
+  --color-snow-2: #e4e8ff;
+
+  /* ── Semánticos ──────────────────────────────────────────────── */
+  --color-green: #22c55e;
+  --color-red: #ef4444;
+
+  /* Acento por sabor. Sobre el dorado no llegan a 4.5:1 (queso da 2.7),
+     así que van en rellenos o en letra grande con contorno. */
+  --color-queso: #e23a2e;
+  --color-papa: #3fa34d;
+  --color-frutos: #b5179e;
+  --color-mani: #c98a2b;
+  --color-tocino: #ff3b14;
+
+  /* Tipografía — el brief avisa que no hay licencia de la fuente del
+     empaque; estas son alternativas libres de Google Fonts. */
+  --font-sans: "Archivo", system-ui, sans-serif;
+  --font-display: "Baloo 2", "Archivo", system-ui, sans-serif;
+  --font-condensed: "Anton", "Archivo", system-ui, sans-serif;
+  /* Solo títulos (clase font-title). Para volver a Anton en todos a la
+     vez, cambiar esta línea por la de --font-condensed. */
+  --font-title: "Lilita One", "Anton", system-ui, sans-serif;
+}
+
+/* Lilita One (OFL, ver ../fonts/OFL.txt), servida desde el repo: no pasa
+   por Google Fonts. */
+@font-face {
+  font-family: "Lilita One";
+  src: url("../fonts/LilitaOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

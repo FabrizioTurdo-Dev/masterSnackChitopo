@@ -1,0 +1,53 @@
+/* ═══════════════════════════════════════════════════════════════
+   MASTER SNACKS — la empresa, marca madre de Chitopo y de las que
+   vengan. Los colores del logo: amarillo de "MASTER", azul eléctrico
+   de "SNACKS", azul rey del gorro y contorno negro, en clave de
+   cómic: trama de puntos donde Chitopo tiene damero.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-brand="mastersnacks"] {
+  --line: var(--color-night);
+  --line-on-dark: var(--color-gold);
+  --grain-rgb: 11 11 30;
+
+  --title-fill: var(--color-snow);
+  --title-line: var(--color-night);
+  --title-shadow: var(--color-electric);
+
+  /* Trama de puntos tono sobre tono, como el Ben-Day de las viñetas. */
+  --page-bg: var(--color-gold);
+  --page-pattern: radial-gradient(var(--color-gold-2) 2.4px, transparent 2.6px);
+  --page-pattern-size: 20px 20px;
+  --scroll-track: var(--color-gold-2);
+
+  --burst-base: var(--color-gold);
+  --burst-default: var(--color-electric);
+}
+
+/* Bloque azul con trama de puntos más oscura: hero, llamados. */
+.halftone-electric {
+  background-color: var(--color-electric);
+  background-image: radial-gradient(rgb(0 0 0 / 0.14) 2.4px, transparent 2.6px);
+  background-size: 20px 20px;
+}
+
+/* Bloque profundo (fábrica, footer). */
+.halftone-night {
+  background-color: var(--color-night);
+  background-image: radial-gradient(rgb(255 255 255 / 0.05) 2.4px, transparent 2.6px);
+  background-size: 20px 20px;
+}
+
+/* Tarjetas con trama muy leve. */
+.dots-snow {
+  background-color: var(--color-snow);
+  background-image: radial-gradient(rgb(11 11 30 / 0.07) 1.5px, transparent 1.6px);
+  background-size: 18px 18px;
+}
+
+/* Titular amarillo sobre un bloque azul: la sombra pasa a negra, que
+   la eléctrica ahí no se vería. */
+.title-on-electric {
+  --title-fill: var(--color-gold);
+  --title-shadow: var(--color-night);
+}

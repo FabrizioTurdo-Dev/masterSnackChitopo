@@ -1,0 +1,53 @@
+/* ═══════════════════════════════════════════════════════════════
+   CHITOPO — la marca de horneados de Master Snacks
+   Dorado con damero, como el post de Instagram que ya usa la marca;
+   café para la tinta y rojo para los llamados.
+
+   Es el tema por defecto (:root) para que nada quede sin valores si
+   una página se olvida del data-brand.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root,
+[data-brand="chitopo"] {
+  --line: var(--color-ink);
+  --line-on-dark: var(--color-gold);
+  --grain-rgb: 58 13 4;
+
+  --title-fill: var(--color-cream);
+  --title-line: var(--color-ink);
+  --title-shadow: var(--color-ink);
+
+  /* Damero sin imagen: un conic-gradient pinta las dos casillas oscuras
+     de cada baldosa de 2×2. */
+  --page-bg: var(--color-gold);
+  --page-pattern: conic-gradient(
+    var(--color-gold-2) 25%,
+    transparent 0 50%,
+    var(--color-gold-2) 0 75%,
+    transparent 0
+  );
+  --page-pattern-size: 96px 96px;
+  --scroll-track: var(--color-gold-2);
+
+  --burst-base: var(--color-gold);
+  --burst-default: var(--color-fire);
+}
+
+/* Damero de dos rojos para los bloques de llamado. */
+.damero-fire {
+  background-color: var(--color-fire);
+  background-image: conic-gradient(
+    rgb(0 0 0 / 0.08) 25%,
+    transparent 0 50%,
+    rgb(0 0 0 / 0.08) 0 75%,
+    transparent 0
+  );
+  background-size: 96px 96px;
+}
+
+/* Tramado de puntos para las franjas crema. */
+.dots-cream {
+  background-color: var(--color-cream);
+  background-image: radial-gradient(rgb(58 13 4 / 0.09) 1.5px, transparent 1.6px);
+  background-size: 18px 18px;
+}

@@ -1,66 +1,19 @@
 /* ═══════════════════════════════════════════════════════════════
-   CHITOPO — Sistema visual compartido por la landing y el catálogo
-   Lo importan los dos index.css justo después de Tailwind. Si algo de
-   la marca cambia, cambia acá: antes cada app tenía su propio @theme y
-   terminaron pareciendo dos sitios distintos.
+   Base común a las dos marcas: reset, neubrutalismo, foco, grano,
+   bolsa, sello y estallido. Nada acá nombra un color de marca: todo
+   lee las variables de rol que define cada tema (chitopo.css,
+   master-snacks.css) según el data-brand más cercano.
 
-   Dorado con damero, como el post de Instagram que ya usa la marca.
-   Los nombres dicen el color y no el rol: con "bg" y "accent" el día
-   que cambió el fondo quedaron botones amarillos sobre amarillo.
+   Variables de rol:
+   --line           tinta de texto, bordes y sombras duras
+   --line-on-dark   lo mismo dentro de un bloque .on-dark
+   --grain-rgb      tinte de la viñeta del grano (canales r g b)
+   --title-*        relleno, contorno y sombra del lettering .hero-title
+   --page-*         fondo de página (color, trama y tamaño de la trama)
+   --scroll-track   carril de la barra de scroll
+   --burst-base     color que se mezcla en cada partícula del estallido
+   --burst-default  acento del estallido cuando el que dispara no trae uno
    ═══════════════════════════════════════════════════════════════ */
-
-@theme {
-  /* Dorado Chitopo — fondo base y casillas del damero */
-  --color-gold: #ffc20e;
-  --color-gold-2: #ffb800;
-
-  /* Café del logo — texto, bordes y sombras duras */
-  --color-ink: #3a0d04;
-  /* Secundarios medidos sobre el dorado: 6.6:1 y 5.3:1 */
-  --color-ink-soft: #6b2a12;
-  --color-ink-faint: #7a3a18;
-
-  /* Tarjetas */
-  --color-cream: #fff4d6;
-  --color-cream-2: #ffe9b0;
-
-  /* Rojo-naranja del fondo del logo, oscurecido lo justo para que el
-     texto crema dé 4.76:1 (con #d92e06 daba 4.41). `fire-light` no llega,
-     así que es solo para rellenos. */
-  --color-fire: #d02b05;
-  --color-fire-light: #f2460f;
-
-  /* Semánticos */
-  --color-green: #22c55e;
-  --color-red: #ef4444;
-
-  /* Acento por sabor. Sobre el dorado no llegan a 4.5:1 (queso da 2.7),
-     así que van en rellenos o en letra grande con contorno ink. */
-  --color-queso: #e23a2e;
-  --color-papa: #3fa34d;
-  --color-frutos: #b5179e;
-  --color-mani: #c98a2b;
-  --color-tocino: #ff3b14;
-
-  /* Tipografía — el brief avisa que no hay licencia de la fuente del
-     empaque; estas son alternativas libres de Google Fonts. */
-  --font-sans: "Archivo", system-ui, sans-serif;
-  --font-display: "Baloo 2", "Archivo", system-ui, sans-serif;
-  --font-condensed: "Anton", "Archivo", system-ui, sans-serif;
-  /* Solo títulos (clase font-title). Para volver a Anton en todos a la
-     vez, cambiar esta línea por la de --font-condensed. */
-  --font-title: "Lilita One", "Anton", system-ui, sans-serif;
-}
-
-/* Lilita One (OFL, ver fonts/OFL.txt), servida desde el repo: no pasa por
-   Google Fonts. */
-@font-face {
-  font-family: "Lilita One";
-  src: url("./fonts/LilitaOne-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
 
 *,
 *::before,
@@ -70,7 +23,6 @@
 
 body {
   margin: 0;
-  color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -79,21 +31,20 @@ body {
   /* `clip` y no `hidden`: hidden crea un contenedor de scroll que
      desestabiliza el position:fixed de ScrollTrigger. */
   overflow-x: clip;
+}
 
-  /* Damero sin imagen: un conic-gradient pinta las dos casillas oscuras
-     de cada baldosa de 2×2. */
-  background-color: var(--color-gold);
-  background-image: conic-gradient(
-    var(--color-gold-2) 25%,
-    transparent 0 50%,
-    var(--color-gold-2) 0 75%,
-    transparent 0
-  );
-  background-size: 96px 96px;
+/* Fondo de página de la marca. Lo usa el body y cualquier "isla" de
+   otra marca (por ejemplo la tarjeta de Chitopo dentro de la home). */
+body,
+.brand-surface {
+  color: var(--line);
+  background-color: var(--page-bg);
+  background-image: var(--page-pattern);
+  background-size: var(--page-pattern-size);
 }
 
 ::selection {
-  background: var(--color-ink);
+  background: var(--line);
   color: var(--color-gold);
 }
 
@@ -102,11 +53,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-gold-2);
+  background: var(--scroll-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-ink);
+  background: var(--line);
 }
 
 .scrollbar-none::-webkit-scrollbar {
@@ -117,16 +68,16 @@ body {
   scrollbar-width: none;
 }
 
-/* ── Neubrutalismo: borde grueso y sombra dura café ─────────────── */
+/* ── Neubrutalismo: borde grueso y sombra dura ──────────────────── */
 
 .nb {
-  border: 3px solid var(--color-ink);
-  box-shadow: 5px 5px 0 var(--color-ink);
+  border: 3px solid var(--line);
+  box-shadow: 5px 5px 0 var(--line);
 }
 
 .nb-soft {
-  border: 3px solid var(--color-ink);
-  box-shadow: 4px 4px 0 var(--color-ink);
+  border: 3px solid var(--line);
+  box-shadow: 4px 4px 0 var(--line);
 }
 
 /* El botón se "hunde" al presionar: se mueve hacia la sombra. */
@@ -136,31 +87,31 @@ body {
 }
 .nb-press:hover {
   transform: translate(2px, 2px);
-  box-shadow: 3px 3px 0 var(--color-ink);
+  box-shadow: 3px 3px 0 var(--line);
 }
 .nb-press:active {
   transform: translate(5px, 5px);
-  box-shadow: 0 0 0 var(--color-ink);
+  box-shadow: 0 0 0 var(--line);
 }
 
-/* En bloques oscuros la sombra café no se ve: pasa a dorado. */
+/* En bloques oscuros la sombra de tinta no se ve: pasa a la clara. */
 .on-dark .nb,
 .on-dark .nb-soft {
-  border-color: var(--color-gold);
-  box-shadow: 5px 5px 0 var(--color-gold);
+  border-color: var(--line-on-dark);
+  box-shadow: 5px 5px 0 var(--line-on-dark);
 }
 
 /* Foco visible siempre — nunca quitar el anillo de foco. */
 :where(a, button, summary, [tabindex]):focus-visible {
-  outline: 3px solid var(--color-ink);
+  outline: 3px solid var(--line);
   outline-offset: 3px;
   border-radius: 2px;
 }
 .on-dark :where(a, button, summary, [tabindex]):focus-visible {
-  outline-color: var(--color-gold);
+  outline-color: var(--line-on-dark);
 }
 
-/* Luz y viñeta fijas sobre el damero, más un grano muy leve: el
+/* Luz y viñeta fijas sobre el fondo, más un grano muy leve: el
    amarillo plano en pantalla grande se ve a papel de cuaderno. */
 .grain::before,
 .grain::after {
@@ -173,7 +124,7 @@ body {
   z-index: 0;
   background:
     radial-gradient(110% 70% at 50% -10%, rgb(255 255 255 / 0.32), transparent 60%),
-    radial-gradient(140% 110% at 50% 50%, transparent 55%, rgb(58 13 4 / 0.16));
+    radial-gradient(140% 110% at 50% 50%, transparent 55%, rgb(var(--grain-rgb) / 0.16));
 }
 .grain::after {
   z-index: 1;
@@ -182,32 +133,13 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Damero de dos rojos para los bloques de llamado. */
-.damero-fire {
-  background-color: var(--color-fire);
-  background-image: conic-gradient(
-    rgb(0 0 0 / 0.08) 25%,
-    transparent 0 50%,
-    rgb(0 0 0 / 0.08) 0 75%,
-    transparent 0
-  );
-  background-size: 96px 96px;
-}
-
-/* Tramado de puntos para las franjas crema. */
-.dots-cream {
-  background-color: var(--color-cream);
-  background-image: radial-gradient(rgb(58 13 4 / 0.09) 1.5px, transparent 1.6px);
-  background-size: 18px 18px;
-}
-
-/* Titular: letra crema con contorno y sombra dura café, como el
-   lettering del empaque. */
+/* Titular: letra con contorno y sombra dura, como el lettering del
+   empaque (Chitopo) y del logo (Master Snacks). */
 .hero-title {
-  color: var(--color-cream);
-  -webkit-text-stroke: 0.028em var(--color-ink);
+  color: var(--title-fill);
+  -webkit-text-stroke: 0.028em var(--title-line);
   paint-order: stroke fill;
-  text-shadow: 0.045em 0.05em 0 var(--color-ink);
+  text-shadow: 0.045em 0.05em 0 var(--title-shadow);
 }
 /* SplitText enmascara cada palabra para que las letras suban desde
    abajo; sin este margen la máscara corta la sombra y el contorno. */
@@ -269,15 +201,16 @@ body {
 }
 
 .burst-particle svg {
-  /* Siempre una pizca de dorado de marca mezclada con el sabor: aunque
-     el acento sea magenta, el estallido se sigue leyendo "Chitopo". */
+  /* Siempre una pizca del color base de la marca mezclada con el sabor:
+     aunque el acento sea magenta, el estallido se sigue leyendo como
+     de la marca. */
   color: color-mix(
     in oklab,
-    var(--burst-accent, var(--color-fire)) var(--tone, 78%),
-    var(--color-gold)
+    var(--burst-accent, var(--burst-default)) var(--tone, 78%),
+    var(--burst-base)
   );
   fill: currentColor;
-  stroke: var(--color-ink);
+  stroke: var(--line);
   stroke-width: 2;
   paint-order: stroke fill;
 }
