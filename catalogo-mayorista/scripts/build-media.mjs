@@ -141,12 +141,18 @@ async function buildLogo() {
 // ── Logo de Master Snacks ───────────────────────────────────────────────
 // El original es un trazado automático (VTracer) de 300 paths: pesado para
 // la web y con un par de manchas grises sueltas que sobre fondo oscuro se
-// notan. Sale en dos versiones:
-//   - plana: para el sello de la fábrica, que ya pone su propio fondo crema;
-//   - sticker: troquelada en crema con filo café, para el footer y la cita,
-//     donde el gorro azul y los contornos negros no se leerían solos.
+// notan. Sale en estas versiones:
+//   - plana: para el sello de la fábrica, que ya pone su propio fondo;
+//   - sticker: troquelada en blanco frío con filo negro, con los colores de
+//     Master Snacks, para footers, la cita y la franja sobre azul, donde el
+//     gorro azul y los contornos negros no se leerían solos;
+//   - sticker-cafe: el mismo troquel en crema con filo café, para cuando
+//     aparece dentro de la página de Chitopo;
+//   - hd: el sticker de Master Snacks grande, en webp, para el hero de la home.
 const INK = { r: 0x3a, g: 0x0d, b: 0x04 };
 const CREAM = { r: 0xff, g: 0xf4, b: 0xd6 };
+const NIGHT = { r: 0x0b, g: 0x0b, b: 0x1e };
+const SNOW = { r: 0xf5, g: 0xf7, b: 0xff };
 
 // Engorda una máscara de un canal: desenfoca y corta bajo. Todo lo que queda
 // a menos de ~2σ de la tinta pasa a opaco.
@@ -194,7 +200,8 @@ async function buildMasterSnacks() {
     return darkest > 170 ? "" : tag;
   });
 
-  const { data, info } = await sharp(Buffer.from(svg), { density: 216 })
+  // Densidad alta: de acá sale también la versión HD del hero.
+  const { data, info } = await sharp(Buffer.from(svg), { density: 600 })
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
@@ -211,8 +218,8 @@ async function buildMasterSnacks() {
   await sharp(plain.data).toFile(join(SRC, "logo-mastersnacks.png"));
   console.log(`  ✓ logo-mastersnacks.png  (${plain.info.width}×${plain.info.height}, landing)`);
 
-  // Sticker: margen para que entre el troquel, máscara crema engordada y
-  // rellena, y un filo café apenas más grande por debajo.
+  // Sticker: margen para que entre el troquel, máscara del papel engordada y
+  // rellena, y un filo apenas más grande por debajo.
   const pad = Math.round(region.width * 0.06);
   const W = region.width + pad * 2;
   const H = region.height + pad * 2;
@@ -223,9 +230,9 @@ async function buildMasterSnacks() {
     .toBuffer();
   for (let p = 0; p < W * H; p++) alpha[p] = padded[p * 4 + 3];
 
-  const cream = await grow(alpha, W, H, region.width * 0.015, 10);
-  fillHoles(cream, W, H);
-  const ink = await grow(cream, W, H, region.width * 0.004, 10);
+  const paperMask = await grow(alpha, W, H, region.width * 0.015, 10);
+  fillHoles(paperMask, W, H);
+  const edgeMask = await grow(paperMask, W, H, region.width * 0.004, 10);
 
   const layer = (background, mask) =>
     sharp({ create: { width: W, height: H, channels: 3, background } })
@@ -233,26 +240,40 @@ async function buildMasterSnacks() {
       .png()
       .toBuffer();
 
-  const composed = await sharp(await layer(INK, ink))
-    .composite([
-      { input: await layer(CREAM, cream) },
-      { input: logo, left: pad, top: pad },
-    ])
-    .raw()
-    .toBuffer();
+  // Devuelve el sticker entero, recortado a su silueta, en RGBA crudo.
+  const troquel = async (edge, paper) => {
+    const composed = await sharp(await layer(edge, edgeMask))
+      .composite([{ input: await layer(paper, paperMask) }, { input: logo, left: pad, top: pad }])
+      .raw()
+      .toBuffer();
+    return sharp(composed, { raw: { width: W, height: H, channels: 4 } }).extract(
+      inkRegion(composed, W, H, 0.005)
+    );
+  };
+  const png480 = (img) =>
+    img
+      .resize(480)
+      .png({ compressionLevel: 9, palette: true, quality: 92 })
+      .toBuffer({ resolveWithObject: true });
 
-  const sticker = await sharp(composed, { raw: { width: W, height: H, channels: 4 } })
-    .extract(inkRegion(composed, W, H, 0.005))
-    .resize(480)
-    .png({ compressionLevel: 9, palette: true, quality: 92 })
-    .toBuffer({ resolveWithObject: true });
-
+  const sticker = await png480(await troquel(NIGHT, SNOW));
   for (const app of [LANDING, CATALOGO]) {
     await sharp(sticker.data).toFile(join(app, "src", "assets", "logo-mastersnacks-sticker.png"));
   }
   console.log(
     `  ✓ logo-mastersnacks-sticker.png  (${sticker.info.width}×${sticker.info.height}, landing + catálogo)`
   );
+
+  const cafe = await png480(await troquel(INK, CREAM));
+  await sharp(cafe.data).toFile(join(SRC, "logo-mastersnacks-sticker-cafe.png"));
+  console.log(`  ✓ logo-mastersnacks-sticker-cafe.png  (${cafe.info.width}×${cafe.info.height}, landing)`);
+
+  const hd = await (await troquel(NIGHT, SNOW))
+    .resize(1200)
+    .webp({ quality: 90, alphaQuality: 95 })
+    .toBuffer({ resolveWithObject: true });
+  await sharp(hd.data).toFile(join(SRC, "logo-mastersnacks-hd.webp"));
+  console.log(`  ✓ logo-mastersnacks-hd.webp  (${hd.info.width}×${hd.info.height}, landing)`);
 }
 
 // ── Bolsa de Tocino Merkén recortada ────────────────────────────────────

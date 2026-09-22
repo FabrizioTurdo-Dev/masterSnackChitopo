@@ -12,14 +12,41 @@ export const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Elemento del ancla con que se abrió la página, si existe.
+function hashTarget() {
+  const hash = window.location.hash;
+  if (hash.length < 2) return null;
+  try {
+    return document.querySelector(decodeURIComponent(hash));
+  } catch {
+    return null;
+  }
+}
+
 // Smooth scroll inercial sincronizado con el ticker de GSAP, para que
 // ScrollTrigger lea la misma posición que pinta Lenis.
 export function useLenis() {
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    // Al llegar con un ancla desde la otra página (/#fabrica desde
+    // /chitopo/), el salto nativo del navegador ocurre antes de que React
+    // pinte la sección. Se repite cuando ya cargaron las fuentes y
+    // ScrollTrigger acomodó sus medidas.
+    const fonts = document.fonts?.ready ?? Promise.resolve();
+
+    if (prefersReducedMotion()) {
+      fonts.then(() => hashTarget()?.scrollIntoView());
+      return;
+    }
 
     const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
     _lenis = lenis;
+
+    fonts.then(() => {
+      const target = hashTarget();
+      if (!target || _lenis !== lenis) return;
+      ScrollTrigger.refresh();
+      lenis.scrollTo(target, { offset: -72, immediate: true });
+    });
 
     lenis.on("scroll", ScrollTrigger.update);
 

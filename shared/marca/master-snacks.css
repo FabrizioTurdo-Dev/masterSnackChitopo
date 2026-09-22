@@ -31,6 +31,12 @@
   background-size: 20px 20px;
 }
 
+/* Sobre el azul, el anillo de foco de tinta no se ve (2.4:1): pasa a
+   amarillo, que da 5.1:1. */
+.halftone-electric :where(a, button, summary, [tabindex]):focus-visible {
+  outline-color: var(--color-gold);
+}
+
 /* Bloque profundo (fábrica, footer). */
 .halftone-night {
   background-color: var(--color-night);

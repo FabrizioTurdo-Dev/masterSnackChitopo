@@ -7,7 +7,7 @@ import InstagramIcon from "../brand/InstagramIcon";
 import StampBadge from "../brand/StampBadge";
 import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import WaveMarquee from "../ui/WaveMarquee";
-import { STORE_CONFIG } from "../../data/store";
+import { CHITOPO } from "../../data/brands";
 import { prefersReducedMotion } from "../../lib/useLenis";
 import { useBurst } from "../../lib/burst";
 
@@ -97,7 +97,7 @@ function VideoFabrica({ paso, className = "" }) {
 
   return (
     <figure className={`fab-card relative m-0 ${className}`}>
-      <div className="nb bg-ink">
+      <div className="nb bg-night">
         <div className="fab-media relative aspect-[3/4] overflow-hidden">
           <video
             ref={ref}
@@ -113,20 +113,20 @@ function VideoFabrica({ paso, className = "" }) {
             className="absolute inset-0 w-full h-full object-cover"
           />
 
-          <span className="absolute top-2 left-2 sm:top-3 sm:left-3 inline-flex items-center gap-1.5 bg-ink/85 px-2 py-1 font-condensed uppercase tracking-[0.12em] text-[10px] sm:text-xs text-cream">
+          <span className="absolute top-2 left-2 sm:top-3 sm:left-3 inline-flex items-center gap-1.5 bg-night/85 px-2 py-1 font-condensed uppercase tracking-[0.12em] text-[10px] sm:text-xs text-snow">
             <span
               className={`size-2 rounded-full bg-red ${playing ? "motion-safe:animate-pulse" : "opacity-40"}`}
               aria-hidden="true"
             />
             Rec
-            <span className="hidden sm:inline text-cream/60">· La Pintana</span>
+            <span className="hidden sm:inline text-snow/60">· La Pintana</span>
           </span>
 
           <button
             type="button"
             onClick={toggle}
             aria-label={playing ? `Pausar: ${paso.title}` : `Reproducir: ${paso.title}`}
-            className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 inline-flex items-center justify-center size-11 bg-gold text-ink border-[3px] border-ink cursor-pointer nb-press"
+            className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 inline-flex items-center justify-center size-11 bg-gold text-night border-[3px] border-night cursor-pointer nb-press"
           >
             {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
           </button>
@@ -134,7 +134,7 @@ function VideoFabrica({ paso, className = "" }) {
 
         <figcaption className="flex items-baseline gap-2 sm:gap-3 px-3 py-2.5 sm:px-4 sm:py-3 border-t-[3px] border-gold">
           <span className="font-condensed text-gold text-lg sm:text-2xl leading-none">{paso.n}</span>
-          <span className="font-condensed uppercase text-cream text-sm sm:text-lg leading-tight">
+          <span className="font-condensed uppercase text-snow text-sm sm:text-lg leading-tight">
             {paso.title}
           </span>
         </figcaption>
@@ -188,7 +188,7 @@ export default function Fabrica() {
           // La palabra de fondo la mueve <WaveMarquee/>, que tiene su propio
           // loop y su propio empujón con el scroll.
 
-          // El sello de Master Snacks cae acelerando y se estampa sobre los
+          // El sello de la fábrica cae acelerando y se estampa sobre los
           // videos: en el golpe se aplasta, la grilla acusa el impacto y
           // saltan chitopos.
           const sello = root.current.querySelector(".fab-sello");
@@ -202,7 +202,7 @@ export default function Fabrica() {
             .addLabel("golpe")
             .add(() => {
               const r = sello.getBoundingClientRect();
-              fire(r.left + r.width / 2, r.top + r.height / 2, "var(--color-fire)");
+              fire(r.left + r.width / 2, r.top + r.height / 2, "var(--color-electric)");
             }, "golpe")
             .to(sello, { scale: 0.9, duration: 0.07, ease: "power1.out" }, "golpe")
             .to(sello, { scale: 1, duration: 0.6, ease: "elastic.out(1, 0.4)" })
@@ -248,7 +248,7 @@ export default function Fabrica() {
     <section
       id="fabrica"
       ref={root}
-      className="on-dark relative scroll-mt-20 overflow-hidden bg-ink text-cream border-y-[3px] border-ink py-12 sm:py-16 lg:py-[clamp(1.25rem,3.5svh,3rem)]"
+      className="on-dark relative scroll-mt-20 overflow-hidden halftone-night text-snow border-y-[3px] border-night py-12 sm:py-16 lg:py-[clamp(1.25rem,3.5svh,3rem)]"
     >
       {/* Carrusel de fondo, al medio de la sección. Va antes de la grilla y
           sin z-index: los dos están posicionados, así que el que viene
@@ -265,12 +265,12 @@ export default function Fabrica() {
           </p>
           {/* En escritorio el tamaño también depende del alto de pantalla:
               la sección tiene que entrar en 90vh. */}
-          <h2 className="fab-fade font-title uppercase text-5xl sm:text-7xl lg:text-[clamp(3rem,min(5.6vw,10.5svh),5.5rem)] leading-[0.9] text-cream m-0">
+          <h2 className="fab-fade font-title uppercase text-5xl sm:text-7xl lg:text-[clamp(3rem,min(5.6vw,10.5svh),5.5rem)] leading-[0.9] text-snow m-0">
             La máquina
             <br />
             que no para
           </h2>
-          <p className="fab-fade text-cream/80 text-base sm:text-lg lg:text-base xl:text-lg leading-relaxed mt-5 lg:mt-[clamp(0.75rem,2.2svh,1.75rem)] max-w-md lg:max-w-xl">
+          <p className="fab-fade text-snow/80 text-base sm:text-lg lg:text-base xl:text-lg leading-relaxed mt-5 lg:mt-[clamp(0.75rem,2.2svh,1.75rem)] max-w-md lg:max-w-xl">
             Así se ve el galpón un día cualquiera. Sin estudio ni actores: el maíz entra
             a la máquina, sale suflé, agarra sabor y cae directo a la bolsa.
           </p>
@@ -282,10 +282,10 @@ export default function Fabrica() {
                   {p.n}
                 </span>
                 <div>
-                  <h3 className="font-title uppercase text-xl sm:text-2xl lg:text-xl xl:text-2xl text-cream m-0 leading-tight">
+                  <h3 className="font-title uppercase text-xl sm:text-2xl lg:text-xl xl:text-2xl text-snow m-0 leading-tight">
                     {p.title}
                   </h3>
-                  <p className="text-cream/75 text-sm sm:text-base lg:text-sm xl:text-base leading-relaxed m-0 mt-1">{p.text}</p>
+                  <p className="text-snow/75 text-sm sm:text-base lg:text-sm xl:text-base leading-relaxed m-0 mt-1">{p.text}</p>
                 </div>
               </li>
             ))}
@@ -295,7 +295,7 @@ export default function Fabrica() {
             {DATOS.map(({ icon: Icon, text }) => (
               <li
                 key={text}
-                className="fab-fade inline-flex items-center gap-2 bg-cream/5 border-[3px] border-gold/40 px-3 py-2 text-sm text-cream"
+                className="fab-fade inline-flex items-center gap-2 bg-snow/5 border-[3px] border-gold/40 px-3 py-2 text-sm text-snow"
               >
                 <Icon size={16} className="text-gold shrink-0" aria-hidden="true" />
                 {text}
@@ -304,13 +304,13 @@ export default function Fabrica() {
           </ul>
 
           <a
-            href={`https://instagram.com/${STORE_CONFIG.instagram}`}
+            href={`https://instagram.com/${CHITOPO.instagram}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="fab-fade mt-7 lg:mt-[clamp(0.5rem,2svh,1.5rem)] inline-flex items-center gap-2 min-h-[44px] font-condensed uppercase tracking-[0.08em] text-gold hover:text-cream no-underline"
+            className="fab-fade mt-7 lg:mt-[clamp(0.5rem,2svh,1.5rem)] inline-flex items-center gap-2 min-h-[44px] font-condensed uppercase tracking-[0.08em] text-gold hover:text-snow no-underline"
           >
             <InstagramIcon size={18} />
-            Más del día a día en @{STORE_CONFIG.instagram}
+            Más del día a día en @{CHITOPO.instagram}
           </a>
         </div>
 
@@ -328,7 +328,7 @@ export default function Fabrica() {
             className="fab-sello absolute z-20 -top-2 -right-2 w-24 sm:-top-8 sm:right-0 sm:w-36 lg:w-40 lg:-top-10 lg:-right-6"
             style={{ transform: "rotate(-12deg)" }}
           >
-            <StampBadge text="Hecho por Master Snacks · La Pintana · " className="relative w-full">
+            <StampBadge text="Fábrica propia · La Pintana · " className="relative w-full">
               <MasterSnacksLogo variant="plain" alt="" className="w-full h-auto" />
             </StampBadge>
           </div>

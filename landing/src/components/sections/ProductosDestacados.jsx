@@ -3,7 +3,7 @@ import Reveal from "../ui/Reveal";
 import ProductoCard from "./ProductoCard";
 import Button from "../ui/Button";
 import PRODUCTS from "../../data/products";
-import { CATALOGO_URL } from "../../lib/catalogoUrl";
+import { CATALOGO_URL } from "../../lib/urls";
 
 export default function ProductosDestacados() {
   return (

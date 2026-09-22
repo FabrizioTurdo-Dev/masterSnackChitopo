@@ -5,10 +5,10 @@ import Reveal from "../ui/Reveal";
 import Button from "../ui/Button";
 import Logo from "../brand/Logo";
 import InstagramIcon from "../brand/InstagramIcon";
-import { STORE_CONFIG } from "../../data/store";
+import { CHITOPO } from "../../data/brands";
 import { prefersReducedMotion } from "../../lib/useLenis";
 
-const INSTAGRAM_URL = `https://instagram.com/${STORE_CONFIG.instagram}`;
+const INSTAGRAM_URL = `https://instagram.com/${CHITOPO.instagram}`;
 
 // Un post real de la cuenta, presentado como tarjeta de Instagram. En
 // computadora se inclina hacia el cursor; en touch y sin animaciones queda
@@ -47,7 +47,7 @@ function PostCard() {
         rel="noopener noreferrer"
         onMouseMove={onMove}
         onMouseLeave={onLeave}
-        aria-label={`Ver el Instagram @${STORE_CONFIG.instagram}`}
+        aria-label={`Ver el Instagram @${CHITOPO.instagram}`}
         // El giro de base va en transform y no con la clase rotate-3: esa
         // usa la propiedad `rotate` y se sumaría a la que anima GSAP.
         style={{ transform: "rotate(3deg)" }}
@@ -58,7 +58,7 @@ function PostCard() {
             <Logo height={10} />
           </span>
           <span className="font-condensed uppercase tracking-[0.06em] text-sm text-ink truncate">
-            {STORE_CONFIG.instagram}
+            {CHITOPO.instagram}
           </span>
           <InstagramIcon size={18} />
         </span>
@@ -101,7 +101,7 @@ export default function RedesSociales() {
               rel="noopener noreferrer"
               className="w-full sm:w-auto mt-8"
             >
-              <InstagramIcon size={20} />@{STORE_CONFIG.instagram}
+              <InstagramIcon size={20} />@{CHITOPO.instagram}
             </Button>
           </div>
 

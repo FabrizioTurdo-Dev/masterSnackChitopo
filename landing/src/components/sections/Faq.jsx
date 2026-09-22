@@ -1,36 +1,18 @@
 import { ChevronDown } from "lucide-react";
 import Section from "../ui/Section";
 import Reveal from "../ui/Reveal";
-import { STORE_CONFIG } from "../../data/store";
+import { preguntasDe } from "../../data/faq";
+import { useTone } from "../../lib/brand";
 
-const PREGUNTAS = [
-  {
-    q: "¿Cómo hago un pedido?",
-    a: "Entras al catálogo mayorista, armas tu carro con los formatos que necesites y nos lo mandas. Ahí seguimos por WhatsApp para confirmarte precio, pago y despacho.",
-  },
-  {
-    q: "¿Cuál es el pedido mínimo?",
-    a: `${STORE_CONFIG.minOrderUnits} unidades. Puedes mezclar sabores y formatos para llegar al mínimo, no hace falta que sea todo lo mismo.`,
-  },
-  {
-    q: "¿Hacen despacho?",
-    a: `${STORE_CONFIG.shipping}. La coordinamos por WhatsApp cuando cerramos el pedido. Fuera de la RM, consúltanos y vemos.`,
-  },
-  {
-    q: "¿En qué formatos venden?",
-    a: "Caja, display y unidad. El display es el que mejor funciona para el mesón del almacén; la caja conviene si tienes más rotación.",
-  },
-  {
-    q: "¿Emiten boleta o factura?",
-    a: `Sí. Somos una pyme formal: Master Snacks Inversiones SpA, con ${STORE_CONFIG.sesma}.`,
-  },
-  {
-    q: "¿Cada cuánto sacan sabores nuevos?",
-    a: "Vamos rápido: en seis meses ya tenemos dos en la calle y tres en camino (frutos del bosque, maní y tocino merkén). Si quieres enterarte primero, síguenos en Instagram.",
-  },
-];
+const TONES = {
+  chitopo: { card: "bg-cream", q: "text-ink", icon: "text-fire", a: "text-ink-soft" },
+  mastersnacks: { card: "bg-snow", q: "text-night", icon: "text-electric", a: "text-night-soft" },
+};
 
-export default function Faq() {
+// `scope`: "empresa" en la home, el id de la marca en su página (ver data/faq.js).
+export default function Faq({ scope = "empresa" }) {
+  const t = useTone(TONES);
+
   return (
     <Section
       id="faq"
@@ -41,17 +23,17 @@ export default function Faq() {
       intro="Si tienes un almacén, distribuidora o local de barrio, esto es lo que necesitas saber."
     >
       <Reveal stagger className="flex flex-col gap-3 max-w-4xl">
-        {PREGUNTAS.map(({ q, a }) => (
-          <details key={q} className="group nb-soft bg-cream">
-            <summary className="flex items-center justify-between gap-4 cursor-pointer list-none p-5 font-condensed uppercase text-lg sm:text-xl text-ink">
+        {preguntasDe(scope).map(({ q, a }) => (
+          <details key={q} className={`group nb-soft ${t.card}`}>
+            <summary className={`flex items-center justify-between gap-4 cursor-pointer list-none p-5 font-condensed uppercase text-lg sm:text-xl ${t.q}`}>
               {q}
               <ChevronDown
                 size={22}
-                className="shrink-0 text-fire transition-transform duration-300 group-open:rotate-180"
+                className={`shrink-0 transition-transform duration-300 group-open:rotate-180 ${t.icon}`}
                 aria-hidden="true"
               />
             </summary>
-            <p className="text-ink-soft text-sm sm:text-base leading-relaxed px-5 pb-5 m-0">
+            <p className={`text-sm sm:text-base leading-relaxed px-5 pb-5 m-0 ${t.a}`}>
               {a}
             </p>
           </details>

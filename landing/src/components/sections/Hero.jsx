@@ -8,7 +8,7 @@ import Button from "../ui/Button";
 import FlavorChips from "../ui/FlavorChips";
 import StampBadge from "../brand/StampBadge";
 import { HeroBackdrop, HeroFloaters, BagStack } from "./FlavorStage";
-import { CATALOGO_URL } from "../../lib/catalogoUrl";
+import { CATALOGO_URL } from "../../lib/urls";
 import { WHATSAPP_LINK, flavorAccent } from "../../data/store";
 import { prefersReducedMotion } from "../../lib/useLenis";
 import { useBurst } from "../../lib/burst";

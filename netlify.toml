@@ -5,6 +5,13 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# La página de Chitopo es una carpeta (/chitopo/index.html): sin la barra
+# final los links relativos de la página se romperían.
+[[redirects]]
+  from = "/chitopo"
+  to = "/chitopo/"
+  status = 301
+
 [[redirects]]
   from = "/catalogo/*"
   to = "/catalogo/index.html"

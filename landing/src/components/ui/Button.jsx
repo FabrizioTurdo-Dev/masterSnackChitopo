@@ -1,12 +1,24 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { prefersReducedMotion } from "../../lib/useLenis";
+import { useTone } from "../../lib/brand";
 
+// Variantes por marca: el llamado principal es rojo en Chitopo y azul
+// eléctrico en Master Snacks. El borde y la sombra (.nb) ya siguen la
+// tinta de la marca solos.
 const VARIANTS = {
-  primary: "bg-fire text-cream nb nb-press hover:bg-[#c42904]",
-  secondary: "bg-cream text-ink nb nb-press hover:bg-cream-2",
-  gold: "bg-gold text-ink nb nb-press hover:bg-[#ffcf3d]",
-  whatsapp: "bg-green text-[#06300f] nb nb-press hover:brightness-105",
+  chitopo: {
+    primary: "bg-fire text-cream nb nb-press hover:bg-[#c42904]",
+    secondary: "bg-cream text-ink nb nb-press hover:bg-cream-2",
+    gold: "bg-gold text-ink nb nb-press hover:bg-[#ffcf3d]",
+    whatsapp: "bg-green text-[#06300f] nb nb-press hover:brightness-105",
+  },
+  mastersnacks: {
+    primary: "bg-electric text-snow nb nb-press hover:bg-royal",
+    secondary: "bg-snow text-night nb nb-press hover:bg-snow-2",
+    gold: "bg-gold text-night nb nb-press hover:bg-[#ffcf3d]",
+    whatsapp: "bg-green text-[#06300f] nb nb-press hover:brightness-105",
+  },
 };
 
 // Botón con imán: en desktop sigue levemente al cursor. En touch y con
@@ -21,6 +33,7 @@ export default function Button({
 }) {
   const ref = useRef(null);
   const Tag = as;
+  const variants = useTone(VARIANTS);
 
   const canMagnet = () =>
     magnetic &&
@@ -48,7 +61,7 @@ export default function Button({
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className={`inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 font-condensed uppercase tracking-[0.06em] text-base sm:text-lg no-underline cursor-pointer ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 font-condensed uppercase tracking-[0.06em] text-base sm:text-lg no-underline cursor-pointer ${variants[variant]} ${className}`}
       {...props}
     >
       {children}

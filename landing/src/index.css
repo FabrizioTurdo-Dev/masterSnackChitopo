@@ -116,3 +116,24 @@ html.lenis {
     animation: none;
   }
 }
+
+/* ── Home de Master Snacks ─────────────────────────────────────────
+   Rayos de viñeta de cómic detrás del logo: franjas de azul rey que se
+   apagan hacia afuera. Los gira GSAP. */
+.he-rays {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgb(0 0 181 / 0.6) 0deg 9deg,
+    transparent 9deg 18deg
+  );
+  -webkit-mask: radial-gradient(circle, #000 18%, transparent 68%);
+  mask: radial-gradient(circle, #000 18%, transparent 68%);
+  will-change: transform;
+}
+
+.he-floater {
+  fill: var(--color-gold);
+  stroke: var(--color-night);
+  stroke-width: 2.4;
+  paint-order: stroke fill;
+}

@@ -25,7 +25,7 @@ const HITOS = [
   {
     icon: Sparkles,
     title: "Recién arrancando",
-    text: "Seis meses en la calle y ya vamos por el cuarto sabor. Esto está partiendo no más.",
+    text: "Seis meses en la calle con Chitopo, ya vamos por el cuarto sabor y se viene una línea sin horno. Esto está partiendo no más.",
   },
 ];
 
@@ -71,19 +71,19 @@ export default function Historia() {
         {HITOS.map(({ icon: Icon, title, text, link }) => (
           <article
             key={title}
-            className="nb-soft bg-cream p-6 flex flex-col gap-3"
+            className="nb-soft bg-snow p-6 flex flex-col gap-3"
           >
-            <span className="grid place-items-center size-12 bg-gold border-[3px] border-ink" aria-hidden="true">
-              <Icon size={24} className="text-ink" />
+            <span className="grid place-items-center size-12 bg-gold border-[3px] border-night" aria-hidden="true">
+              <Icon size={24} className="text-night" />
             </span>
-            <h3 className="font-title uppercase text-xl sm:text-2xl text-ink m-0 leading-tight">
+            <h3 className="font-title uppercase text-xl sm:text-2xl text-night m-0 leading-tight">
               {title}
             </h3>
-            <p className="text-ink-soft text-sm leading-relaxed m-0">{text}</p>
+            <p className="text-night-soft text-sm leading-relaxed m-0">{text}</p>
             {link && (
               <a
                 href={link.href}
-                className="mt-auto inline-flex items-center gap-1.5 min-h-[44px] font-condensed uppercase tracking-[0.08em] text-sm text-ink hover:text-fire underline decoration-fire decoration-[3px] underline-offset-4"
+                className="mt-auto inline-flex items-center gap-1.5 min-h-[44px] font-condensed uppercase tracking-[0.08em] text-sm text-night hover:text-electric underline decoration-electric decoration-[3px] underline-offset-4"
               >
                 {link.label}
                 <ArrowDown size={16} aria-hidden="true" />
@@ -94,7 +94,7 @@ export default function Historia() {
       </Reveal>
 
       <Reveal className="mt-10">
-        <blockquote className="nb bg-fire text-cream p-6 sm:p-10 m-0 -rotate-1">
+        <blockquote className="nb halftone-electric text-snow p-6 sm:p-10 m-0 -rotate-1">
           <p className="font-condensed uppercase text-2xl sm:text-4xl leading-[1.05] m-0">
             “Si lo hacemos nosotros, tiene que quedar bueno de verdad.”
           </p>
@@ -111,8 +111,9 @@ export default function Historia() {
               className="block shrink-0 origin-bottom-right -mb-12 sm:-mb-20 -mr-5 sm:-mr-14"
               style={{ transform: "rotate(8deg)" }}
             >
+              {/* Troquelado: el logo sin troquel se pierde sobre el azul. */}
               <MasterSnacksLogo
-                variant="transparente"
+                variant="sticker"
                 alt=""
                 className="h-20 sm:h-28 w-auto transition-transform duration-300 hover:scale-105 hover:-rotate-6"
               />

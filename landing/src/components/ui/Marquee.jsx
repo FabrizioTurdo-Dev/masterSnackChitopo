@@ -6,9 +6,14 @@ import { prefersReducedMotion } from "../../lib/useLenis";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
+// Colores de la cinta. fire/ink son de Chitopo; electric/night, de Master
+// Snacks. El borde y la sombra de la versión inclinada siguen la tinta de
+// la marca (--line).
 const TONES = {
   fire: { band: "bg-fire text-cream", star: "text-gold" },
   ink: { band: "bg-ink text-gold", star: "text-fire-light" },
+  electric: { band: "bg-electric text-snow", star: "text-gold" },
+  night: { band: "bg-night text-gold", star: "text-electric-light" },
 };
 
 // Cinta infinita. El track tiene dos grupos idénticos y se corre -50%: al
@@ -94,8 +99,8 @@ export default function Marquee({
   return (
     <div
       ref={root}
-      className={`relative overflow-hidden border-y-[3px] border-ink py-3 ${band} ${
-        tilted ? "z-20 -mx-[5%] -my-5 sm:-my-7 -rotate-2 shadow-[0_6px_0_var(--color-ink)]" : ""
+      className={`relative overflow-hidden border-y-[3px] border-(--line) py-3 ${band} ${
+        tilted ? "z-20 -mx-[5%] -my-5 sm:-my-7 -rotate-2 shadow-[0_6px_0_var(--line)]" : ""
       } ${className}`}
       aria-hidden="true"
     >

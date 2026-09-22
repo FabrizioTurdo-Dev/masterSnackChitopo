@@ -4,15 +4,22 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Store, ArrowRight } from "lucide-react";
 import Button from "../ui/Button";
-import { CATALOGO_URL } from "../../lib/catalogoUrl";
+import { CATALOGO_URL } from "../../lib/urls";
 import { STORE_CONFIG } from "../../data/store";
 import { prefersReducedMotion } from "../../lib/useLenis";
+import { useTone } from "../../lib/brand";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+const TONES = {
+  chitopo: "damero-fire text-cream",
+  mastersnacks: "halftone-electric text-snow",
+};
 
 // Clímax de la página: el bloque que manda al catálogo.
 export default function CtaCatalogo() {
   const root = useRef(null);
+  const box = useTone(TONES);
 
   useGSAP(
     () => {
@@ -32,7 +39,7 @@ export default function CtaCatalogo() {
   return (
     <section id="catalogo" ref={root} className="relative scroll-mt-20 py-16 sm:py-24">
       <div className="contenedor">
-        <div className="cta-box nb damero-fire text-cream p-7 sm:p-14 text-center">
+        <div className={`cta-box nb p-7 sm:p-14 text-center ${box}`}>
           <Store size={40} className="mx-auto mb-5" aria-hidden="true" />
 
           <h2 className="font-title uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] m-0">

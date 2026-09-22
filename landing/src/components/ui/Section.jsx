@@ -1,3 +1,18 @@
+import { useTone } from "../../lib/brand";
+
+const TONES = {
+  chitopo: {
+    eyebrow: "text-ink before:text-fire",
+    title: "text-ink",
+    intro: "text-ink-soft",
+  },
+  mastersnacks: {
+    eyebrow: "text-night before:text-electric",
+    title: "text-night",
+    intro: "text-night-soft",
+  },
+};
+
 // Envoltorio estándar de sección: ancho máximo, padding y encabezado opcional.
 export default function Section({
   id,
@@ -8,6 +23,8 @@ export default function Section({
   innerClassName = "",
   children,
 }) {
+  const t = useTone(TONES);
+
   return (
     <section
       id={id}
@@ -17,17 +34,17 @@ export default function Section({
         {(eyebrow || title) && (
           <div className="mb-10 sm:mb-14">
             {eyebrow && (
-              <p className="font-condensed uppercase tracking-[0.22em] text-ink text-xs sm:text-sm mb-3 before:content-['★'] before:text-fire before:mr-2">
+              <p className={`font-condensed uppercase tracking-[0.22em] text-xs sm:text-sm mb-3 before:content-['★'] before:mr-2 ${t.eyebrow}`}>
                 {eyebrow}
               </p>
             )}
             {title && (
-              <h2 className="font-title uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] text-ink m-0">
+              <h2 className={`font-title uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] m-0 ${t.title}`}>
                 {title}
               </h2>
             )}
             {intro && (
-              <p className="text-ink-soft text-base sm:text-lg leading-relaxed mt-5 max-w-2xl">
+              <p className={`text-base sm:text-lg leading-relaxed mt-5 max-w-2xl ${t.intro}`}>
                 {intro}
               </p>
             )}
