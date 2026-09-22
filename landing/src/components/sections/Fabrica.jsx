@@ -18,7 +18,6 @@ const PASOS = [
   {
     n: "01",
     video: "/video/fabrica-produccion.mp4",
-    poster: "/video/fabrica-produccion.webp",
     title: "Sale de la extrusora",
     text: "Maíz adentro, suflé afuera. Después pasa al bombo, donde agarra el sabor.",
     label: "Video de la extrusora sacando suflés y del bombo donde se sazonan",
@@ -185,16 +184,17 @@ export default function Fabrica() {
             }
           );
 
-          // La palabra de fondo cruza la sección con el scroll.
-          gsap.fromTo(
-            ".fab-word",
-            { xPercent: 0 },
-            {
-              xPercent: -35,
-              ease: "none",
-              scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 0.6 },
-            }
-          );
+          // La palabra de fondo hace una onda vertical continua (arriba-abajo),
+          // independiente del scroll. Solo en desktop para no complicar mobile.
+          if (desktop) {
+            gsap.to(".fab-word", {
+              y: 40,        // Amplitud: sube/baja 40px desde el centro
+              duration: 5,  // Ciclo completo: 5 segundos
+              ease: "sine.inOut", // Movimiento natural, sinusoidal
+              repeat: -1,   // Infinito
+              yoyo: true,   // Arriba → abajo → arriba
+            });
+          }
 
           // El sello de Master Snacks cae acelerando y se estampa sobre los
           // videos: en el golpe se aplasta, la grilla acusa el impacto y
@@ -254,16 +254,9 @@ export default function Fabrica() {
     <section
       id="fabrica"
       ref={root}
-      className="on-dark relative scroll-mt-20 overflow-hidden bg-ink text-cream border-y-[3px] border-ink py-16 sm:py-24 lg:py-32"
+      className="on-dark relative scroll-mt-20 overflow-hidden max-h-[90vh] bg-ink text-cream border-y-[3px] border-ink py-8 sm:py-12 lg:py-16"
     >
-      <span
-        aria-hidden="true"
-        className="fab-word pointer-events-none select-none absolute left-0 top-1/2 -translate-y-1/2 whitespace-nowrap font-condensed uppercase leading-none text-transparent text-[clamp(7rem,24vw,22rem)] [-webkit-text-stroke:2px_rgb(255_194_14/0.16)]"
-      >
-        La Pintana · La Pintana · La Pintana
-      </span>
-
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16 items-center">
+      <div className="relative isolate max-w-6xl mx-auto px-3 sm:px-4 lg:px-5 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-16 items-center">
         <div>
           <p className="fab-fade font-condensed uppercase tracking-[0.22em] text-gold text-xs sm:text-sm mb-3">
             La fábrica
@@ -317,7 +310,20 @@ export default function Fabrica() {
           </a>
         </div>
 
-        <div className="fab-videos relative grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 items-start">
+        {/* Palabra de fondo. En celular y tablet va en su propia franja,
+            de borde a borde entre el texto y los videos. En escritorio sale
+            del flujo y baja a la franja libre bajo los videos, pegada al
+            borde izquierdo de la pantalla: al medio de la sección los
+            videos la tapaban. El -z-10 (con el isolate de la grilla) la
+            deja detrás del texto. */}
+        <span
+          aria-hidden="true"
+          className="fab-word -z-10 pointer-events-none select-none block -mx-4 sm:-mx-6 -my-4 lg:m-0 lg:absolute lg:inset-0 lg:flex lg:items-center lg:justify-center whitespace-nowrap font-condensed uppercase leading-none text-gold/12 text-[clamp(4rem,15vw,15rem)] [-webkit-text-stroke:2px_rgb(255_194_14/0.50)]"
+        >
+          La Pintana · La Pintana · La Pintana
+        </span>
+
+        <div className="fab-videos relative grid grid-cols-2 gap-2 sm:gap-4 lg:gap-6 items-start">
           <VideoFabrica paso={PASOS[0]} />
           <VideoFabrica paso={PASOS[1]} className="mt-10 sm:mt-16" />
 
