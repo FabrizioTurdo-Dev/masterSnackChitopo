@@ -1,6 +1,8 @@
-# Material que necesitamos para la web de Chitopo
+# Material que necesitamos para la web de Master Snacks y Chitopo
 
-Este documento es para pasarle a quien esté produciendo el contenido visual de la marca.
+Este documento es para pasarle a quien esté produciendo el contenido visual. La web tiene
+una home de **Master Snacks** (la empresa) y una página de **Chitopo** (su marca de
+horneados); las próximas marcas tendrán la suya.
 Está ordenado por prioridad: lo primero es lo que más cambia el resultado.
 
 Contexto rápido: la web no es una tienda online. No hay carrito ni precios — el catálogo
@@ -34,7 +36,7 @@ Entre **6 y 10 unidades sueltas** de suflé, fotografiadas individualmente.
 - Recortadas, PNG con transparencia, ~400-600 px cada una.
 - Lo mismo para maní, y para el aro de tocino merkén si ya existe el producto.
 
-**Por qué:** cuando pasás el mouse por encima de un producto en la web, estallan chitopos
+**Por qué:** cuando pasas el mouse por encima de un producto en la web, estallan chitopos
 hacia afuera. Ahora mismo son siluetas dibujadas en vectores; con fotos reales del producto
 el efecto se ve mucho mejor y es un gesto que no tiene ninguna competidora.
 
@@ -56,14 +58,20 @@ Eso sostiene todo el relato de "pyme real que produce acá".
 la Ley 20.606 no podemos dirigir publicidad a menores de 14 años. **Sin niños ni
 adolescentes identificables en las fotos**, y nada de códigos visuales infantiles.
 
-## 5. Marca
+## 5. Marcas
 
-- Logo en **SVG**, versión a color y versión monocroma.
-- Si se define una **tipografía oficial con licencia**, avisar cuál: hoy la web usa Anton,
-  Archivo y Baloo 2 de Google Fonts como sustitutas de la fuente del empaque, porque el
-  brief aclara que no hay licencia de esa.
-- Si se formaliza una **paleta oficial**, pasarla: la actual está derivada del logo y los
-  empaques (dorado `#ffc20e`, café `#3a0d04`, rojo `#d02b05`, crema `#fff4d6` y un color por sabor).
+- Logos en **SVG**, versión a color y versión monocroma: el de **Master Snacks** (hoy solo
+  hay un PNG y un trazado automático) y el de **Chitopo**. Cuando exista la marca de no
+  horneados, su logo también.
+- Si se define una **tipografía oficial con licencia**, avisar cuál: hoy la web usa Lilita
+  One, Anton, Archivo y Baloo 2 como sustitutas de la fuente del empaque, porque el brief
+  aclara que no hay licencia de esa.
+- Si se formaliza una **paleta oficial**, pasarla. Las actuales están derivadas de los logos
+  y los empaques:
+  - Master Snacks: amarillo `#ffc20e`, azul eléctrico `#001bfa`, azul rey `#0000b5` y
+    negro `#0b0b1e`.
+  - Chitopo: dorado `#ffc20e`, café `#3a0d04`, rojo `#d02b05`, crema `#fff4d6` y un color
+    por sabor.
 - Si se hacen stickers, sellos o ilustraciones para redes, pedirlos también en **SVG o PNG
   transparente** para poder reutilizarlos en la web.
 

@@ -1,25 +1,35 @@
-# Estado del proyecto — Chitopo
+# Estado del proyecto — Master Snacks (Chitopo y las marcas que vengan)
 
-Última actualización: 2026-09-17
+Última actualización: 2026-09-22
 
 ## 1. Resumen
 
+**Master Snacks** (Master Snacks Inversiones SpA) es la empresa. **Chitopo** es su marca de
+horneados; después vendrán otras marcas de productos no horneados. El sitio refleja eso:
+
 Un solo repositorio con dos apps React + Vite independientes, desplegadas juntas en un solo sitio de Netlify:
 
-- **`landing/`** — sitio de marketing (una sola página, secciones ancladas).
-- **`catalogo-mayorista/`** — catálogo B2B con carrito, pedido derivado a WhatsApp, y panel de administración.
+- **`landing/`** — sitio de marketing con dos páginas (Vite multi-page):
+  - `/` — home de **Master Snacks**: la empresa, sus marcas, historia, fábrica, FAQ y contacto.
+  - `/chitopo/` — página de **Chitopo**: sabores, por qué elegirlo, Instagram, y una franja que
+    lleva a la empresa.
+- **`catalogo-mayorista/`** — catálogo B2B de Master Snacks con carrito, pedido derivado a WhatsApp, y panel de administración. Cada producto tiene su marca.
 
-En producción quedan bajo el mismo dominio: la landing en `/` y el catálogo en `/catalogo/`.
+En producción quedan bajo el mismo dominio: la home en `/`, Chitopo en `/chitopo/` y el catálogo en `/catalogo/`.
 
 - Repo: https://github.com/FabrizioTurdo-Dev/masterSnackChitopo
 - Link de producción: **completar acá una vez conectado el sitio en Netlify**
 
 ## 2. Qué está hecho y funcionando
 
-- Landing completa: hero, historia, productos destacados, FAQ, contacto, animaciones (GSAP + Lenis), responsive.
-- Catálogo: browse de productos, filtros, carrito, pedido derivado a WhatsApp.
-- Pedidos: al tocar "Enviar por WhatsApp" el pedido se guarda en Supabase como **nuevo**, con un código (`CH-XXXX`) que también va en el mensaje. En el panel los dueños lo avanzan: nuevo → pendiente (cotización enviada) → confirmado → enviado, o cancelado. Esto funciona apenas hay credenciales de Supabase, aunque `MOCK_MODE` siga en `true`. Límite: se registra al abrir WhatsApp; si el local no aprieta enviar, queda un "nuevo" sin mensaje, y se cancela desde el panel.
-- Catálogo y panel admin con la misma identidad visual que la landing (dorado con damero, tarjetas crema con borde café, Anton, estallido de chitopos con GSAP). Los tokens y utilidades de marca viven en un solo archivo, `shared/chitopo-brand.css`, que importan las dos apps: un cambio de color o tipografía se hace ahí y aplica a ambas.
+- Landing completa en dos páginas (home de Master Snacks y página de Chitopo), animaciones (GSAP + Lenis), responsive.
+- Catálogo: browse de productos, filtros, carrito, pedido derivado a WhatsApp. El filtro por marca aparece solo cuando hay productos de más de una marca; si un pedido las mezcla, el mensaje las agrupa.
+- Pedidos: al tocar "Enviar por WhatsApp" el pedido se guarda en Supabase como **nuevo**, con un código (`MS-XXXX`; los anteriores al cambio de marca quedaron con `CH-XXXX`) que también va en el mensaje. En el panel los dueños lo avanzan: nuevo → pendiente (cotización enviada) → confirmado → enviado, o cancelado. Esto funciona apenas hay credenciales de Supabase, aunque `MOCK_MODE` siga en `true`. Límite: se registra al abrir WhatsApp; si el local no aprieta enviar, queda un "nuevo" sin mensaje, y se cancela desde el panel.
+- Dos identidades visuales compartidas por las dos apps en `shared/marca/`:
+  - **Master Snacks** (home, catálogo y panel): los colores del logo — amarillo, azul eléctrico, azul rey y contorno negro — con trama de puntos de cómic.
+  - **Chitopo** (`/chitopo/` y su tarjeta en la home): dorado con damero, café y rojo.
+
+  Cada página elige con `data-brand` en su `<html>` (o en un bloque, para las "islas" de otra marca). Los datos de la empresa y de cada marca viven en `src/data/brands.js` de cada app (espejo uno del otro).
 - Panel de admin (`/catalogo/#/admin`): dashboard, CRUD de productos, listado de pedidos, configuración de tienda — todo funcional en UI.
 - Login del panel con **Supabase Auth** (email + contraseña, sesión persistente, cerrar sesión): ya no hay credenciales hardcodeadas en el bundle. Falta conectar el proyecto de Supabase para que tenga contra qué autenticar.
 - Infra: repo unificado, build combinado (`build.mjs`) que compila ambas apps y las publica bajo un mismo dominio, `netlify.toml` con el redirect necesario para el panel admin.
@@ -39,6 +49,12 @@ Pasos, en orden:
    `migration-pedidos.sql`.
    Antes de correr el último, editar adentro la lista de emails con acceso (hoy son dos
    placeholders: Alex y Fabrizio).
+
+   **Si la base ya existía antes del 2026-09-22**, correr también
+   `migration-marcas.sql` (agrega la columna `brand` a los productos) **antes** de volver a
+   correr `seed.sql` y antes de poner `MOCK_MODE` en `false`. Sin esa columna, crear o
+   editar productos desde el panel falla con "column brand does not exist". En una base
+   nueva no hace falta: `schema.sql` ya la trae.
 2. **Authentication → Providers → Email**: desactivar *Enable email signups*.
 3. **Authentication → Users → Add user**: crear a mano la cuenta de Alex y la de Fabrizio,
    con los mismos emails que se pusieron en `migration-auth.sql`. Cada uno elige su propia
@@ -87,12 +103,15 @@ Hoy el sitio queda en un subdominio `*.netlify.app`. Falta decidir y comprar un 
 
 - Las imágenes de producto en `catalogo-mayorista/src/data/products.js` usan rutas absolutas (`/img/productos/...`). Hoy "funcionan" bajo `/catalogo/` solo porque `landing/public` tiene archivos con los mismos nombres en la raíz del sitio — es un acoplamiento frágil e invisible: se rompe apenas se suba un producto o imagen nueva desde el panel admin que no exista también en `landing/public`. Fix recomendado a futuro: anteponer `import.meta.env.BASE_URL` a esos strings.
 - Código duplicado entre `landing/` y `catalogo-mayorista/` (Logo, sello de advertencia, imágenes de producto, favicons, fuentes) — deliberadamente fuera de alcance de la unificación de hoy, candidato a extraer a una carpeta/paquete compartido más adelante.
+- El registro de marcas (`src/data/brands.js`) está duplicado en las dos apps y puede desincronizarse; `npm run seed:sql` al menos valida que cada producto use una marca conocida. Sumar una marca es un cambio de código (brands.js en las dos apps, su logo en `BrandMark.jsx` y, si trae líneas o sabores nuevos, `store.js`), no de base de datos.
+- Las líneas (suflés, maní, aros) y los sabores son hoy los de Chitopo. Cuando llegue la marca no horneada habrá que sumar los suyos.
+- A confirmar con los dueños: si Master Snacks tiene Instagram propio (hoy la home enlaza el de Chitopo como marca) y si son dueños de mastersnackschile.com (el link se sacó del footer; el dominio podría apuntar a este sitio).
 - Sin tests automatizados en ninguno de los dos proyectos.
 
 ## 5. Cómo correr todo localmente
 
 ```bash
-# Landing (puerto 5174)
+# Landing (puerto 5174): / es Master Snacks y /chitopo/ (con barra) es Chitopo
 cd landing
 npm install
 npm run dev

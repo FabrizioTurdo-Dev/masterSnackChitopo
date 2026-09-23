@@ -1,6 +1,7 @@
-# Chitopo — Catálogo mayorista
+# Master Snacks — Catálogo mayorista
 
-Catálogo mayorista de snacks Chitopo (Master Snacks Inversiones SpA, La Pintana, Santiago).
+Catálogo mayorista de Master Snacks (Master Snacks Inversiones SpA, La Pintana, Santiago).
+Cada producto pertenece a una de sus marcas: hoy todos son de **Chitopo**, la de horneados.
 No hay checkout: el local arma su pedido eligiendo cajas o displays, y el pedido se deriva al
 WhatsApp del socio, donde se cierra precio, pago y despacho.
 
@@ -26,7 +27,8 @@ El panel funciona igual (crear, editar, ocultar, borrar), pero los cambios se pi
 | `npm run dev` | Servidor de desarrollo |
 | `npm run build` | Build de producción en `dist/` |
 | `npm run preview` | Sirve el build |
-| `npm run assets` | Regenera imágenes de producto, favicons y OG desde la carpeta de marca |
+| `npm run assets` | Regenera imágenes de producto, favicons y OG (`-- empaques`, `-- chitopo` o `-- marca` para un solo paso) |
+| `npm run media` | Procesa logos, videos y recortes nuevos de `../landing/src/assets` (`-- mastersnacks` para el logo de la empresa) |
 | `npm run seed:sql` | Regenera `supabase/seed.sql` desde `src/data/products.js` |
 
 ## Precios: modo "a consultar"
@@ -47,12 +49,26 @@ componente necesita condicionales sueltos.
 
 | Quiero cambiar… | Archivo |
 |---|---|
-| Nombre, tagline, WhatsApp, pedido mínimo, datos legales | `src/data/store.js` |
-| Los productos y sus formatos | `src/data/products.js` |
-| Colores, tipografías | `../shared/chitopo-brand.css` (bloque `@theme`, compartido con la landing) |
+| Datos de la empresa y de cada marca | `src/data/brands.js` (espejo de `../landing/src/data/brands.js`) |
+| WhatsApp, pedido mínimo, líneas, formatos por defecto | `src/data/store.js` |
+| Los productos, su marca y sus formatos | `src/data/products.js` |
+| Logo de una marca en tarjetas y filtros | `src/components/brand/BrandMark.jsx` |
+| Colores, tipografías | `../shared/marca/` (`tokens.css` con las paletas; `master-snacks.css` y `chitopo.css` con cada identidad) |
 | Color de un sabor | `FLAVOR_ACCENTS` en `src/data/store.js` |
+| Mensajes de WhatsApp del pedido | `src/lib/orderMessage.js` |
 | Imágenes de empaque | `npm run assets` (originales en `../Logos vectorizados/`) |
-| Logo de Master Snacks (footer y landing) | `npm run media -- mastersnacks` (original en `../landing/src/assets/logo-mastersnacks.svg`) |
+| Logo de Master Snacks (sticker, HD, íconos y OG) | `npm run media -- mastersnacks` y después `npm run assets -- marca` |
+
+### Marcas
+
+Master Snacks es la empresa; cada producto tiene `brand` con el id de una de sus marcas
+(`src/data/brands.js`). Con una sola marca cargada el catálogo y el panel no muestran nada
+extra; con dos o más aparecen el filtro por marca, la columna en la tabla del panel y el
+desglose del dashboard, y el mensaje de WhatsApp agrupa los ítems por marca.
+
+Para sumar una marca: agregarla en `brands.js` (acá y en la landing), darle su logo en
+`BrandMark.jsx` y, si trae líneas o sabores nuevos, sumarlos en `store.js`. La base no
+necesita migración: `brand` es texto libre.
 
 ### Formatos de venta
 
@@ -80,7 +96,8 @@ El proyecto vive en la cuenta de Supabase del cliente (Master Snacks). Pasos, en
 2. **SQL Editor**, en este orden:
    `supabase/schema.sql` → `supabase/seed.sql` → `supabase/migration-auth.sql` →
    `supabase/migration-pedidos.sql` (antes de `migration-auth.sql`, editar la lista de
-   emails que está adentro).
+   emails que está adentro). En una base creada antes de la columna `brand`, correr
+   además `supabase/migration-marcas.sql` antes de volver a correr `seed.sql`.
 3. **Project Settings → API**: copiar la URL y la publishable key a `.env.local`:
 
    ```
