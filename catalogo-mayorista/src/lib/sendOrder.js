@@ -31,10 +31,11 @@ export function sendOrder(row) {
 }
 
 // Código corto que va en el mensaje de WhatsApp y en el panel, para cruzar
-// uno con otro. Sin 0/O ni 1/I, que se confunden al leerlos.
+// uno con otro. Sin 0/O ni 1/I, que se confunden al leerlos. MS de Master
+// Snacks; los pedidos anteriores al cambio de marca quedaron con CH-.
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 export function orderRef() {
   const bytes = crypto.getRandomValues(new Uint8Array(4));
-  return "CH-" + Array.from(bytes, b => ALPHABET[b % ALPHABET.length]).join("");
+  return "MS-" + Array.from(bytes, b => ALPHABET[b % ALPHABET.length]).join("");
 }

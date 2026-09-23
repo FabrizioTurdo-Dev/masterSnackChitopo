@@ -14,6 +14,7 @@ const TABLE = "productos";
 const COLUMNS = [
   "slug",
   "name",
+  "brand",
   "line",
   "flavor",
   "grams",

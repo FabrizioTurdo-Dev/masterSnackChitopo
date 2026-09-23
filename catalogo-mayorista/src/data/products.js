@@ -1,6 +1,7 @@
 // src/data/products.js
-// Catálogo real de Chitopo. Datos tomados del brief de marca (22-08-2026)
-// y del arte de los empaques.
+// Catálogo real de Master Snacks. Hoy todo es de Chitopo (`brand`, ver
+// brands.js). Datos tomados del brief de marca (22-08-2026) y del arte de
+// los empaques.
 //
 // ⚠️ Pendientes marcados con TODO: precios, y las fichas nutricionales de
 // los productos que todavía no salen a la venta.
@@ -10,6 +11,7 @@ const PRODUCTS = [
     id: 1,
     slug: "sufle-queso",
     name: "Suflés Queso Horneado",
+    brand: "chitopo",
     line: "sufles",
     flavor: "queso",
     grams: 150,
@@ -48,6 +50,7 @@ const PRODUCTS = [
     id: 2,
     slug: "sufle-papa",
     name: "Suflés Papa Horneado",
+    brand: "chitopo",
     line: "sufles",
     flavor: "papa",
     grams: 150,
@@ -83,6 +86,7 @@ const PRODUCTS = [
     id: 3,
     slug: "sufle-frutos-del-bosque",
     name: "Suflés Frutos del Bosque",
+    brand: "chitopo",
     line: "sufles",
     flavor: "frutos",
     // El arte vectorizado oficial ("Sufle completo/3.svg") imprime 125 g,
@@ -110,6 +114,7 @@ const PRODUCTS = [
     id: 4,
     slug: "mani-salado",
     name: "Maní Horneado Salado",
+    brand: "chitopo",
     line: "mani",
     flavor: "mani",
     grams: 60,
@@ -145,6 +150,7 @@ const PRODUCTS = [
     id: 5,
     slug: "tocino-merken",
     name: "Tocino Merkén",
+    brand: "chitopo",
     line: "aros",
     flavor: "tocino",
     grams: 130,

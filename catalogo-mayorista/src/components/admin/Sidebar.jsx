@@ -1,7 +1,7 @@
 import { Package, ShoppingCart, BarChart3, Settings, ExternalLink, LogOut } from "lucide-react";
-import { STORE_CONFIG } from "../../data/store";
+import { COMPANY } from "../../data/brands";
 import { useAuth } from "../../context/AuthContext";
-import Logo from "../brand/Logo";
+import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 
 const NAV = [
   { id: "dashboard", label: "Dashboard",  icon: BarChart3 },
@@ -18,10 +18,10 @@ export default function Sidebar({ page, setPage, newOrders, stockAlerts }) {
       <>
         <div className="px-3 mb-6">
           <div className="flex items-center gap-2.5 mb-1">
-            <Logo height={26} />
+            <MasterSnacksLogo height={44} alt="" className="-rotate-3 shrink-0" />
             <div>
               <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-gold">Admin</div>
-              <div className="text-[11px] text-snow/70">{STORE_CONFIG.name}</div>
+              <div className="text-[11px] text-snow/70">{COMPANY.name}</div>
             </div>
           </div>
           <div className="text-[11px] text-snow/70 mt-3 px-1">

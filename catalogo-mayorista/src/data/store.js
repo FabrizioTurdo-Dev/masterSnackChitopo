@@ -1,7 +1,10 @@
 // src/data/store.js
-// Estado compartido y configuración del catálogo mayorista de Chitopo.
+// Estado compartido y configuración del catálogo mayorista de Master Snacks.
+// La identidad de la empresa y de cada marca vive en brands.js.
 // MOCK_MODE = true usa los productos locales de products.js.
 // Cambia a false y configura .env.local para usar Supabase (ver README).
+
+import { BRANDS, DEFAULT_BRAND, brandOf } from "./brands";
 
 export const MOCK_MODE = true;
 
@@ -14,16 +17,7 @@ export const INITIAL_ORDERS = [];
 // ═══════════════════════════════════════════════════════════════
 
 export const STORE_CONFIG = {
-  // Identidad
-  name: "Chitopo",
   subtitle: "Catálogo mayorista",
-  tagline: "El sufle, po'",
-  producer: "Master Snacks Inversiones SpA",
-
-  // SEO
-  metaTitle: "Chitopo — Catálogo mayorista de snacks",
-  metaDescription:
-    "Snacks horneados hechos en Chile. Suflés, maní y más, al por mayor. Arma tu pedido y lo cerramos por WhatsApp.",
 
   // ⚠️ Precios: el brief los deja pendientes ("a definir con Alex").
   // Con showPrices en false el catálogo funciona como cotizador:
@@ -56,15 +50,6 @@ export const STORE_CONFIG = {
     { id: "display-12", label: "Display", units: 12, stock: 0, price: null },
     { id: "unidad", label: "Unidad", units: 1, stock: 0, price: null },
   ],
-
-  // Contacto y datos legales (del arte de los empaques)
-  schedule: "Lun a Vie 9:00–18:00",
-  shipping: "Despachos en la Región Metropolitana",
-  address: "Doctor Amador Neghme 03639 M 28, La Pintana, Santiago",
-  sesma: "Resolución SESMA N° 2313426436 (16/08/2023, Región Metropolitana)",
-  instagram: "chitoposnakcs.cl",
-  website: "www.mastersnackschile.com",
-  copyrightYear: 2026,
 };
 
 // WhatsApp del socio — formato internacional sin +
@@ -76,10 +61,10 @@ export const WHATSAPP_LINK = `https://wa.me/${SELLER_PHONE}`;
 // Buenos Aires en formato internacional: 54 + 9 (móvil) + 11 5492-2800.
 export const DEV_CREDIT = { name: "Fabrizio Turdo", phone: "5491154922800" };
 const DEV_MESSAGE =
-  "¡Hola Fabrizio! Vi la web de Chitopo y quiero una para mi negocio. Te cuento de qué se trata: ";
+  "¡Hola Fabrizio! Vi la web de Master Snacks y quiero una para mi negocio. Te cuento de qué se trata: ";
 export const DEV_WHATSAPP_LINK = `https://wa.me/${DEV_CREDIT.phone}?text=${encodeURIComponent(DEV_MESSAGE)}`;
 
-// Acento por sabor (los tokens viven en shared/chitopo-brand.css)
+// Acento por sabor (los tokens viven en shared/marca/tokens.css)
 export const FLAVOR_ACCENTS = {
   queso: "#e23a2e",
   papa: "#3fa34d",
@@ -88,9 +73,21 @@ export const FLAVOR_ACCENTS = {
   tocino: "#ff3b14",
 };
 
-// Sin sabor conocido cae en el rojo de marca: el dorado no se ve sobre crema.
+// Sin sabor conocido cae en el azul de Master Snacks: el dorado no se ve
+// sobre las tarjetas blancas.
 export function flavorAccent(flavor) {
-  return FLAVOR_ACCENTS[flavor] || "#d02b05";
+  return FLAVOR_ACCENTS[flavor] || "#001bfa";
+}
+
+// Marcas presentes en una lista de productos, en el orden de BRANDS. Con
+// una sola, el catálogo y el panel no muestran filtros ni columnas de marca.
+export function brandsIn(products) {
+  const ids = new Set((products || []).map(p => p.brand || DEFAULT_BRAND));
+  const order = id => {
+    const i = BRANDS.findIndex(b => b.id === id);
+    return i === -1 ? BRANDS.length : i;
+  };
+  return [...ids].sort((a, b) => order(a) - order(b)).map(brandOf);
 }
 
 // Devuelve los formatos con stock disponible de un producto

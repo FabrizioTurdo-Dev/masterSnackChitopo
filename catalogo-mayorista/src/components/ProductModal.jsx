@@ -6,7 +6,9 @@ import NutritionTable from "./brand/NutritionTable";
 import ImageLightbox from "./ImageLightbox";
 import { Bag, QtyStepper } from "./ProductCard";
 import { useBurst } from "../lib/burst";
+import BrandMark from "./brand/BrandMark";
 import { formatPrice, hasPrice, flavorAccent, formatsOf, SELLER_PHONE } from "../data/store";
+import { brandOf } from "../data/brands";
 
 function Dato({ label, children }) {
   if (!children) return null;
@@ -62,7 +64,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
   const maxQty = selected ? selected.stock : 1;
 
   function notifyMe() {
-    const msg = `¡Hola! Quiero que me avisen cuando llegue el ${product.name} de Chitopo.`;
+    const msg = `¡Hola! Quiero que me avisen cuando llegue el ${product.name} de ${brandOf(product.brand).name}.`;
     window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 
@@ -185,6 +187,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
           <div className="p-5 pt-0 md:pt-5 md:border-l-[3px] md:border-night flex flex-col gap-5">
             <div>
               <div className="flex items-center gap-3 flex-wrap text-xs text-night-faint">
+                <BrandMark brand={product.brand} height={22} />
                 <span className="font-semibold text-night">{product.grams} g</span>
                 {soon && (
                   <span className="font-condensed uppercase tracking-[0.08em] text-xs px-2 py-0.5 bg-night text-gold">

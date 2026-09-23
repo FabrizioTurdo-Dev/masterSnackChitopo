@@ -1,6 +1,7 @@
 -- ============================================================
--- Chitopo — catálogo mayorista
--- Ejecutar en el SQL Editor de Supabase, sobre un proyecto nuevo.
+-- Master Snacks — catálogo mayorista (Chitopo y las marcas que vengan)
+-- Ejecutar en el SQL Editor de Supabase, sobre un proyecto nuevo. Ya trae
+-- la columna brand: migration-marcas.sql es solo para bases anteriores.
 -- Después correr seed.sql para cargar los 5 productos reales, y al final
 -- migration-auth.sql.
 --
@@ -11,7 +12,8 @@
 -- ============================================================
 
 -- ── 1. PRODUCTOS ────────────────────────────────────────────
--- Un producto = un SKU (sabor + gramaje). Los bultos de venta
+-- Un producto = un SKU (sabor + gramaje) de una marca de Master Snacks
+-- (brand: id de src/data/brands.js, hoy 'chitopo'). Los bultos de venta
 -- (caja, display, unidad) viven en formats como JSONB:
 --   [{ "id":"caja-24", "label":"Caja", "units":24, "stock":40, "price":null }]
 -- price en null significa "a consultar".
@@ -20,6 +22,7 @@ CREATE TABLE IF NOT EXISTS productos (
   id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   slug        TEXT UNIQUE NOT NULL,
   name        TEXT NOT NULL,
+  brand       TEXT NOT NULL DEFAULT 'chitopo',
   line        TEXT NOT NULL DEFAULT 'sufles',
   flavor      TEXT,
   grams       INT  NOT NULL,
@@ -40,6 +43,7 @@ CREATE TABLE IF NOT EXISTS productos (
   created_at  TIMESTAMPTZ DEFAULT now()
 );
 
+CREATE INDEX IF NOT EXISTS productos_brand_idx  ON productos (brand);
 CREATE INDEX IF NOT EXISTS productos_line_idx   ON productos (line);
 CREATE INDEX IF NOT EXISTS productos_active_idx ON productos (active);
 
@@ -69,7 +73,7 @@ CREATE TABLE IF NOT EXISTS pedidos (
   -- confirmado → enviado; o cancelado. Lo avanzan los dueños desde el panel.
   status     TEXT NOT NULL DEFAULT 'nuevo'
              CHECK (status IN ('nuevo', 'pendiente', 'confirmado', 'enviado', 'cancelado')),
-  ref        TEXT,                    -- código del mensaje de WhatsApp (CH-XXXX)
+  ref        TEXT,                    -- código del mensaje de WhatsApp (MS-XXXX; los viejos, CH-XXXX)
   items      JSONB NOT NULL DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -98,7 +102,7 @@ CREATE POLICY "pedidos update admin" ON pedidos
 
 CREATE TABLE IF NOT EXISTS config (
   id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  shop_name   TEXT    DEFAULT 'Chitopo',
+  shop_name   TEXT    DEFAULT 'Master Snacks',
   phone       TEXT    DEFAULT '56978632055',
   min_order   INT     DEFAULT 100,     -- en unidades (bolsas)
   currency    TEXT    DEFAULT 'CLP',
@@ -118,7 +122,7 @@ CREATE POLICY "config escritura admin" ON config
   FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 INSERT INTO config (shop_name, phone)
-SELECT 'Chitopo', '56978632055'
+SELECT 'Master Snacks', '56978632055'
 WHERE NOT EXISTS (SELECT 1 FROM config);
 
 -- ── 4. updated_at automático ────────────────────────────────

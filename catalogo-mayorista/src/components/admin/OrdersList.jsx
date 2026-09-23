@@ -10,6 +10,8 @@ import { useApp } from "../../context/AppContext";
 import { isSupabaseConfigured } from "../../config/supabase";
 import { ordersService } from "../../services/ordersService";
 import { formatPrice, hasPrice } from "../../data/store";
+import { followUpMessage, groupByBrand } from "../../lib/orderMessage";
+import { brandOf } from "../../data/brands";
 
 function WhatsAppIcon({ size = 16 }) {
   return (
@@ -101,16 +103,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
   }
 
   function openChat(order) {
-    const detalle = (order.items || [])
-      .map(i => `• ${i.name} — ${i.format} ×${i.units} · ${i.qty}`)
-      .join("\n");
-    const codigo = order.ref ? ` ${order.ref}` : "";
-    const monto = hasPrice(order.total) ? `\nMonto: ${formatPrice(order.total)}` : "";
-    const msg =
-      `¡Hola ${order.client}! Te escribimos de Chitopo por tu pedido${codigo}:\n\n` +
-      detalle +
-      `\n\nTotal: ${order.units} bolsas` +
-      monto;
+    const msg = followUpMessage(order, hasPrice(order.total) ? formatPrice : null);
     window.open(`https://wa.me/${waNumber(order.phone)}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 
@@ -193,6 +186,8 @@ export default function OrdersList({ sync = {}, onRefresh }) {
         )}
 
         {filtered.map(order => {
+          // Si el pedido mezcla marcas, cada ítem dice de cuál es.
+          const mixed = groupByBrand(order.items || []).length > 1;
           const idx = stepIndex(order.status);
           const step = ORDER_STEPS[idx];
           const next = step?.next ? ORDER_STEPS[idx + 1] : null;
@@ -235,6 +230,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
               <div className="flex gap-1.5 flex-wrap">
                 {(order.items || []).map((item, i) => (
                   <span key={i} className="text-xs px-2 py-1 bg-snow-2 text-night border border-night/30">
+                    {mixed && <strong>{brandOf(item.brand).name} · </strong>}
                     {item.name} · {item.format} ×{item.units} · {item.qty}
                   </span>
                 ))}

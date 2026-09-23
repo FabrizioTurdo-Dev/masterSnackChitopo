@@ -9,19 +9,21 @@ import ProductModal from "../components/ProductModal";
 import CartDrawer from "../components/CartDrawer";
 import CatalogHero from "../components/CatalogHero";
 import Marquee from "../components/ui/Marquee";
-import Logo from "../components/brand/Logo";
+import MasterSnacksLogo from "../components/brand/MasterSnacksLogo";
+import BrandMark from "../components/brand/BrandMark";
 import { BurstProvider } from "../lib/burst";
 import { prefersReducedMotion } from "../lib/motion";
 import { LANDING_URL } from "../lib/landingUrl";
 import { useApp } from "../context/AppContext";
-import { STORE_CONFIG, WHATSAPP_LINK, totalUnits } from "../data/store";
+import { STORE_CONFIG, WHATSAPP_LINK, totalUnits, brandsIn } from "../data/store";
+import { COMPANY, DEFAULT_BRAND, brandOf } from "../data/brands";
 
-// La marca ya la presentó la landing: acá la cinta repite lo que el local
+// La empresa ya la presentó la landing: acá la cinta repite lo que el local
 // necesita para pedir, sobre todo el mínimo.
 const CINTA = [
   `Pedido mínimo ${STORE_CONFIG.minOrderUnits} unidades`,
   "Mezcla sabores y formatos",
-  "Producido por Master Snacks",
+  "Fábrica propia en La Pintana",
   "Despacho en la RM",
 ];
 
@@ -64,6 +66,7 @@ export default function Catalogo() {
 
 function CatalogoPage() {
   const { products } = useApp();
+  const [brandFilter, setBrandFilter] = useState("todas");
   const [lineFilter, setLineFilter] = useState("todos");
   const [formatFilter, setFormatFilter] = useState(null);
   const [sortBy, setSortBy] = useState("default");
@@ -95,14 +98,20 @@ function CatalogoPage() {
     return [...map.entries()].sort((a, b) => b[1] - a[1]).map(([label]) => label);
   }, [products]);
 
+  // Marcas con productos visibles. Con una sola (hoy, Chitopo) no hay filtro
+  // de marca: aparece solo cuando el catálogo mezcla más de una.
+  const brands = useMemo(() => brandsIn(products.filter(p => p.active)), [products]);
+  const multiBrand = brands.length > 1;
+
   const filtered = useMemo(() => {
     const list = products.filter(p => {
       if (!p.active) return false;
+      if (brandFilter !== "todas" && (p.brand || DEFAULT_BRAND) !== brandFilter) return false;
       if (lineFilter !== "todos" && p.line !== lineFilter) return false;
       if (formatFilter && !(p.formats || []).some(f => f.label === formatFilter)) return false;
       if (search) {
         const q = search.toLowerCase();
-        const haystack = `${p.name} ${p.flavor} ${p.line}`.toLowerCase();
+        const haystack = `${p.name} ${p.flavor} ${p.line} ${brandOf(p.brand).name}`.toLowerCase();
         if (!haystack.includes(q)) return false;
       }
       return true;
@@ -121,7 +130,7 @@ function CatalogoPage() {
     }
 
     return list;
-  }, [products, lineFilter, formatFilter, search, sortBy]);
+  }, [products, brandFilter, lineFilter, formatFilter, search, sortBy]);
 
   const units = totalUnits(cart);
 
@@ -150,6 +159,7 @@ function CatalogoPage() {
         ...prev,
         {
           id: product.id,
+          brand: product.brand || DEFAULT_BRAND,
           name: product.name,
           grams: product.grams,
           image: product.image,
@@ -192,6 +202,7 @@ function CatalogoPage() {
   }
 
   function clearFilters() {
+    setBrandFilter("todas");
     setLineFilter("todos");
     setFormatFilter(null);
     setSearch("");
@@ -202,8 +213,13 @@ function CatalogoPage() {
       <header className="sticky top-0 z-50 bg-snow/95 backdrop-blur border-b-[3px] border-night">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <a href={LANDING_URL} className="shrink-0" aria-label="Chitopo — ir al sitio">
-              <Logo height={32} />
+            <a href={LANDING_URL} className="shrink-0" aria-label={`${COMPANY.name} — ir al sitio`}>
+              <MasterSnacksLogo
+                height={52}
+                alt={COMPANY.name}
+                loading="eager"
+                className="-rotate-3 mt-2 transition-transform duration-300 hover:rotate-0 hover:scale-105"
+              />
             </a>
             <span className="hidden md:inline-flex items-center font-condensed uppercase tracking-[0.12em] text-xs px-2.5 py-1 bg-night text-gold">
               {STORE_CONFIG.subtitle}
@@ -274,6 +290,32 @@ function CatalogoPage() {
           </div>
 
           <div className="flex flex-col gap-4 mb-5 sm:mb-7">
+            {multiBrand && (
+              <div className="flex gap-2.5 flex-wrap items-center" role="group" aria-label="Marca">
+                <span className="font-condensed text-xs text-night-soft uppercase tracking-[0.14em] shrink-0 mr-1">
+                  Marca
+                </span>
+                <button
+                  onClick={() => setBrandFilter("todas")}
+                  aria-pressed={brandFilter === "todas"}
+                  className={chip(brandFilter === "todas")}
+                >
+                  Todas
+                </button>
+                {brands.map(b => (
+                  <button
+                    key={b.id}
+                    onClick={() => setBrandFilter(b.id)}
+                    aria-pressed={brandFilter === b.id}
+                    aria-label={`${b.name} · ${b.descriptor}`}
+                    className={`${chip(brandFilter === b.id)} gap-2`}
+                  >
+                    <BrandMark brand={b.id} height={20} />
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="flex gap-3 flex-wrap items-center justify-between">
               <div className="flex gap-2.5 flex-wrap" role="group" aria-label="Línea de producto">
                 {[

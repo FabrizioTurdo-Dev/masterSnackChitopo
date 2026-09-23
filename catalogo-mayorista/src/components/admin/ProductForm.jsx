@@ -4,7 +4,8 @@ import Input from "./ui/Input";
 import Select from "./ui/Select";
 import Btn from "./ui/Btn";
 import { FIELD, FIELD_SM, LABEL, TONES, ERROR_TEXT } from "./ui/styles";
-import { STORE_CONFIG, FLAVOR_ACCENTS } from "../../data/store";
+import { STORE_CONFIG, FLAVOR_ACCENTS, DEV_CREDIT } from "../../data/store";
+import { BRANDS, DEFAULT_BRAND, brandOf } from "../../data/brands";
 
 const NUTRIENTS = [
   { key: "energia", label: "Energía (kcal)" },
@@ -37,6 +38,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
   const [form, setForm] = useState({
     name: product?.name || "",
     slug: product?.slug || "",
+    brand: product?.brand || DEFAULT_BRAND,
     line: product?.line || STORE_CONFIG.lines[0]?.id || "sufles",
     flavor: product?.flavor || "queso",
     grams: product?.grams || "",
@@ -48,7 +50,11 @@ export default function ProductForm({ product, onSave, onCancel }) {
     // Sin UI propia todavía: se conserva tal cual para no perderla al guardar.
     gallery: product?.gallery || [],
     barcode: product?.barcode || "",
-    claims: product?.claims || { baked: true, glutenFree: false, seals: [] },
+    claims: product?.claims || {
+      baked: brandOf(DEFAULT_BRAND).baked ?? false,
+      glutenFree: false,
+      seals: [],
+    },
     formats: product?.formats?.length
       ? product.formats
       : STORE_CONFIG.defaultFormats.map(f => ({ ...f })),
@@ -61,6 +67,16 @@ export default function ProductForm({ product, onSave, onCancel }) {
   const fileRef = useRef();
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
+
+  // En un producto nuevo, "Horneado, no frito" arranca como diga la marca
+  // (Chitopo es de horneados). En uno existente no se toca lo ya declarado.
+  function setBrand(id) {
+    setForm(f => ({
+      ...f,
+      brand: id,
+      claims: isEdit ? f.claims : { ...f.claims, baked: brandOf(id).baked ?? false },
+    }));
+  }
 
   function setClaim(key, val) {
     setForm(f => ({ ...f, claims: { ...f.claims, [key]: val } }));
@@ -203,6 +219,20 @@ export default function ProductForm({ product, onSave, onCancel }) {
           onChange={e => set("grams", e.target.value)}
           placeholder="150"
         />
+        <div className="flex flex-col gap-1.5">
+          <Select label="Marca" value={form.brand} onChange={e => setBrand(e.target.value)}>
+            {BRANDS.map(b => (
+              <option key={b.id} value={b.id}>
+                {b.name} · {b.descriptor}
+              </option>
+            ))}
+          </Select>
+          {BRANDS.length === 1 && (
+            <p className="text-xs text-night-faint leading-relaxed m-0">
+              Por ahora hay una sola marca. Para sumar otra, avísale a {DEV_CREDIT.name}.
+            </p>
+          )}
+        </div>
         <Select label="Línea" value={form.line} onChange={e => set("line", e.target.value)}>
           {STORE_CONFIG.lines.map(l => (
             <option key={l.id} value={l.id}>{l.labelPlural}</option>

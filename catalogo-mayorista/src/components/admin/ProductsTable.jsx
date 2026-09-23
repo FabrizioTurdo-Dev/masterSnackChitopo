@@ -7,8 +7,10 @@ import { CARD, FIELD, TH, PILL, TONES, chip } from "./ui/styles";
 import Modal from "./Modal";
 import ProductForm from "./ProductForm";
 import { useApp } from "../../context/AppContext";
-import { formatPrice, hasPrice, STORE_CONFIG, lineLabel, totalStock } from "../../data/store";
+import { formatPrice, hasPrice, STORE_CONFIG, lineLabel, totalStock, brandsIn } from "../../data/store";
+import { brandOf, DEFAULT_BRAND } from "../../data/brands";
 import { productsService } from "../../services/productsService";
+import BrandMark from "../brand/BrandMark";
 
 function FormatTag({ format, threshold }) {
   const isZero = format.stock === 0;
@@ -66,6 +68,7 @@ export default function ProductsTable({ stockThreshold }) {
   const { products, setProducts } = useApp();
   const [modal, setModal] = useState(null);
   const [search, setSearch] = useState("");
+  const [brandFilter, setBrandFilter] = useState("todas");
   const [lineFilter, setLineFilter] = useState("todos");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [stockFilter, setStockFilter] = useState("todos");
@@ -87,7 +90,12 @@ export default function ProductsTable({ stockThreshold }) {
 
   useEffect(() => {
     setPage(1);
-  }, [search, lineFilter, statusFilter, stockFilter]);
+  }, [search, brandFilter, lineFilter, statusFilter, stockFilter]);
+
+  // Con una sola marca cargada no hace falta ni la columna ni el filtro.
+  const brands = useMemo(() => brandsIn(products), [products]);
+  const multiBrand = brands.length > 1;
+  const brandIdOf = p => p.brand || DEFAULT_BRAND;
 
   function handleSort(field) {
     if (sortField === field) setSortDir(d => (d === "asc" ? "desc" : "asc"));
@@ -131,8 +139,11 @@ export default function ProductsTable({ stockThreshold }) {
 
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter(p => `${p.name} ${p.flavor || ""}`.toLowerCase().includes(q));
+      list = list.filter(p =>
+        `${p.name} ${p.flavor || ""} ${brandOf(p.brand).name}`.toLowerCase().includes(q)
+      );
     }
+    if (brandFilter !== "todas") list = list.filter(p => brandIdOf(p) === brandFilter);
     if (lineFilter !== "todos") list = list.filter(p => p.line === lineFilter);
     if (statusFilter === "activos") list = list.filter(p => p.active);
     if (statusFilter === "ocultos") list = list.filter(p => !p.active);
@@ -146,6 +157,7 @@ export default function ProductsTable({ stockThreshold }) {
     list.sort((a, b) => {
       let cmp = 0;
       if (sortField === "name") cmp = a.name.localeCompare(b.name);
+      else if (sortField === "brand") cmp = brandOf(a.brand).name.localeCompare(brandOf(b.brand).name);
       else if (sortField === "line") cmp = (a.line || "").localeCompare(b.line || "");
       else if (sortField === "grams") cmp = (a.grams || 0) - (b.grams || 0);
       else if (sortField === "stock") cmp = totalStock(a) - totalStock(b);
@@ -155,12 +167,13 @@ export default function ProductsTable({ stockThreshold }) {
     });
 
     return list;
-  }, [products, search, lineFilter, statusFilter, stockFilter, sortField, sortDir, stockThreshold]);
+  }, [products, search, brandFilter, lineFilter, statusFilter, stockFilter, sortField, sortDir, stockThreshold]);
 
   function exportCSV() {
-    const headers = ["Nombre", "Línea", "Gramaje", "Disponibilidad", "Formatos", "Bolsas en stock", "Visible"];
+    const headers = ["Nombre", "Marca", "Línea", "Gramaje", "Disponibilidad", "Formatos", "Bolsas en stock", "Visible"];
     const rows = filtered.map(p => [
       p.name,
+      brandOf(p.brand).name,
       lineLabel(p.line),
       `${p.grams} g`,
       p.status === "activo" ? "A la venta" : "Próximamente",
@@ -174,7 +187,7 @@ export default function ProductsTable({ stockThreshold }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `chitopo-productos-${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `master-snacks-productos-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -182,9 +195,21 @@ export default function ProductsTable({ stockThreshold }) {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
   const hasFilters =
-    search || lineFilter !== "todos" || statusFilter !== "todos" || stockFilter !== "todos";
+    search ||
+    brandFilter !== "todas" ||
+    lineFilter !== "todos" ||
+    statusFilter !== "todos" ||
+    stockFilter !== "todos";
 
   const FILTERS = [
+    ...(multiBrand
+      ? [
+          {
+            key: "brand", value: brandFilter, set: setBrandFilter,
+            options: [{ v: "todas", l: "Todas las marcas" }, ...brands.map(b => ({ v: b.id, l: b.name }))],
+          },
+        ]
+      : []),
     {
       key: "line", value: lineFilter, set: setLineFilter,
       options: [{ v: "todos", l: "Todas las líneas" }, ...STORE_CONFIG.lines.map(l => ({ v: l.id, l: l.labelPlural }))],
@@ -288,6 +313,7 @@ export default function ProductsTable({ stockThreshold }) {
                       <div className="min-w-0">
                         <div className="font-condensed uppercase text-base leading-tight text-night truncate">{p.name}</div>
                         <div className="text-xs text-night-faint">
+                          {multiBrand && `${brandOf(p.brand).name} · `}
                           {lineLabel(p.line)} · {p.grams} g
                         </div>
                       </div>
@@ -331,6 +357,9 @@ export default function ProductsTable({ stockThreshold }) {
                 <thead>
                   <tr className="bg-night">
                     <SortHeader label="Producto" field="name" current={sortField} direction={sortDir} onSort={handleSort} />
+                    {multiBrand && (
+                      <SortHeader label="Marca" field="brand" current={sortField} direction={sortDir} onSort={handleSort} />
+                    )}
                     <SortHeader label="Línea" field="line" current={sortField} direction={sortDir} onSort={handleSort} />
                     <SortHeader label="Gramaje" field="grams" current={sortField} direction={sortDir} onSort={handleSort} />
                     <th className={TH}>Precio</th>
@@ -353,6 +382,11 @@ export default function ProductsTable({ stockThreshold }) {
                           </div>
                         </div>
                       </td>
+                      {multiBrand && (
+                        <td className="px-4 py-3">
+                          <BrandMark brand={p.brand} height={20} />
+                        </td>
+                      )}
                       <td className="px-4 py-3 text-sm text-night-soft">{lineLabel(p.line)}</td>
                       <td className="px-4 py-3 text-sm text-night-soft tabular-nums">{p.grams} g</td>
                       <td className="px-4 py-3 text-xs font-bold text-electric">{priceOf(p)}</td>

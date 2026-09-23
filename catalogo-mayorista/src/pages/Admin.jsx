@@ -4,9 +4,10 @@ import { Loader2, ShieldAlert } from "lucide-react";
 import Input from "../components/admin/ui/Input";
 import { ERROR_TEXT } from "../components/admin/ui/styles";
 import AdminApp from "../components/admin/AdminApp";
-import Logo from "../components/brand/Logo";
+import MasterSnacksLogo from "../components/brand/MasterSnacksLogo";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { STORE_CONFIG } from "../data/store";
+import { COMPANY } from "../data/brands";
 
 export default function Admin() {
   return (
@@ -42,7 +43,7 @@ function Shell({ children }) {
         className="relative z-10 bg-snow nb p-6 sm:p-8 w-full max-w-[400px]"
       >
         <div className="text-center mb-7 flex flex-col items-center">
-          <Logo height={44} />
+          <MasterSnacksLogo height={96} alt={COMPANY.name} loading="eager" className="-rotate-3" />
           <h1 className="hero-title font-title uppercase text-6xl leading-none mt-5 mb-0">
             Panel
             <span className="sr-only"> de administración</span>
@@ -149,7 +150,7 @@ function Login() {
         </button>
 
         <p className="text-xs text-night-faint text-center mt-2 mb-0 leading-relaxed">
-          Acceso solo para cuentas autorizadas de {STORE_CONFIG.producer}.
+          Acceso solo para cuentas autorizadas de {COMPANY.legalName}.
         </p>
       </form>
     </Shell>

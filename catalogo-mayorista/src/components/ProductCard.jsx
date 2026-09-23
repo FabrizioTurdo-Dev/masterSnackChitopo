@@ -2,9 +2,11 @@ import { useRef, useState, memo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Plus, Minus, Bell } from "lucide-react";
 import SelloAdvertencia from "./brand/SelloAdvertencia";
+import BrandMark from "./brand/BrandMark";
 import { useBurst } from "../lib/burst";
 import { useBurstOnHover } from "../lib/useBurstOnHover";
 import { formatPrice, hasPrice, flavorAccent, formatsOf, SELLER_PHONE } from "../data/store";
+import { brandOf } from "../data/brands";
 
 // Stepper cuadrado de cantidad; lo comparten la tarjeta y la ficha.
 export function QtyStepper({ qty, max, onChange, size = "md" }) {
@@ -61,6 +63,7 @@ export function Bag({ src, alt, onError, className = "", imgClassName = "h-48 sm
 const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDetail, stockThreshold }) {
   const prefersReduced = useReducedMotion();
   const accent = flavorAccent(product.flavor);
+  const brand = brandOf(product.brand);
   const available = formatsOf(product);
   const soon = product.status === "proximamente";
 
@@ -79,7 +82,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
   const seal = product.claims?.seals?.[0];
 
   function notifyMe() {
-    const msg = `¡Hola! Quiero que me avisen cuando llegue el ${product.name} de Chitopo.`;
+    const msg = `¡Hola! Quiero que me avisen cuando llegue el ${product.name} de ${brand.name}.`;
     window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 
@@ -128,7 +131,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
         {product.image && !imgError ? (
           <Bag
             src={product.image}
-            alt={`Bolsa de ${product.name} Chitopo de ${product.grams} gramos`}
+            alt={`Bolsa de ${product.name} ${brand.name} de ${product.grams} gramos`}
             onError={() => setImgError(true)}
             className={`transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-rotate-3 ${soon ? "opacity-75" : ""}`}
           />
@@ -161,6 +164,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
       <div className="p-5 flex flex-col gap-4 flex-1">
         <div className="cursor-pointer" onClick={openDetail}>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-night-faint m-0">
+            <BrandMark brand={product.brand} height={18} />
             <span className="font-semibold text-night">{product.grams} g</span>
             {product.claims?.baked && <span>Horneado, no frito</span>}
             {product.claims?.glutenFree && <span>Libre de gluten</span>}

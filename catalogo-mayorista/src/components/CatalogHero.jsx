@@ -3,7 +3,9 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/SplitText";
 import StampBadge from "./brand/StampBadge";
+import BrandMark from "./brand/BrandMark";
 import { STORE_CONFIG, FLAVOR_ACCENTS } from "../data/store";
+import { BRANDS } from "../data/brands";
 import { prefersReducedMotion } from "../lib/motion";
 
 gsap.registerPlugin(SplitText, useGSAP);
@@ -116,10 +118,25 @@ export default function CatalogHero() {
         </h1>
 
         <div className="mt-4 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)] xl:items-end">
-          <p className="ch-fade text-night-soft text-base sm:text-lg leading-relaxed font-medium m-0 max-w-xl">
-            Snacks horneados hechos en Chile, al por mayor. Arma tu pedido acá y lo cerramos
-            por WhatsApp: precio, pago y despacho, al tiro.
-          </p>
+          <div className="max-w-xl">
+            <p className="ch-fade text-night-soft text-base sm:text-lg leading-relaxed font-medium m-0">
+              Snacks de nuestra fábrica en La Pintana, al por mayor. Arma tu pedido acá y lo
+              cerramos por WhatsApp: precio, pago y despacho, al tiro.
+            </p>
+            <ul className="ch-fade list-none p-0 m-0 mt-4 flex flex-wrap items-center gap-2" aria-label="Marcas del catálogo">
+              {BRANDS.map(b => (
+                <li
+                  key={b.id}
+                  className="inline-flex items-center gap-2 bg-snow border-2 border-night pl-2 pr-2.5 py-1 shadow-[3px_3px_0_var(--color-night)]"
+                >
+                  <BrandMark brand={b.id} height={20} />
+                  <span className="font-condensed uppercase tracking-[0.1em] text-[11px] text-night-soft">
+                    {b.descriptor}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <ol className="grid grid-cols-3 gap-2 sm:gap-3 list-none p-0 m-0">
             {STEPS.map((s, i) => (

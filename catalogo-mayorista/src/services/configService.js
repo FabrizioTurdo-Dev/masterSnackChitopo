@@ -1,4 +1,5 @@
 import { MOCK_MODE, STORE_CONFIG, SELLER_PHONE } from "../data/store";
+import { COMPANY } from "../data/brands";
 import { supabase } from "../config/supabase";
 
 export const configService = {
@@ -7,7 +8,7 @@ export const configService = {
       return {
         success: true,
         data: {
-          shop_name: STORE_CONFIG.name,
+          shop_name: COMPANY.name,
           phone: SELLER_PHONE,
           min_order: STORE_CONFIG.minOrderUnits,
           currency: STORE_CONFIG.currency.code,

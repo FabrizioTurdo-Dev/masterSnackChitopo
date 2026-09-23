@@ -4,6 +4,7 @@ import { X, Plus, Minus, Check, Trash2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { useBurst } from "../lib/burst";
 import { orderRef } from "../lib/sendOrder";
+import { newOrderMessage } from "../lib/orderMessage";
 import {
   formatPrice,
   hasPrice,
@@ -22,8 +23,8 @@ function WhatsAppIcon({ size = 20 }) {
   );
 }
 
-// Rojo oscuro para mensajes de error: el `fire` de marca no llega a 4.5:1
-// sobre crema-2 en letra chica.
+// Rojo oscuro para mensajes de error: legible en letra chica sobre las
+// superficies claras.
 const ERROR_TEXT = "text-xs font-semibold text-[#a32004] mt-1 block";
 
 // Barra hacia el pedido mínimo: se llena en rojo y pasa a verde al llegar.
@@ -90,21 +91,16 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
     if (!validate()) return;
 
     const ref = orderRef();
-    let msg = "*Nuevo pedido mayorista — Chitopo*\n";
-    msg += `*Código:* ${ref}\n\n`;
-    msg += `*Local:* ${shop.trim()}\n`;
-    msg += `*Contacto:* ${name.trim()}\n`;
-    if (phone.trim()) msg += `*Teléfono:* ${phone.trim()}\n`;
-    msg += "\n*Pedido:*\n";
-    cart.forEach(item => {
-      const line = `• ${item.name} ${item.grams}g — ${item.formatLabel} ×${item.units} · ${item.qty} ${item.qty === 1 ? "bulto" : "bultos"} (${itemUnits(item)} bolsas)`;
-      msg += priced ? `${line} = ${formatPrice(item.price * item.qty)}\n` : `${line}\n`;
+    const msg = newOrderMessage({
+      ref,
+      shop: shop.trim(),
+      contact: name.trim(),
+      phone: phone.trim(),
+      items: cart,
+      units,
+      total,
+      money: priced ? formatPrice : null,
     });
-    msg += "\n─────────────────\n";
-    msg += `*Total: ${units} bolsas*`;
-    msg += priced
-      ? `\n*Monto: ${formatPrice(total)}*`
-      : "\n\n_Precios a confirmar por este medio._";
 
     // Se registra antes de abrir WhatsApp: en el celular la pestaña puede
     // quedar congelada apenas salta a la app.
@@ -114,6 +110,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
       contact: name.trim(),
       phone: phone.trim(),
       items: cart.map(c => ({
+        brand: c.brand,
         name: c.name,
         format: c.formatLabel,
         units: c.units,

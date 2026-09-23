@@ -1,7 +1,6 @@
-import { MapPin, Clock, Truck, Globe, MessageCircle, ArrowLeft } from "lucide-react";
-import Logo from "./brand/Logo";
+import { MapPin, Clock, Truck, MessageCircle, ArrowLeft, ArrowUpRight } from "lucide-react";
 import MasterSnacksLogo from "./brand/MasterSnacksLogo";
-import { LANDING_URL } from "../lib/landingUrl";
+import { LANDING_URL, brandSiteUrl } from "../lib/landingUrl";
 import {
   STORE_CONFIG,
   WHATSAPP_LINK,
@@ -9,6 +8,7 @@ import {
   DEV_CREDIT,
   DEV_WHATSAPP_LINK,
 } from "../data/store";
+import { COMPANY, BRANDS } from "../data/brands";
 
 function InstagramIcon({ size = 14 }) {
   return (
@@ -44,25 +44,29 @@ function Item({ icon: Icon, children }) {
 const FOOT_LINK =
   "inline-flex items-center gap-2 min-h-[32px] py-1.5 text-[13px] no-underline transition-colors";
 
-// Mismo footer que la landing, con el link cruzado al revés (acá lleva al
-// sitio) y el aviso legal propio de un catálogo mayorista.
+const HEADING = "font-condensed text-sm text-gold uppercase tracking-[0.12em] mb-3 font-normal";
+
+// Mismo footer que la home de Master Snacks, con el link cruzado al revés
+// (acá lleva al sitio) y el aviso legal propio de un catálogo mayorista.
 export default function Footer() {
   return (
-    <footer className="on-dark relative z-10 border-t-[3px] border-night bg-night text-snow">
+    <footer className="on-dark relative z-10 border-t-[3px] border-night halftone-night text-snow">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          <div className="text-gold">
-            <Logo height={44} withTagline />
+          <div>
+            <MasterSnacksLogo
+              alt={COMPANY.name}
+              height={96}
+              className="-rotate-3 transition-transform duration-300 hover:rotate-2 hover:scale-105"
+            />
             <p className="text-[13px] text-snow/75 leading-relaxed mt-4 max-w-[280px]">
-              Snacks horneados hechos en Chile. Catálogo mayorista para almacenes,
+              Snacks hechos en nuestra fábrica de La Pintana. Catálogo mayorista para almacenes,
               distribuidoras y locales de barrio.
             </p>
           </div>
 
           <div>
-            <h3 className="font-condensed text-sm text-gold uppercase tracking-[0.12em] mb-3 font-normal">
-              Pedidos
-            </h3>
+            <h3 className={HEADING}>Pedidos</h3>
             <ul className="flex flex-col gap-2 list-none p-0 m-0">
               <li>
                 <a
@@ -76,60 +80,52 @@ export default function Footer() {
               </li>
               <li>
                 <a href={LANDING_URL} className={`${FOOT_LINK} text-snow hover:text-gold font-semibold`}>
-                  <ArrowLeft size={14} aria-hidden="true" /> Ir al sitio de Chitopo
+                  <ArrowLeft size={14} aria-hidden="true" /> Ir al sitio de {COMPANY.name}
                 </a>
               </li>
-              <Item icon={Clock}>{STORE_CONFIG.schedule}</Item>
-              <Item icon={Truck}>{STORE_CONFIG.shipping}</Item>
+              <Item icon={Clock}>{COMPANY.schedule}</Item>
+              <Item icon={Truck}>{COMPANY.shipping}</Item>
               <Item icon={Truck}>Pedido mínimo: {STORE_CONFIG.minOrderUnits} unidades</Item>
             </ul>
           </div>
 
           <div>
-            <MasterSnacksLogo
-              alt=""
-              height={72}
-              className="mb-4 -rotate-3 transition-transform duration-300 hover:rotate-2 hover:scale-105"
-            />
-            <h3 className="font-condensed text-sm text-gold uppercase tracking-[0.12em] mb-3 font-normal">
-              {STORE_CONFIG.producer}
-            </h3>
-            <ul className="flex flex-col gap-2 list-none p-0 m-0">
-              <Item icon={MapPin}>{STORE_CONFIG.address}</Item>
-              <li>
-                <a
-                  href={`https://instagram.com/${STORE_CONFIG.instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${FOOT_LINK} text-snow hover:text-gold`}
-                >
-                  <InstagramIcon size={14} /> @{STORE_CONFIG.instagram}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`https://${STORE_CONFIG.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${FOOT_LINK} text-snow hover:text-gold`}
-                >
-                  <Globe size={14} aria-hidden="true" /> {STORE_CONFIG.website}
-                </a>
-              </li>
+            <h3 className={HEADING}>Nuestras marcas</h3>
+            <ul className="flex flex-col gap-3 list-none p-0 m-0">
+              {BRANDS.map(b => (
+                <li key={b.id} className="flex flex-col gap-1">
+                  <a
+                    href={brandSiteUrl(b)}
+                    className={`${FOOT_LINK} text-snow hover:text-gold font-semibold`}
+                  >
+                    {b.name} · {b.descriptor}
+                    <ArrowUpRight size={14} aria-hidden="true" />
+                  </a>
+                  <a
+                    href={`https://instagram.com/${b.instagram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${FOOT_LINK} text-snow/80 hover:text-gold`}
+                  >
+                    <InstagramIcon size={14} /> @{b.instagram}
+                  </a>
+                </li>
+              ))}
+              <Item icon={MapPin}>{COMPANY.address}</Item>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t-2 border-snow/15 flex flex-col gap-4">
           <p className="text-[11px] text-snow/70 leading-relaxed max-w-3xl m-0">
-            {STORE_CONFIG.sesma} · Hecho en Chile. Productos con sello de advertencia según la
+            {COMPANY.sesma} · Hecho en Chile. Productos con sello de advertencia según la
             Ley 20.606 de Etiquetado de Alimentos. Este catálogo es mayorista y está dirigido a
             comerciantes adultos: no constituye publicidad dirigida a menores de 14 años.
           </p>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <p className="text-[11px] text-snow/70 m-0">
-              &copy; {STORE_CONFIG.copyrightYear} {STORE_CONFIG.name} — {STORE_CONFIG.producer}
+              &copy; {COMPANY.copyrightYear} {COMPANY.legalName}
             </p>
 
             <a

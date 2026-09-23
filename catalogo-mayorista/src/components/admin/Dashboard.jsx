@@ -4,7 +4,8 @@ import { Package, AlertCircle, Boxes, ShoppingCart, Sparkles } from "lucide-reac
 import Btn from "./ui/Btn";
 import PageHeader from "./ui/PageHeader";
 import { CARD, TONES } from "./ui/styles";
-import { STORE_CONFIG, lineLabel, totalStock } from "../../data/store";
+import { STORE_CONFIG, lineLabel, totalStock, brandsIn } from "../../data/store";
+import { DEFAULT_BRAND } from "../../data/brands";
 
 function KpiCard({ icon, label, value, sub, tone, index = 0 }) {
   const prefersReduced = useReducedMotion();
@@ -97,6 +98,16 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
       value: products.filter(p => p.line === l.id).length,
     }));
 
+    // Solo tiene sentido con más de una marca cargada.
+    const brands = brandsIn(products);
+    const byBrand =
+      brands.length > 1
+        ? brands.map(b => ({
+            label: b.name,
+            value: products.filter(p => (p.brand || DEFAULT_BRAND) === b.id).length,
+          }))
+        : null;
+
     const byStatus = status => orders.filter(o => o.status === status).length;
     const ordersBy = {
       nuevo: byStatus("nuevo"),
@@ -105,7 +116,7 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
       enviado: byStatus("enviado"),
     };
 
-    return { total, visible, hidden, soon, onSale, units, zeroFormats, lowStock, byLine, ordersBy };
+    return { total, visible, hidden, soon, onSale, units, zeroFormats, lowStock, byLine, byBrand, ordersBy };
   }, [products, orders, stockThreshold]);
 
   return (
@@ -157,6 +168,7 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
             { label: "Enviados", value: metrics.ordersBy.enviado },
           ]}
         />
+        {metrics.byBrand && <StatCard label="Por marca" items={metrics.byBrand} />}
         <StatCard label="Por línea" items={metrics.byLine} />
         <StatCard
           label="Estado del catálogo"

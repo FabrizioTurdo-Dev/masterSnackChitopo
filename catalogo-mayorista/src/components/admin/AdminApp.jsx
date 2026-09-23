@@ -3,9 +3,10 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { STORE_CONFIG } from "../../data/store";
+import { COMPANY } from "../../data/brands";
 import { isSupabaseConfigured } from "../../config/supabase";
 import { ordersService } from "../../services/ordersService";
-import Logo from "../brand/Logo";
+import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import Sidebar from "./Sidebar";
 import Dashboard from "./Dashboard";
 import ProductsTable from "./ProductsTable";
@@ -108,10 +109,10 @@ export default function AdminApp() {
             <Menu size={20} aria-hidden="true" />
           </button>
           <div className="flex items-center gap-2.5">
-            <Logo height={26} />
+            <MasterSnacksLogo height={38} alt="" className="-rotate-3" />
             <div>
               <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-night">Admin</div>
-              <div className="text-[11px] text-night-soft">{STORE_CONFIG.name}</div>
+              <div className="text-[11px] text-night-soft">{COMPANY.name}</div>
             </div>
           </div>
         </div>
