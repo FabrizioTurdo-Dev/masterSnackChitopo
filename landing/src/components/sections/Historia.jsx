@@ -105,10 +105,13 @@ export default function Historia() {
             {/* Sobresale de la esquina de la tarjeta, como un sticker pegado
                 encima. La inclinación va inline porque la anima GSAP. Gira y
                 escala desde abajo a la derecha: desde el centro, el estado
-                inicial agrandado se salía de la pantalla en mobile. */}
+                inicial agrandado se salía de la pantalla en mobile. Entre sm
+                y lg el margen de la página es de 24px y no alcanza para todo
+                el vuelo a la derecha: se pasaba del borde y ensanchaba la
+                página en tablet. */}
             <span
               ref={sticker}
-              className="block shrink-0 origin-bottom-right -mb-12 sm:-mb-20 -mr-5 sm:-mr-14"
+              className="block shrink-0 origin-bottom-right -mb-12 sm:-mb-20 -mr-5 sm:-mr-10 lg:-mr-14"
               style={{ transform: "rotate(8deg)" }}
             >
               {/* Troquelado: el logo sin troquel se pierde sobre el azul. */}

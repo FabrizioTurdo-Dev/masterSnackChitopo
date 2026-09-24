@@ -96,7 +96,7 @@ export default function Marquee({
 
   const { band, star } = TONES[tone] ?? TONES.fire;
 
-  return (
+  const ribbon = (
     <div
       ref={root}
       className={`relative overflow-hidden border-y-[3px] border-(--line) py-3 ${band} ${
@@ -125,4 +125,12 @@ export default function Marquee({
       </div>
     </div>
   );
+
+  // Inclinada, la cinta se sale por los costados (margen negativo más el
+  // giro) y ensanchaba la página: en el teléfono se alejaba y se corría de
+  // lado. El envoltorio la recorta solo a lo ancho; `clip` y no `hidden`,
+  // porque hidden también cortaría arriba y abajo las puntas y la sombra.
+  // Tampoco arma un contexto de formato propio, así que los márgenes
+  // negativos siguen montando la cinta sobre las secciones vecinas.
+  return tilted ? <div className="overflow-x-clip">{ribbon}</div> : ribbon;
 }
