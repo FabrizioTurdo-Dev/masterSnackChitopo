@@ -25,7 +25,7 @@ export const BRANDS = [
     name: "Chitopo",
     descriptor: "Horneados",
     blurb: "Suflés horneados y maní, crujientes y sin fritura.",
-    tagline: "El sufle, po'",
+    tagline: "El sufle, BKN",
     instagram: "chitoposnakcs.cl",
     path: "chitopo/",
     baked: true,

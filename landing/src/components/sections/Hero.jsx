@@ -436,15 +436,17 @@ export default function Hero() {
 
         <div ref={poster} className="relative flex-1 flex flex-col items-center justify-center min-h-0 lg:min-h-[440px] mt-4 lg:mt-2">
           {/* Dos líneas decididas a mano. En computadora "El sufle," va
-              arriba de lado a lado y la bolsa apenas le pisa el pie; "po'"
+              arriba de lado a lado y la bolsa apenas le pisa el pie; "BKN"
               cae abajo a la derecha de la bolsa, así se lee en diagonal.
-              En teléfono quedan apiladas arriba. */}
+              Se corre media bolsa (0.35 × su alto), media palabra (0.9em)
+              y un respiro: así nunca queda debajo de la bolsa, sea cual sea
+              la proporción de la pantalla. En teléfono quedan apiladas arriba. */}
           <h1
             ref={headline}
             className="hero-title font-title uppercase m-0 leading-[0.86] text-[clamp(4.2rem,21vw,7rem)] lg:text-[clamp(7rem,min(14.5vw,24svh),15rem)] text-center w-full lg:absolute lg:inset-0 lg:flex lg:flex-col lg:justify-between"
           >
             <span className="block whitespace-nowrap">El sufle,</span>
-            <span className="block whitespace-nowrap translate-x-[20%] lg:translate-x-[27%]">po'</span>
+            <span className="block whitespace-nowrap translate-x-[20%] lg:translate-x-[calc(min(16.45svh,196px)_+_0.9em_+_1.25rem)]">BKN</span>
           </h1>
 
           <div ref={anchor} className="relative z-10 mt-3 sm:mt-0 lg:mt-0 lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2">
