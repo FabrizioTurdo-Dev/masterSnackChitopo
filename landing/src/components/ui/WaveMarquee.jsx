@@ -50,6 +50,7 @@ export default function WaveMarquee({
 }) {
   const root = useRef(null);
   const textEl = useRef(null);
+  const medidaEl = useRef(null);
   const pathEl = useRef(null);
   const offset = useRef(null);
   const id = useRef(`onda-${++seq}`).current;
@@ -72,15 +73,18 @@ export default function WaveMarquee({
   medir.current = () => {
     const box = root.current;
     const t = textEl.current;
-    if (!box || !t) return;
+    const medida = medidaEl.current;
+    if (!box || !t || !medida) return;
 
     const ancho = box.clientWidth;
     const fs = parseFloat(getComputedStyle(t).fontSize) || 0;
     if (!ancho || !fs) return;
 
-    // Largo de una repetición: todas miden lo mismo, así que alcanza con
-    // dividir el total por las que hay puestas.
-    const unidad = t.getComputedTextLength() / repsRef.current;
+    // Largo de una repetición, medido en una copia suelta fuera de la onda.
+    // Sobre la onda no sirve: Safari solo cuenta el texto que cabe en el
+    // trazado, así que cada medida pedía una copia más y React cortaba el
+    // ciclo desmontando la página entera.
+    const unidad = medida.getComputedTextLength();
     setGeo((prev) =>
       prev.ancho === ancho && prev.fs === fs && Math.abs(prev.unidad - unidad) < 0.5
         ? prev
@@ -90,8 +94,9 @@ export default function WaveMarquee({
     const largo = pathEl.current?.getTotalLength();
     if (!largo || !unidad) return;
     // Una repetición de más: mientras una sale por la izquierda, tiene
-    // que seguir habiendo texto hasta el final del trazado.
-    const necesarias = Math.ceil(largo / unidad) + 1;
+    // que seguir habiendo texto hasta el final del trazado. El tope es por
+    // si alguna medida sale absurda (fuente todavía sin cargar).
+    const necesarias = Math.min(Math.ceil(largo / unidad) + 1, 40);
     if (necesarias !== repsRef.current) setReps(necesarias);
   };
 
@@ -169,6 +174,10 @@ export default function WaveMarquee({
           <textPath ref={offset} href={`#${id}`} startOffset={0}>
             {unidadTexto.repeat(reps)}
           </textPath>
+        </text>
+        {/* Copia suelta e invisible solo para medir una repetición. */}
+        <text ref={medidaEl} visibility="hidden" className="uppercase">
+          {unidadTexto}
         </text>
       </svg>
     </div>
