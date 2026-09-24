@@ -22,7 +22,7 @@ export const PREGUNTAS = [
   {
     scope: "empresa",
     q: "¿Qué marcas tienen?",
-    a: "Hoy, Chitopo: nuestra marca de horneados, con suflés y maní. Estamos preparando una línea de snacks no horneados; si quieres saber apenas salga, escríbenos por WhatsApp.",
+    a: "Hoy, Chitopo: nuestra marca de horneados, con suflés y maní. Tenemos próximos lanzamientos en preparación; si quieres saber apenas salgan, escríbenos por WhatsApp.",
   },
   {
     scope: "todas",

@@ -130,8 +130,8 @@ function ChitopoCard() {
   );
 }
 
-// La marca que viene: todavía sin nombre. La bolsa misteriosa se mece sola
-// y el botón deja pedir aviso por WhatsApp.
+// Próximos lanzamientos: todavía bajo llave. La bolsa misteriosa se mece
+// sola y el botón deja pedir aviso por WhatsApp.
 function ProximamenteCard() {
   const card = useRef(null);
 
@@ -166,6 +166,14 @@ function ProximamenteCard() {
         </span>
       </div>
 
+      {/* El título va en su propia fila: "lanzamientos" no entra al lado de
+          la bolsa en teléfono ni en la columna angosta de computador. */}
+      <h3 className="font-title uppercase text-3xl sm:text-4xl leading-[0.95] text-snow m-0">
+        Próximos
+        <br />
+        lanzamientos
+      </h3>
+
       <div className="flex items-center gap-6">
         <div className="mc-mystery shrink-0 w-24 sm:w-28 drop-shadow-[5px_7px_0_var(--color-gold)]" aria-hidden="true">
           <div className="bag-flat halftone-electric aspect-[800/1361] grid place-items-center">
@@ -174,22 +182,14 @@ function ProximamenteCard() {
             </span>
           </div>
         </div>
-        <div>
-          <h3 className="font-title uppercase text-3xl sm:text-4xl leading-[0.95] text-snow m-0">
-            Una marca
-            <br />
-            sin horno
-          </h3>
-          <p className="text-snow/80 text-sm sm:text-base leading-relaxed mt-3 mb-0">
-            Estamos preparando una línea de snacks no horneados. Nombre, sabores y bolsa:
-            todavía bajo llave.
-          </p>
-        </div>
+        <p className="text-snow/80 text-sm sm:text-base leading-relaxed m-0">
+          Estamos preparando productos nuevos. Nombres, sabores y bolsas: todavía bajo llave.
+        </p>
       </div>
 
       <Button
         href={whatsappWith(
-          `¡Hola! Quiero saber cuándo sale la nueva marca de ${COMPANY.name}. Mi local es: `
+          `¡Hola! Quiero saber de los próximos lanzamientos de ${COMPANY.name}. Mi local es: `
         )}
         target="_blank"
         rel="noopener noreferrer"
@@ -197,7 +197,7 @@ function ProximamenteCard() {
         className="mt-auto w-full"
       >
         <MessageCircle size={20} aria-hidden="true" />
-        Avísame cuando salga
+        Avísame cuando salgan
       </Button>
     </article>
   );
@@ -215,7 +215,7 @@ export default function NuestrasMarcas() {
           varias marcas
         </>
       }
-      intro={`Cada línea de ${COMPANY.name} sale con su propia marca y su propia personalidad. Partimos con los horneados de Chitopo; lo que viene no pasa por el horno.`}
+      intro={`Cada línea de ${COMPANY.name} sale con su propia marca y su propia personalidad. Partimos con los horneados de Chitopo, y ya estamos preparando lo que viene.`}
     >
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-8 items-stretch">
         <ChitopoCard />

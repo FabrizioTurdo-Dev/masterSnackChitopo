@@ -25,7 +25,7 @@ const HITOS = [
   {
     icon: Sparkles,
     title: "Recién arrancando",
-    text: "Seis meses en la calle con Chitopo, ya vamos por el cuarto sabor y se viene una línea sin horno. Esto está partiendo no más.",
+    text: "Seis meses en la calle con Chitopo, ya vamos por el cuarto sabor y hay más productos en camino. Esto está partiendo no más.",
   },
 ];
 

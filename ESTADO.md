@@ -1,11 +1,12 @@
 # Estado del proyecto — Master Snacks (Chitopo y las marcas que vengan)
 
-Última actualización: 2026-09-22
+Última actualización: 2026-09-24
 
 ## 1. Resumen
 
 **Master Snacks** (Master Snacks Inversiones SpA) es la empresa. **Chitopo** es su marca de
-horneados; después vendrán otras marcas de productos no horneados. El sitio refleja eso:
+horneados; después vendrán otras marcas de productos no horneados. En el sitio eso se
+presenta como "próximos lanzamientos", sin decir qué son (pedido de los dueños). El sitio refleja eso:
 
 Un solo repositorio con dos apps React + Vite independientes, desplegadas juntas en un solo sitio de Netlify:
 
