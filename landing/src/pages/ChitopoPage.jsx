@@ -29,9 +29,7 @@ const CINTA = [
   "El suflé, BKN",
   "Queso",
   "Papa",
-  "Frutos del bosque",
-  "Maní",
-  "Tocino merkén",
+  "Próximamente: frutos del bosque, maní y tocino merkén",
   "Hecho en Chile",
 ];
 

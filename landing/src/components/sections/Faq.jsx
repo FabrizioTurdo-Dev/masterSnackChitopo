@@ -20,7 +20,7 @@ export default function Faq({ scope = "empresa" }) {
       // arriba y Contacto de abajo, y sumado quedaba un hueco muy grande.
       className="pt-0 sm:pt-0 lg:pt-0 pb-0 sm:pb-0 lg:pb-0"
       title="Lo que siempre nos preguntan"
-      intro="Si tienes un almacén, distribuidora o local de barrio, esto es lo que necesitas saber."
+      intro="Si tienes un almacén, una distribuidora o un local de barrio, esto es lo que necesitas saber."
     >
       <Reveal stagger className="flex flex-col gap-3 max-w-4xl">
         {preguntasDe(scope).map(({ q, a }) => (

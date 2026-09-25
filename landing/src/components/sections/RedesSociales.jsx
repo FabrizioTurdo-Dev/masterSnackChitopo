@@ -64,7 +64,7 @@ function PostCard() {
         </span>
         <img
           src="/img/redes/sufles-horneados.webp"
-          alt="Post de Instagram: bolsas de Suflés Papa y Suflés Queso horneados sobre fondo amarillo"
+          alt="Publicación de Instagram: bolsas de Suflés Papa y Suflés Queso horneados sobre fondo amarillo"
           width="800"
           height="800"
           loading="lazy"

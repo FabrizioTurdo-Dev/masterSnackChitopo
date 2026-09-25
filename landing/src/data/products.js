@@ -103,7 +103,7 @@ const PRODUCTS = [
     imageSize: [800, 1152],
     bag: "cutout",
     seal: "alto-en-calorias",
-    glutenFree: false,
+    glutenFree: true,
     blurb: "Merkén de verdad. Este pica, avisamos no más.",
   },
 ];

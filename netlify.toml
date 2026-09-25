@@ -12,7 +12,21 @@
   to = "/chitopo/"
   status = 301
 
+# El catálogo usa rutas con hash (#/admin), así que no necesita comodín: un
+# archivo que no existe (por ejemplo, un pedazo del panel de un deploy
+# anterior) tiene que dar 404 y no devolver el index.html. Solo /admin
+# escrito a mano cae en el catálogo, que lo pasa a #/admin.
 [[redirects]]
-  from = "/catalogo/*"
+  from = "/catalogo/admin"
   to = "/catalogo/index.html"
   status = 200
+
+[[redirects]]
+  from = "/catalogo/admin/"
+  to = "/catalogo/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/catalogo/admin"
+  status = 301
