@@ -102,8 +102,8 @@ function ChitopoCard() {
           {CHITOPO.tagline}
         </p>
         <p className="text-ink-soft text-base leading-relaxed mt-4 max-w-sm m-0">
-          {CHITOPO.blurb} Queso y papa en la calle; frutos del bosque, maní y tocino merkén en
-          camino.
+          {CHITOPO.blurb} Hoy en la calle: queso y papa. En camino: frutos del bosque, maní y
+          tocino merkén.
         </p>
 
         <span className="mt-auto pt-8 inline-flex items-center gap-2 self-start bg-fire text-cream border-[3px] border-ink px-5 min-h-[48px] font-condensed uppercase tracking-[0.06em] text-lg shadow-[4px_4px_0_var(--color-ink)]">
@@ -210,12 +210,12 @@ export default function NuestrasMarcas() {
       eyebrow="Nuestras marcas"
       title={
         <>
-          Una fábrica,
+          Una misma fábrica,
           <br />
-          varias marcas
+          un universo de sabores
         </>
       }
-      intro={`Cada línea de ${COMPANY.name} sale con su propia marca y su propia personalidad. Partimos con los horneados de Chitopo, y ya estamos preparando lo que viene.`}
+      intro={`En ${COMPANY.name} no solo producimos, sino que creamos experiencias únicas para cada antojo. Desarrollamos cada línea de productos con su propia identidad, marca y personalidad. Encendimos los motores con los horneados y extruidos de Chitopo. Nuestro equipo ya está cocinando las próximas innovaciones que se sumarán a la familia.`}
     >
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-8 items-stretch">
         <ChitopoCard />

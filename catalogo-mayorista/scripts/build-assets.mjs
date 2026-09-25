@@ -99,7 +99,7 @@ async function buildChitopo() {
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
        <text x="600" y="470" text-anchor="middle" fill="#fbc610"
              font-family="Arial, Helvetica, sans-serif" font-size="52"
-             font-weight="bold">El sufle, BKN</text>
+             font-weight="bold">El suflé, BKN</text>
        <text x="600" y="536" text-anchor="middle" fill="#c9a88f"
              font-family="Arial, Helvetica, sans-serif" font-size="30">
          Catálogo mayorista · Hecho en Chile

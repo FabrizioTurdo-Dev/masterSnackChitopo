@@ -12,17 +12,17 @@ export const PREGUNTAS = [
   {
     scope: "todas",
     q: "¿Cuál es el pedido mínimo?",
-    a: `${STORE_CONFIG.minOrderUnits} unidades. Puedes mezclar productos y formatos para llegar al mínimo, no hace falta que sea todo lo mismo.`,
+    a: `${STORE_CONFIG.minOrderUnits} unidades. Puedes mezclar productos y formatos para llegar al mínimo: no hace falta que sea todo lo mismo.`,
   },
   {
     scope: "todas",
     q: "¿Hacen despacho?",
-    a: `${COMPANY.shipping}. La coordinamos por WhatsApp cuando cerramos el pedido. Fuera de la RM, consúltanos y vemos.`,
+    a: `${COMPANY.shipping}. Los coordinamos por WhatsApp cuando cerramos el pedido. Fuera de la RM, consúltanos y vemos.`,
   },
   {
     scope: "empresa",
     q: "¿Qué marcas tienen?",
-    a: "Hoy, Chitopo: nuestra marca de horneados, con suflés y maní. Tenemos próximos lanzamientos en preparación; si quieres saber apenas salgan, escríbenos por WhatsApp.",
+    a: "Hoy, Chitopo: nuestra marca de horneados, con suflés de queso y papa. Tenemos próximos lanzamientos en preparación; si quieres saber apenas salgan, escríbenos por WhatsApp.",
   },
   {
     scope: "todas",
@@ -37,7 +37,7 @@ export const PREGUNTAS = [
   {
     scope: "chitopo",
     q: "¿Cada cuánto sacan sabores nuevos?",
-    a: "Vamos rápido: en seis meses ya tenemos dos en la calle y tres en camino (frutos del bosque, maní y tocino merkén). Si quieres enterarte primero, síguenos en Instagram.",
+    a: "Vamos rápido: en seis meses ya tenemos dos sabores en la calle. Los que vienen son frutos del bosque, maní y tocino merkén. Si quieres enterarte primero, síguenos en Instagram.",
   },
 ];
 

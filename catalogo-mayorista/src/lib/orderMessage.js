@@ -33,7 +33,7 @@ export function newOrderMessage({ ref, shop, contact, phone, items, units, total
   const line = item => {
     const bags = (item.units || 1) * item.qty;
     const base =
-      `• ${item.name} ${item.grams}g — ${item.formatLabel} ×${item.units} · ` +
+      `• ${item.name} ${item.grams} g — ${item.formatLabel} ×${item.units} · ` +
       `${item.qty} ${item.qty === 1 ? "bulto" : "bultos"} (${bags} bolsas)`;
     return money ? `${base} = ${money(item.price * item.qty)}` : base;
   };
@@ -57,7 +57,7 @@ export function followUpMessage(order, money) {
   const codigo = order.ref ? ` ${order.ref}` : "";
   const monto = money ? `\nMonto: ${money(order.total)}` : "";
   return (
-    `¡Hola ${order.client}! Te escribimos de ${COMPANY.name} por tu pedido${codigo}:\n\n` +
+    `¡Hola, ${order.client}! Te escribimos de ${COMPANY.name} por tu pedido${codigo}:\n\n` +
     detail(order.items || [], line) +
     `\n\nTotal: ${order.units} bolsas` +
     monto

@@ -435,7 +435,7 @@ export default function Hero() {
         </p>
 
         <div ref={poster} className="relative flex-1 flex flex-col items-center justify-center min-h-0 lg:min-h-[440px] mt-4 lg:mt-2">
-          {/* Dos líneas decididas a mano. En computadora "El sufle," va
+          {/* Dos líneas decididas a mano. En computadora "El suflé," va
               arriba de lado a lado y la bolsa apenas le pisa el pie; "BKN"
               cae abajo a la derecha de la bolsa, así se lee en diagonal.
               Se corre media bolsa (0.35 × su alto), media palabra (0.9em)
@@ -445,7 +445,7 @@ export default function Hero() {
             ref={headline}
             className="hero-title font-title uppercase m-0 leading-[0.86] text-[clamp(4.2rem,21vw,7rem)] lg:text-[clamp(7rem,min(14.5vw,24svh),15rem)] text-center w-full lg:absolute lg:inset-0 lg:flex lg:flex-col lg:justify-between"
           >
-            <span className="block whitespace-nowrap">El sufle,</span>
+            <span className="block whitespace-nowrap">El suflé,</span>
             <span className="block whitespace-nowrap translate-x-[20%] lg:translate-x-[calc(min(16.45svh,196px)_+_0.9em_+_1.25rem)]">BKN</span>
           </h1>
 
@@ -501,7 +501,7 @@ export default function Hero() {
         <div className="relative z-30 mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="flex flex-col gap-3 min-w-0">
             <p className="hero-fade m-0 text-ink text-sm sm:text-base font-semibold max-w-md">
-              Suflés horneados y maní, hechos por una pyme de La Pintana. ¿Cuál es el tuyo?
+              Suflés horneados hechos por una pyme de La Pintana. ¿Cuál es el tuyo?
             </p>
             <div className="hero-fade flex items-center gap-2 min-w-0">
               <FlavorChips products={PRODUCTS} active={active} onSelect={go} auto={auto} />

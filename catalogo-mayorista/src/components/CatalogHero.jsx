@@ -120,8 +120,8 @@ export default function CatalogHero() {
         <div className="mt-4 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)] xl:items-end">
           <div className="max-w-xl">
             <p className="ch-fade text-night-soft text-base sm:text-lg leading-relaxed font-medium m-0">
-              Snacks de nuestra fábrica en La Pintana, al por mayor. Arma tu pedido acá y lo
-              cerramos por WhatsApp: precio, pago y despacho, al tiro.
+              Snacks de nuestra fábrica en La Pintana, al por mayor. Arma tu pedido acá: por WhatsApp
+              cerramos precio, pago y despacho al tiro.
             </p>
             <ul className="ch-fade list-none p-0 m-0 mt-4 flex flex-wrap items-center gap-2" aria-label="Marcas del catálogo">
               {BRANDS.map(b => (

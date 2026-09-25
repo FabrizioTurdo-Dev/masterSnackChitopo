@@ -25,7 +25,7 @@ const HITOS = [
   {
     icon: Sparkles,
     title: "Recién arrancando",
-    text: "Seis meses en la calle con Chitopo, ya vamos por el cuarto sabor y hay más productos en camino. Esto está partiendo no más.",
+    text: "Seis meses en la calle con Chitopo: dos sabores a la venta y tres en camino. Esto está partiendo no más.",
   },
 ];
 
@@ -61,7 +61,7 @@ export default function Historia() {
           del barrio
         </>
       }
-      intro="Esto partió como cualquier idea de amigos en una junta: 3 locos con hartas ganas y cero plata de multinacional. Hoy tenemos un galpón en La Pintana, una máquina que no para, y cada producto armado con nuestras propias manos. El precio lo pensamos pa' ti, no pa' que se lo lleve una corporación. Puras ganas de que pruebes lo que hacemos, cachái."
+      intro="Esto partió como cualquier idea de amigos en una junta: tres locos con hartas ganas y cero plata de multinacional. Hoy tenemos un galpón en La Pintana y una máquina que no para; cada producto lo armamos con nuestras propias manos. El precio lo pensamos pa' ti, no pa' que se lo lleve una corporación. Puras ganas de que pruebes lo que hacemos, cachái."
     >
       <Reveal
         stagger

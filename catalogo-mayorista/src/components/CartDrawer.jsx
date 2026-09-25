@@ -81,7 +81,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
     if (!shop.trim()) errs.shop = "Pon el nombre de tu local";
     if (!name.trim()) errs.name = "Pon tu nombre";
     if (phone.trim() && !/^\d{7,15}$/.test(phone.replace(/[\s\-+]/g, ""))) {
-      errs.phone = "Formato inválido (ej: 56912345678)";
+      errs.phone = "Formato inválido (ej.: 56912345678)";
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -197,7 +197,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                   Pedido enviado
                 </p>
                 <p className="text-sm text-night-soft mt-3 mb-5 max-w-xs leading-relaxed">
-                  Se abrió WhatsApp con tu pedido. Solo falta que aprietes enviar ahí y te
+                  Se abrió WhatsApp con tu pedido. Solo falta que aprietes “Enviar” ahí; te
                   confirmamos precios y despacho al tiro.
                 </p>
                 <p className="inline-flex items-baseline gap-2 px-3 py-1.5 mb-8 bg-snow border-2 border-night">
@@ -353,7 +353,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           name="organization"
                           type="text"
                           autoComplete="organization"
-                          placeholder="Ej: Distribuidora El Sol"
+                          placeholder="Ej.: Distribuidora El Sol"
                           value={shop}
                           spellCheck={false}
                           onChange={e => { setShop(e.target.value); setErrors(p => ({ ...p, shop: null })); }}
@@ -377,7 +377,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           name="name"
                           type="text"
                           autoComplete="name"
-                          placeholder="Ej: Camila Rojas"
+                          placeholder="Ej.: Camila Rojas"
                           value={name}
                           spellCheck={false}
                           onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: null })); }}

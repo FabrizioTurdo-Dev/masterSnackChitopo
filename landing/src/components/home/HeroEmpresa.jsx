@@ -232,9 +232,9 @@ export default function HeroEmpresa() {
           </h1>
 
           <p className="he-fade text-snow text-base sm:text-lg lg:text-xl leading-relaxed mt-5 max-w-xl mx-auto lg:mx-0 font-medium">
-            Somos {COMPANY.name}: tres socios con fábrica propia en La Pintana. Hacemos snacks
-            para almacenes, distribuidoras y locales de barrio, y cada línea sale con su propia
-            marca.
+            Tres socios con fábrica propia en La Pintana, dedicados a crear snacks auténticos y
+            de calidad. Abastecemos a almacenes, distribuidoras y locales de barrio, llevando
+            nuestro sabor a cada rincón.
           </p>
 
           <div className="he-fade mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">

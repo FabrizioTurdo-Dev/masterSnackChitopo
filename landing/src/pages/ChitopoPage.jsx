@@ -26,7 +26,7 @@ const NAV = [
 ];
 
 const CINTA = [
-  "El sufle, BKN",
+  "El suflé, BKN",
   "Queso",
   "Papa",
   "Frutos del bosque",

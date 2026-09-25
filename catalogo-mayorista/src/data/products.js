@@ -10,7 +10,7 @@ const PRODUCTS = [
   {
     id: 1,
     slug: "sufle-queso",
-    name: "Suflés Queso Horneado",
+    name: "Suflés Queso Horneados",
     brand: "chitopo",
     line: "sufles",
     flavor: "queso",
@@ -31,7 +31,7 @@ const PRODUCTS = [
       { id: "unidad", label: "Unidad", units: 1, stock: 300, price: null },
     ],
     ingredients:
-      "Gritz de maíz, Aceite vegetal, sólidos de leche, Almidón, Sal, Glutamato monosódico, saborizante y colorantes (Amarillo Crepúsculo, Tartrazina), Antioxidantes (BHT, TBHQ).",
+      "Gritz de maíz, aceite vegetal, sólidos de leche, almidón, sal, glutamato monosódico, saborizante y colorantes (amarillo crepúsculo, tartrazina), antioxidantes (BHT, TBHQ).",
     allergens: "Contiene derivados lácteos.",
     nutrition: {
       serving: "15 g",
@@ -49,7 +49,7 @@ const PRODUCTS = [
   {
     id: 2,
     slug: "sufle-papa",
-    name: "Suflés Papa Horneado",
+    name: "Suflés Papa Horneados",
     brand: "chitopo",
     line: "sufles",
     flavor: "papa",
@@ -67,7 +67,7 @@ const PRODUCTS = [
       { id: "unidad", label: "Unidad", units: 1, stock: 240, price: null },
     ],
     ingredients:
-      "Gritz de maíz, Papa en escama, Aceite vegetal, Sal, Glutamato Monosódico, Antioxidante (BHT, TBHQ).",
+      "Gritz de maíz, papa en escama, aceite vegetal, sal, glutamato monosódico, antioxidante (BHT, TBHQ).",
     allergens: null,
     nutrition: {
       serving: "15 g",
@@ -105,7 +105,7 @@ const PRODUCTS = [
       { id: "display-12", label: "Display", units: 12, stock: 0, price: null },
     ],
     ingredients:
-      "Gritz de maíz, Aceite de Maravilla, Harina de Arroz, Fibra de manzana, deshidratado en polvo natural de frutos del bosque, Colorantes, Saborizante natural, azúcar, Antioxidante (BHT, TBHQ). (Preliminar)",
+      "Gritz de maíz, aceite de maravilla, harina de arroz, fibra de manzana, deshidratado en polvo natural de frutos del bosque, colorantes, saborizante natural, azúcar, antioxidante (BHT, TBHQ). (Preliminar)",
     allergens: null,
     // TODO: tabla nutricional pendiente — el producto todavía no sale.
     nutrition: null,
@@ -130,7 +130,7 @@ const PRODUCTS = [
       { id: "caja-24", label: "Caja", units: 24, stock: 0, price: null },
       { id: "display-12", label: "Display", units: 12, stock: 0, price: null },
     ],
-    ingredients: "Maní, Sal.",
+    ingredients: "Maní, sal.",
     allergens: "Contiene maní.",
     nutrition: {
       serving: "30 g",
@@ -170,7 +170,7 @@ const PRODUCTS = [
       { id: "caja-24", label: "Caja", units: 24, stock: 0, price: null },
     ],
     ingredients:
-      "Gritz de maíz, Aceite vegetal (TBHQ), Harina de arroz, Saborizante tocino, Merkén, Glutamato, Sal, Colorante rojo.",
+      "Gritz de maíz, aceite vegetal (TBHQ), harina de arroz, saborizante tocino, merkén, glutamato, sal, colorante rojo.",
     allergens: "Contiene derivados de soya.",
     // ⚠️ Tal cual la etiqueta. Hidratos 7,8 g por 100 g no calza con un
     // snack de maíz y la columna por porción no es proporcional: confirmar

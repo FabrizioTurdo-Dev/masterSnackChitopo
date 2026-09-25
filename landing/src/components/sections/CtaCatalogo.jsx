@@ -43,12 +43,12 @@ export default function CtaCatalogo() {
           <Store size={40} className="mx-auto mb-5" aria-hidden="true" />
 
           <h2 className="font-title uppercase text-4xl sm:text-6xl lg:text-7xl leading-[0.92] m-0">
-            ¿Tenís un almacén?
+            ¿Tienes un almacén?
           </h2>
 
           <p className="text-base sm:text-xl leading-relaxed mt-5 max-w-2xl mx-auto font-medium">
-            Arma tu pedido al por mayor en el catálogo. Eliges los formatos, ves el mínimo
-            y nosotros te confirmamos precio y despacho por WhatsApp.
+            Arma tu pedido al por mayor en el catálogo: eliges los formatos y ves el mínimo.
+            Después te confirmamos precio y despacho por WhatsApp.
           </p>
 
           <div className="mt-9 flex justify-center">

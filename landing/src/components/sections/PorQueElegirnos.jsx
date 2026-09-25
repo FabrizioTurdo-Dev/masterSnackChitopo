@@ -6,7 +6,7 @@ const RAZONES = [
   {
     icon: Flame,
     title: "Horneado, no frito",
-    text: "Todo el crunch, con harta menos grasa que un snack frito.",
+    text: "Todo el crunch, con harto menos grasa que un snack frito.",
   },
   {
     icon: MapPin,
@@ -16,7 +16,7 @@ const RAZONES = [
   {
     icon: Wheat,
     title: "Libre de gluten",
-    text: "Los suflés y el maní vienen sin gluten, declarado en el empaque.",
+    text: "Nuestros suflés vienen sin gluten, tal como lo indica el empaque.",
   },
   {
     icon: Handshake,

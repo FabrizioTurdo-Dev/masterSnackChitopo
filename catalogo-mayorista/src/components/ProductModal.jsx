@@ -64,7 +64,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
   const maxQty = selected ? selected.stock : 1;
 
   function notifyMe() {
-    const msg = `¡Hola! Quiero que me avisen cuando llegue el ${product.name} de ${brandOf(product.brand).name}.`;
+    const msg = `¡Hola! Quiero que me avisen cuando llegue ${product.name}, de ${brandOf(product.brand).name}.`;
     window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 

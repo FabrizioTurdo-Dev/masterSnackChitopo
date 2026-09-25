@@ -87,7 +87,7 @@ export default function RedesSociales() {
             <h2 className="font-title uppercase text-3xl sm:text-5xl leading-[0.95] text-ink m-0">
               Todo lo bueno pasa
               <br />
-              en el Instagram
+              en Instagram
             </h2>
             <p className="text-ink-soft text-base leading-relaxed mt-5 max-w-xl">
               Ahí mostramos la fábrica por dentro, los sabores que estamos probando y las

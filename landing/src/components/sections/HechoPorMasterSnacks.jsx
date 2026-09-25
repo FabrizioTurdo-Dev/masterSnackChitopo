@@ -78,8 +78,8 @@ export default function HechoPorMasterSnacks() {
           </h2>
           <p className="hp-fade text-snow/90 text-base sm:text-lg leading-relaxed mt-5 max-w-2xl">
             Somos tres socios con fábrica propia en La Pintana. Chitopo es nuestra marca de
-            horneados: el suflé sale de nuestra máquina, agarra sabor en nuestro bombo y cae a
-            la bolsa ahí mismo. Y ya estamos preparando lo que viene.
+            horneados: el suflé sale de la máquina, agarra sabor en el bombo y cae a la bolsa
+            ahí mismo. Ya estamos preparando lo que viene.
           </p>
 
           <div className="hp-fade mt-8 flex flex-col sm:flex-row gap-3">

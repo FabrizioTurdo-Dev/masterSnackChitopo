@@ -61,7 +61,7 @@ export const WHATSAPP_LINK = `https://wa.me/${SELLER_PHONE}`;
 // Buenos Aires en formato internacional: 54 + 9 (móvil) + 11 5492-2800.
 export const DEV_CREDIT = { name: "Fabrizio Turdo", phone: "5491154922800" };
 const DEV_MESSAGE =
-  "¡Hola Fabrizio! Vi la web de Master Snacks y quiero una para mi negocio. Te cuento de qué se trata: ";
+  "¡Hola, Fabrizio! Vi la web de Master Snacks y quiero una para mi negocio. Te cuento de qué se trata: ";
 export const DEV_WHATSAPP_LINK = `https://wa.me/${DEV_CREDIT.phone}?text=${encodeURIComponent(DEV_MESSAGE)}`;
 
 // Acento por sabor (los tokens viven en shared/marca/tokens.css)

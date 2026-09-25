@@ -82,7 +82,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
   const seal = product.claims?.seals?.[0];
 
   function notifyMe() {
-    const msg = `¡Hola! Quiero que me avisen cuando llegue el ${product.name} de ${brand.name}.`;
+    const msg = `¡Hola! Quiero que me avisen cuando llegue ${product.name}, de ${brand.name}.`;
     window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 

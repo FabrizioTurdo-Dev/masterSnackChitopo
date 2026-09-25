@@ -210,7 +210,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
           label="Nombre *"
           value={form.name}
           onChange={e => set("name", e.target.value)}
-          placeholder="Suflés Queso Horneado"
+          placeholder="Suflés Queso Horneados"
         />
         <Input
           label="Gramaje (g) *"
