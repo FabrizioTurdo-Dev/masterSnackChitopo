@@ -1,11 +1,13 @@
 // src/services/productsService.js
-// Acceso a productos. Con MOCK_MODE activo trabaja contra los datos locales
-// de src/data/products.js; con MOCK_MODE en false pega contra Supabase.
+// Productos desde el panel, con la sesión del admin. Sin credenciales de
+// Supabase (desarrollo, modo demo) no hay base: el panel trabaja sobre lo
+// que hay en memoria y estas funciones solo lo confirman.
 //
-// Todas las funciones devuelven { success, data } o { success:false, error }.
+// Todas las funciones devuelven { success, data } o { success:false, error },
+// con el error ya en castellano para mostrarlo en el panel.
 
-import { MOCK_MODE, MOCK_PRODUCTS } from "../data/store";
-import { supabase } from "../config/supabase";
+import { supabase, isSupabaseConfigured } from "../config/supabase";
+import { friendlyError, noRowsError } from "./dbError";
 
 const TABLE = "productos";
 
@@ -41,13 +43,20 @@ function toRow(product) {
 }
 
 function fail(action, error) {
-  console.error(`Error al ${action} productos:`, error.message);
-  return { success: false, error: error.message };
+  console.error(`Error al ${action}:`, error.message);
+  return { success: false, error: friendlyError(error, action) };
+}
+
+// Devuelve la primera fila, o error si la base no devolvió ninguna.
+function firstRow(data) {
+  if (!data?.length) throw noRowsError();
+  return data[0];
 }
 
 export const productsService = {
+  // data: null = seguir con lo que hay en memoria.
   async list() {
-    if (MOCK_MODE) return { success: true, data: MOCK_PRODUCTS };
+    if (!isSupabaseConfigured) return { success: true, data: null };
     try {
       const { data, error } = await supabase
         .from(TABLE)
@@ -56,25 +65,25 @@ export const productsService = {
       if (error) throw error;
       return { success: true, data: data || [] };
     } catch (error) {
-      return fail("listar", error);
+      return fail("cargar los productos", error);
     }
   },
 
   async create(product) {
-    if (MOCK_MODE) {
+    if (!isSupabaseConfigured) {
       return { success: true, data: { ...product, id: Date.now() } };
     }
     try {
       const { data, error } = await supabase.from(TABLE).insert([toRow(product)]).select();
       if (error) throw error;
-      return { success: true, data: data[0] };
+      return { success: true, data: firstRow(data) };
     } catch (error) {
-      return fail("crear", error);
+      return fail("crear el producto", error);
     }
   },
 
   async update(id, product) {
-    if (MOCK_MODE) return { success: true, data: { ...product, id } };
+    if (!isSupabaseConfigured) return { success: true, data: { ...product, id } };
     try {
       const { data, error } = await supabase
         .from(TABLE)
@@ -82,25 +91,26 @@ export const productsService = {
         .eq("id", id)
         .select();
       if (error) throw error;
-      return { success: true, data: data[0] };
+      return { success: true, data: firstRow(data) };
     } catch (error) {
-      return fail("actualizar", error);
+      return fail("guardar el producto", error);
     }
   },
 
   async remove(id) {
-    if (MOCK_MODE) return { success: true, data: { id } };
+    if (!isSupabaseConfigured) return { success: true, data: { id } };
     try {
-      const { error } = await supabase.from(TABLE).delete().eq("id", id);
+      const { data, error } = await supabase.from(TABLE).delete().eq("id", id).select("id");
       if (error) throw error;
+      firstRow(data);
       return { success: true, data: { id } };
     } catch (error) {
-      return fail("eliminar", error);
+      return fail("eliminar el producto", error);
     }
   },
 
   async toggleActive(id, active) {
-    if (MOCK_MODE) return { success: true, data: { id, active } };
+    if (!isSupabaseConfigured) return { success: true, data: { id, active } };
     try {
       const { data, error } = await supabase
         .from(TABLE)
@@ -108,9 +118,9 @@ export const productsService = {
         .eq("id", id)
         .select();
       if (error) throw error;
-      return { success: true, data: data[0] };
+      return { success: true, data: firstRow(data) };
     } catch (error) {
-      return fail("actualizar", error);
+      return fail("cambiar la visibilidad del producto", error);
     }
   },
 };

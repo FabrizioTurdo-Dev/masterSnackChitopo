@@ -24,8 +24,8 @@ const AuthContext = createContext(null);
 // Mensajes de Supabase → castellano. No revelamos si el email existe o no.
 function translateError(error) {
   const msg = (error?.message || "").toLowerCase();
-  if (msg.includes("invalid login credentials")) return "Email o contraseña incorrectos.";
-  if (msg.includes("email not confirmed")) return "La cuenta todavía no confirmó su email.";
+  if (msg.includes("invalid login credentials")) return "Correo o contraseña incorrectos.";
+  if (msg.includes("email not confirmed")) return "Esta cuenta todavía no confirma su correo.";
   if (error?.status === 429 || msg.includes("too many requests") || msg.includes("rate limit"))
     return "Demasiados intentos. Espera un minuto y vuelve a probar.";
   if (msg.includes("failed to fetch") || msg.includes("network"))

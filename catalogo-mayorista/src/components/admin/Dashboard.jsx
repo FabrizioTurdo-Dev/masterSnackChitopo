@@ -4,7 +4,7 @@ import { Package, AlertCircle, Boxes, ShoppingCart, Sparkles } from "lucide-reac
 import Btn from "./ui/Btn";
 import PageHeader from "./ui/PageHeader";
 import { CARD, TONES } from "./ui/styles";
-import { STORE_CONFIG, lineLabel, totalStock, brandsIn } from "../../data/store";
+import { STORE_CONFIG, lineLabel, totalStock, brandsIn, plural } from "../../data/store";
 import { DEFAULT_BRAND } from "../../data/brands";
 
 function KpiCard({ icon, label, value, sub, tone, index = 0 }) {
@@ -121,14 +121,14 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
 
   return (
     <div>
-      <PageHeader eyebrow="Panel" title="Dashboard" subtitle="Resumen del catálogo mayorista" />
+      <PageHeader eyebrow="Panel" title="Resumen" subtitle="Cómo está el catálogo mayorista hoy" />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <KpiCard
           icon={<Package size={18} />}
           label="Productos"
           value={metrics.total}
-          sub={`${metrics.visible} visibles · ${metrics.hidden} ocultos`}
+          sub={`${plural(metrics.visible, "visible")} · ${plural(metrics.hidden, "oculto")}`}
           tone={TONES.gold}
           index={0}
         />
@@ -144,7 +144,7 @@ export default function Dashboard({ products, orders, setPage, stockThreshold })
           icon={<AlertCircle size={18} />}
           label="Stock crítico"
           value={metrics.lowStock}
-          sub={`${metrics.zeroFormats} formatos sin stock`}
+          sub={`${plural(metrics.zeroFormats, "formato")} sin stock`}
           tone={metrics.lowStock > 0 ? TONES.red : TONES.green}
           index={2}
         />

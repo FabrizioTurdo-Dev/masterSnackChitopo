@@ -1,40 +1,12 @@
-import { MOCK_MODE, STORE_CONFIG, SELLER_PHONE } from "../data/store";
-import { COMPANY } from "../data/brands";
-import { supabase } from "../config/supabase";
+// Configuración de la tienda (fila única de `config`) desde el panel. El
+// catálogo la lee por su lado con src/lib/supabaseRest.js.
+import { supabase, isSupabaseConfigured } from "../config/supabase";
+import { friendlyError, noRowsError } from "./dbError";
 
 export const configService = {
-  async get() {
-    if (MOCK_MODE) {
-      return {
-        success: true,
-        data: {
-          shop_name: COMPANY.name,
-          phone: SELLER_PHONE,
-          min_order: STORE_CONFIG.minOrderUnits,
-          currency: STORE_CONFIG.currency.code,
-          show_prices: STORE_CONFIG.showPrices,
-          low_stock: STORE_CONFIG.defaultStockThreshold,
-        },
-      };
-    }
-    try {
-      const { data, error } = await supabase
-        .from("config")
-        .select("*")
-        .limit(1)
-        .single();
-      if (error) throw error;
-      return { success: true, data };
-    } catch (error) {
-      console.error("Error al obtener config:", error.message);
-      return { success: false, error: error.message };
-    }
-  },
-
+  // Sin credenciales (desarrollo, modo demo) el cambio queda en memoria.
   async update(configData) {
-    if (MOCK_MODE) {
-      return { success: true, data: configData };
-    }
+    if (!isSupabaseConfigured) return { success: true, data: configData };
     try {
       const { data, error } = await supabase
         .from("config")
@@ -42,10 +14,11 @@ export const configService = {
         .eq("id", 1)
         .select();
       if (error) throw error;
-      return { success: true, data };
+      if (!data?.length) throw noRowsError();
+      return { success: true, data: data[0] };
     } catch (error) {
       console.error("Error al guardar config:", error.message);
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "guardar la configuración") };
     }
   },
 };

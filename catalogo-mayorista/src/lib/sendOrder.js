@@ -1,24 +1,20 @@
 // Registra el pedido en Supabase en el momento en que el local lo manda por
 // WhatsApp, para que aparezca en el panel como "nuevo".
 //
-// Va con fetch directo y no con supabase-js: esa librería solo la carga el
-// panel, y el catálogo público es lo que se abre desde el celular. Además
-// `keepalive` deja terminar la petición aunque el teléfono salte a la app de
-// WhatsApp y congele la pestaña.
+// Va por la API REST (supabaseRest.js) y no con supabase-js: esa librería
+// solo la carga el panel. Además `keepalive` deja terminar la petición
+// aunque el teléfono salte a la app de WhatsApp y congele la pestaña.
 
-const URL = import.meta.env.VITE_SUPABASE_URL;
-const KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { dbOnline, rest } from "./supabaseRest";
 
 // Sin credenciales (desarrollo) el pedido queda en memoria, como antes.
-export const ordersOnline = Boolean(URL && KEY);
+export const ordersOnline = dbOnline;
 
 export function sendOrder(row) {
-  return fetch(`${URL}/rest/v1/pedidos`, {
+  return rest("pedidos", {
     method: "POST",
     keepalive: true,
     headers: {
-      apikey: KEY,
-      Authorization: `Bearer ${KEY}`,
       "Content-Type": "application/json",
       // El visitante puede insertar pero no leer pedidos: pedir la fila de
       // vuelta haría fallar el insert por RLS.

@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
-import { Upload, Plus, Trash2 } from "lucide-react";
+import { Upload, Plus, Trash2, Loader2 } from "lucide-react";
 import Input from "./ui/Input";
 import Select from "./ui/Select";
 import Btn from "./ui/Btn";
 import { FIELD, FIELD_SM, LABEL, TONES, ERROR_TEXT } from "./ui/styles";
-import { STORE_CONFIG, FLAVOR_ACCENTS, DEV_CREDIT } from "../../data/store";
+import { STORE_CONFIG, FLAVOR_ACCENTS, DEV_CREDIT, flavorLabel } from "../../data/store";
 import { BRANDS, DEFAULT_BRAND, brandOf } from "../../data/brands";
 
 const NUTRIENTS = [
@@ -23,6 +23,38 @@ const SEALS = [
   { id: "alto-en-azucares", label: "Alto en azúcares" },
   { id: "alto-en-grasas-saturadas", label: "Alto en grasas saturadas" },
 ];
+
+// La foto se guarda dentro del producto y viaja con el catálogo a cada
+// visita: se achica a 800 px de lado como máximo. WebP conserva el fondo
+// transparente; Safari no lo sabe codificar y ahí va JPEG sobre blanco.
+const MAX_SIDE = 800;
+
+function shrinkImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const webp = canvas.toDataURL("image/webp", 0.85);
+      if (webp.startsWith("data:image/webp")) return resolve(webp);
+      ctx.globalCompositeOperation = "destination-over";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("imagen ilegible"));
+    };
+    img.src = url;
+  });
+}
 
 function slugify(s) {
   return s
@@ -64,6 +96,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
   });
   const [imgPreview, setImgPreview] = useState(product?.image || null);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
   const fileRef = useRef();
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
@@ -134,25 +167,30 @@ export default function ProductForm({ product, onSave, onCancel }) {
     }));
   }
 
-  function handleImage(e) {
+  async function handleImage(e) {
     const file = e.target.files[0];
+    e.target.value = "";
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      setImgPreview(ev.target.result);
-      set("image", ev.target.result);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const src = await shrinkImage(file);
+      setImgPreview(src);
+      set("image", src);
+      setError(null);
+    } catch {
+      setError("No se pudo leer esa imagen. Prueba con una foto en JPG o PNG.");
+    }
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    if (saving) return;
     if (!form.name.trim()) return setError("Falta el nombre del producto");
     if (!form.grams) return setError("Falta el gramaje");
     if (form.formats.length === 0) return setError("Agrega al menos un formato de venta");
     if (form.formats.some(f => !f.label.trim())) return setError("Todos los formatos necesitan un nombre");
 
     setError(null);
-    onSave({
+    setSaving(true);
+    const res = await onSave({
       ...form,
       id: product?.id || null,
       slug: form.slug || slugify(form.name),
@@ -168,6 +206,11 @@ export default function ProductForm({ product, onSave, onCancel }) {
         price: f.price === "" || f.price === null ? null : Number(f.price),
       })),
     });
+    // Si salió bien el modal se cierra; si no, queda abierto con el aviso.
+    if (res && !res.success) {
+      setError(res.error);
+      setSaving(false);
+    }
   }
 
   const toggle = (on) =>
@@ -240,7 +283,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         </Select>
         <Select label="Sabor (define el color)" value={form.flavor} onChange={e => set("flavor", e.target.value)}>
           {Object.keys(FLAVOR_ACCENTS).map(f => (
-            <option key={f} value={f}>{f}</option>
+            <option key={f} value={f}>{flavorLabel(f)}</option>
           ))}
         </Select>
         <Input
@@ -385,7 +428,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
             value={form.ingredients}
             onChange={e => set("ingredients", e.target.value)}
             rows={3}
-            placeholder="Gritz de maíz, Aceite vegetal, Sal…"
+            placeholder="Gritz de maíz, aceite vegetal, sal…"
             className={`${FIELD} py-2.5 resize-y`}
           />
         </div>
@@ -440,8 +483,11 @@ export default function ProductForm({ product, onSave, onCancel }) {
       )}
 
       <div className="flex gap-3 justify-end pt-4 border-t-[3px] border-night">
-        <Btn variant="ghost" onClick={onCancel}>Cancelar</Btn>
-        <Btn onClick={handleSubmit}>{isEdit ? "Guardar cambios" : "Crear producto"}</Btn>
+        <Btn variant="ghost" onClick={onCancel} disabled={saving}>Cancelar</Btn>
+        <Btn onClick={handleSubmit} disabled={saving}>
+          {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
+          {saving ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear producto"}
+        </Btn>
       </div>
     </div>
   );

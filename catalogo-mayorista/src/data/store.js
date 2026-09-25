@@ -1,16 +1,15 @@
 // src/data/store.js
-// Estado compartido y configuración del catálogo mayorista de Master Snacks.
-// La identidad de la empresa y de cada marca vive en brands.js.
-// MOCK_MODE = true usa los productos locales de products.js.
-// Cambia a false y configura .env.local para usar Supabase (ver README).
+// Configuración del catálogo mayorista de Master Snacks. La identidad de la
+// empresa y de cada marca vive en brands.js.
+//
+// Con credenciales de Supabase (.env.local, variables de Netlify) los
+// productos salen de la base y el panel los guarda ahí. Sin credenciales
+// (desarrollo, modo demo) se usan los de products.js en memoria. products.js
+// también es el respaldo si la base no responde y la fuente de seed.sql.
 
 import { BRANDS, DEFAULT_BRAND, brandOf } from "./brands";
 
-export const MOCK_MODE = true;
-
 export { default as MOCK_PRODUCTS } from "./products";
-export const INITIAL_PRODUCTS = [];
-export const INITIAL_ORDERS = [];
 
 // ═══════════════════════════════════════════════════════════════
 // CONFIGURACIÓN DEL NEGOCIO
@@ -73,6 +72,19 @@ export const FLAVOR_ACCENTS = {
   tocino: "#ff3b14",
 };
 
+// Nombre de cada sabor para mostrar en el panel.
+export const FLAVOR_LABELS = {
+  queso: "Queso",
+  papa: "Papa",
+  frutos: "Frutos del bosque",
+  mani: "Maní",
+  tocino: "Tocino merkén",
+};
+
+export function flavorLabel(flavor) {
+  return FLAVOR_LABELS[flavor] || flavor || "";
+}
+
 // Sin sabor conocido cae en el azul de Master Snacks: el dorado no se ve
 // sobre las tarjetas blancas.
 export function flavorAccent(flavor) {
@@ -100,6 +112,16 @@ export function lineLabel(id, plural = false) {
   const l = STORE_CONFIG.lines.find(l => l.id === id);
   if (!l) return id;
   return plural ? l.labelPlural : l.label;
+}
+
+// "1 pedido", "3 pedidos".
+export function plural(n, one, many = `${one}s`) {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
+// "1 bolsa", "24 bolsas".
+export function bolsas(n) {
+  return plural(n, "bolsa");
 }
 
 // Unidades reales de un ítem del carrito (bolsas, no bultos)

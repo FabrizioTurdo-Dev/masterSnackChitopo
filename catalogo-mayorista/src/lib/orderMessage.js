@@ -7,6 +7,9 @@
 
 import { COMPANY, DEFAULT_BRAND, brandOf } from "../data/brands.js";
 
+// "1 bolsa", "24 bolsas". Va acá y no desde store.js, que Node no puede importar.
+const bolsas = n => `${n} ${n === 1 ? "bolsa" : "bolsas"}`;
+
 // [[marca, ítems], ...] en el orden en que aparecen en el pedido. Los
 // pedidos viejos no traen marca: son de la marca por defecto.
 export function groupByBrand(items) {
@@ -34,7 +37,7 @@ export function newOrderMessage({ ref, shop, contact, phone, items, units, total
     const bags = (item.units || 1) * item.qty;
     const base =
       `• ${item.name} ${item.grams} g — ${item.formatLabel} ×${item.units} · ` +
-      `${item.qty} ${item.qty === 1 ? "bulto" : "bultos"} (${bags} bolsas)`;
+      `${item.qty} ${item.qty === 1 ? "bulto" : "bultos"} (${bolsas(bags)})`;
     return money ? `${base} = ${money(item.price * item.qty)}` : base;
   };
 
@@ -53,7 +56,9 @@ export function newOrderMessage({ ref, shop, contact, phone, items, units, total
 
 // Respuesta de los dueños desde el panel, sobre un pedido guardado.
 export function followUpMessage(order, money) {
-  const line = i => `• ${i.name} — ${i.format} ×${i.units} · ${i.qty}`;
+  const line = i =>
+    `• ${i.name} — ${i.format} ×${i.units} · ` +
+    `${i.qty} ${i.qty === 1 ? "bulto" : "bultos"} (${bolsas((i.units || 1) * i.qty)})`;
   const codigo = order.ref ? ` ${order.ref}` : "";
   const monto = money ? `\nMonto: ${money(order.total)}` : "";
   return (

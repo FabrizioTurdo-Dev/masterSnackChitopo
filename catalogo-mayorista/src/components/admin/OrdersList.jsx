@@ -4,12 +4,12 @@ import { ArrowRight, Check, Package, RefreshCw, ShoppingCart, X, RotateCcw } fro
 import Badge from "./ui/Badge";
 import Btn from "./ui/Btn";
 import PageHeader from "./ui/PageHeader";
-import { CARD, chip } from "./ui/styles";
+import { ALERT, CARD, chip } from "./ui/styles";
 import { ORDER_STEPS, ALL_STATUSES, stepIndex } from "./orderStatus";
 import { useApp } from "../../context/AppContext";
 import { isSupabaseConfigured } from "../../config/supabase";
 import { ordersService } from "../../services/ordersService";
-import { formatPrice, hasPrice } from "../../data/store";
+import { formatPrice, hasPrice, plural } from "../../data/store";
 import { followUpMessage, groupByBrand } from "../../lib/orderMessage";
 import { brandOf } from "../../data/brands";
 
@@ -94,7 +94,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
     const res = await ordersService.update(order.id, { status });
     if (!res.success) {
       setOrders(list => list.map(o => (o.id === order.id ? { ...o, status: prev } : o)));
-      setError(`No se pudo cambiar el estado del pedido de ${order.client}: ${res.error}`);
+      setError(`Pedido de ${order.client}. ${res.error}`);
     }
   }
 
@@ -114,10 +114,10 @@ export default function OrdersList({ sync = {}, onRefresh }) {
   const filtered = filter === "todos" ? orders : orders.filter(o => o.status === filter);
 
   const subtitle = !isSupabaseConfigured
-    ? `${orders.length} pedidos · Modo demo: se guardan en memoria mientras dure la sesión`
+    ? `${plural(orders.length, "pedido")} · Modo demo: se guardan en memoria mientras dure la sesión`
     : sync.at
-      ? `${orders.length} pedidos · Actualizado ${sync.at.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}`
-      : `${orders.length} pedidos`;
+      ? `${plural(orders.length, "pedido")} · Actualizado ${sync.at.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })}`
+      : `${plural(orders.length, "pedido")}`;
 
   return (
     <div>
@@ -131,11 +131,8 @@ export default function OrdersList({ sync = {}, onRefresh }) {
       </PageHeader>
 
       {(error || sync.error) && (
-        <div
-          className="mb-5 px-4 py-3 border-[3px] border-night bg-[#ffd9cc] text-[#8a1c03] text-sm font-semibold"
-          role="alert"
-        >
-          {error || `No se pudieron cargar los pedidos: ${sync.error}`}
+        <div className={`${ALERT} mb-5`} role="alert">
+          {error || sync.error}
         </div>
       )}
 
@@ -231,7 +228,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
                 {(order.items || []).map((item, i) => (
                   <span key={i} className="text-xs px-2 py-1 bg-snow-2 text-night border border-night/30">
                     {mixed && <strong>{brandOf(item.brand).name} · </strong>}
-                    {item.name} · {item.format} ×{item.units} · {item.qty}
+                    {item.name} · {item.format} ×{item.units} · {plural(item.qty, "bulto")}
                   </span>
                 ))}
               </div>

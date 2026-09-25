@@ -17,8 +17,15 @@ npm run dev
 - Catálogo: http://localhost:5173
 - Panel admin: http://localhost:5173/#/admin
 
-Arranca en **MOCK_MODE**: los productos salen de `src/data/products.js` y nada se persiste.
-El panel funciona igual (crear, editar, ocultar, borrar), pero los cambios se pierden al recargar.
+Con credenciales de Supabase en `.env.local` (ver más abajo), los productos, el umbral de
+stock bajo y los pedidos salen de la base, y el panel guarda ahí lo que se edita. Sin
+credenciales, los productos salen de `src/data/products.js` y el panel abre en **modo demo**:
+funciona igual (crear, editar, ocultar, borrar), pero los cambios se pierden al recargar.
+Para ver el modo demo teniendo credenciales, `npm run dev -- --mode demo` con un
+`.env.demo.local` que deje las dos variables vacías.
+
+`src/data/products.js` sigue siendo el respaldo: si la base no responde, el catálogo muestra
+esos productos (y el panel no deja editar). También es la fuente de `supabase/seed.sql`.
 
 ## Scripts
 
@@ -108,13 +115,9 @@ El proyecto vive en la cuenta de Supabase del cliente (Master Snacks). Pasos, en
    Las mismas dos variables van en Netlify → Site configuration → Environment variables.
 4. Reiniciar `npm run dev` y probar el login del panel.
 
-> ⚠️ **No poner `MOCK_MODE = false` todavía.** El catálogo público lee los productos del
-> estado en memoria (`AppContext`), no de Supabase: con el flag apagado, los visitantes
-> verían el catálogo vacío. El login funciona igual con `MOCK_MODE` en `true` (solo depende
-> de que `.env.local` tenga las credenciales). Los pedidos tampoco dependen del flag: con
-> credenciales, cada pedido que un local manda por WhatsApp se guarda como "nuevo" y
-> aparece en el panel. Conectar el catálogo y la configuración a la base es la etapa
-> siguiente.
+Con las credenciales cargadas, el catálogo público lee productos y config de la base con la
+anon key (`src/lib/supabaseRest.js`, sin supabase-js), y cada pedido que un local manda por
+WhatsApp se guarda como "nuevo". El panel escribe con la sesión del admin (supabase-js).
 
 La anon key es pública por diseño (viaja en el bundle del navegador). Lo que impide que
 alguien la use para escribir son las políticas RLS. **La service_role key nunca va al front

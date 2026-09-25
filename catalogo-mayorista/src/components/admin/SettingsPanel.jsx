@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import Input from "./ui/Input";
 import Btn from "./ui/Btn";
 import PageHeader from "./ui/PageHeader";
-import { CARD, LABEL, PILL, TONES } from "./ui/styles";
-import { STORE_CONFIG, SELLER_PHONE, DEV_CREDIT } from "../../data/store";
+import { ALERT, CARD, LABEL, PILL, TONES } from "./ui/styles";
+import { STORE_CONFIG, SELLER_PHONE_PRETTY, DEV_CREDIT } from "../../data/store";
+import { useApp } from "../../context/AppContext";
+import { configService } from "../../services/configService";
 import { COMPANY, BRANDS } from "../../data/brands";
 import BrandMark from "../brand/BrandMark";
 
@@ -27,14 +30,32 @@ function ReadOnly({ label, value }) {
   );
 }
 
-export default function SettingsPanel({ stockThreshold, onStockThresholdChange }) {
-  const [lowStock, setLowStock] = useState(stockThreshold ?? STORE_CONFIG.defaultStockThreshold);
+export default function SettingsPanel() {
+  const { stockThreshold, setStockThreshold } = useApp();
+  const [lowStock, setLowStock] = useState(stockThreshold);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState(null);
 
-  function handleSave() {
-    if (onStockThresholdChange && Number(lowStock) >= 0) {
-      onStockThresholdChange(Number(lowStock));
+  // El umbral de la base puede llegar después de abrir esta pestaña.
+  useEffect(() => setLowStock(stockThreshold), [stockThreshold]);
+
+  // El umbral se guarda en la base: lo usan el panel y el catálogo.
+  async function handleSave() {
+    const n = Number(lowStock);
+    if (lowStock === "" || !Number.isInteger(n) || n < 0) {
+      setError("El umbral de stock bajo tiene que ser un número entero, 0 o más.");
+      return;
     }
+    setError(null);
+    setSaving(true);
+    const res = await configService.update({ low_stock: n });
+    setSaving(false);
+    if (!res.success) {
+      setError(res.error);
+      return;
+    }
+    setStockThreshold(n);
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   }
@@ -44,19 +65,16 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
       <PageHeader
         eyebrow="Ajustes"
         title="Configuración"
-        subtitle={`Datos del negocio y del catálogo. Si hay que cambiar alguno, avísale a ${DEV_CREDIT.name}.`}
+        subtitle={`Datos del negocio y del catálogo. Para cambiar los datos fijos, avísale a ${DEV_CREDIT.name}.`}
       />
 
       <div className="flex flex-col gap-4">
         <Card title="Datos del negocio">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <ReadOnly label="Empresa" value={COMPANY.legalName} />
-            <ReadOnly label="WhatsApp de pedidos" value={`+${SELLER_PHONE}`} />
+            <ReadOnly label="WhatsApp de pedidos" value={SELLER_PHONE_PRETTY} />
             <ReadOnly label="Pedido mínimo" value={`${STORE_CONFIG.minOrderUnits} unidades`} />
-            <ReadOnly
-              label="Moneda"
-              value={`${STORE_CONFIG.currency.code} · ${STORE_CONFIG.currency.locale}`}
-            />
+            <ReadOnly label="Moneda" value={`Peso chileno (${STORE_CONFIG.currency.code})`} />
           </div>
         </Card>
 
@@ -99,7 +117,7 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
             </p>
             {!STORE_CONFIG.showPrices && (
               <p className="text-sm text-night-faint leading-relaxed m-0">
-                Cuando tengan los precios cargados en cada formato (pestaña Productos), avísale a{" "}
+                Cuando tengas los precios cargados en cada formato (pestaña Productos), avísale a{" "}
                 {DEV_CREDIT.name} para que el catálogo empiece a mostrarlos.
               </p>
             )}
@@ -126,9 +144,18 @@ export default function SettingsPanel({ stockThreshold, onStockThresholdChange }
           </div>
         </Card>
 
+        {error && (
+          <div className={ALERT} role="alert">
+            {error}
+          </div>
+        )}
+
         <div className="flex justify-end items-center gap-3">
           {saved && <span className="font-condensed uppercase tracking-[0.08em] text-[#14532d]" role="status">✓ Guardado</span>}
-          <Btn onClick={handleSave}>Guardar cambios</Btn>
+          <Btn onClick={handleSave} disabled={saving}>
+            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
+            {saving ? "Guardando…" : "Guardar cambios"}
+          </Btn>
         </div>
       </div>
     </div>

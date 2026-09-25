@@ -5,7 +5,7 @@ import SelloAdvertencia from "./brand/SelloAdvertencia";
 import BrandMark from "./brand/BrandMark";
 import { useBurst } from "../lib/burst";
 import { useBurstOnHover } from "../lib/useBurstOnHover";
-import { formatPrice, hasPrice, flavorAccent, formatsOf, SELLER_PHONE } from "../data/store";
+import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, SELLER_PHONE } from "../data/store";
 import { brandOf } from "../data/brands";
 
 // Stepper cuadrado de cantidad; lo comparten la tarjeta y la ficha.
@@ -210,7 +210,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
                     onClick={() => { setSelectedId(f.id); setQty(1); }}
                     role="radio"
                     aria-checked={isSel}
-                    aria-label={`${f.label} de ${f.units} unidades, ${f.stock} disponibles`}
+                    aria-label={`${f.label} de ${bolsas(f.units)}, ${f.stock} disponibles`}
                     className={`relative min-h-[40px] px-3 text-sm font-bold border-2 border-night transition-colors cursor-pointer ${
                       isSel ? "bg-night text-gold" : "bg-snow text-night hover:bg-snow-2"
                     }`}
@@ -235,7 +235,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
                 </span>
                 <QtyStepper qty={qty} max={maxQty} onChange={setQty} />
                 <span className="ml-auto text-xs text-night-faint tabular-nums">
-                  {selected.units * qty} {selected.units * qty === 1 ? "bolsa" : "bolsas"}
+                  {bolsas(selected.units * qty)}
                 </span>
               </div>
             )}

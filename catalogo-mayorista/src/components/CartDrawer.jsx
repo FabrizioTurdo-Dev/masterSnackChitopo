@@ -10,6 +10,7 @@ import {
   hasPrice,
   totalUnits,
   itemUnits,
+  bolsas,
   flavorAccent,
   SELLER_PHONE,
   STORE_CONFIG,
@@ -36,7 +37,7 @@ function MinOrderMeter({ units }) {
     <div role="status" aria-live="polite">
       <div className="flex items-baseline justify-between gap-3 mb-1.5">
         <span className="font-condensed uppercase tracking-[0.06em] text-base text-night">
-          {done ? `¡Listo! ${units} bolsas` : `Llevas ${units} de ${min} bolsas`}
+          {done ? `¡Listo! ${bolsas(units)}` : `Llevas ${units} de ${bolsas(min)}`}
         </span>
         <span className="text-xs font-semibold text-night-soft tabular-nums">
           {done ? "Pedido mínimo cumplido" : `Te faltan ${min - units}`}
@@ -192,9 +193,9 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                 >
                   <Check size={40} strokeWidth={3} aria-hidden="true" />
                 </motion.div>
-                <h2 className="hero-title font-title uppercase text-6xl leading-[0.95] m-0">¡Listo!</h2>
+                <h2 className="hero-title font-title uppercase text-6xl leading-[0.95] m-0">¡Casi listo!</h2>
                 <p className="font-condensed uppercase tracking-[0.06em] text-xl text-night mt-3 mb-0">
-                  Pedido enviado
+                  Tu pedido está en WhatsApp
                 </p>
                 <p className="text-sm text-night-soft mt-3 mb-5 max-w-xs leading-relaxed">
                   Se abrió WhatsApp con tu pedido. Solo falta que aprietes “Enviar” ahí; te
@@ -219,7 +220,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                   <h2 className="font-title uppercase text-2xl text-night m-0 leading-none">
                     Tu pedido{" "}
                     <span className="font-sans normal-case font-semibold text-sm text-night-soft tabular-nums">
-                      ({units} {units === 1 ? "bolsa" : "bolsas"})
+                      ({bolsas(units)})
                     </span>
                   </h2>
                   <button
@@ -279,7 +280,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                               {item.name}
                             </div>
                             <div className="text-xs text-night-faint tabular-nums">
-                              {item.formatLabel} ×{item.units} · {itemUnits(item)} bolsas
+                              {item.formatLabel} ×{item.units} · {bolsas(itemUnits(item))}
                             </div>
                             {hasPrice(item.price) && (
                               <div className="font-condensed text-electric tabular-nums">
@@ -329,7 +330,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           {priced ? "Total estimado" : "Total del pedido"}
                         </span>
                         <div className="text-xs text-night-faint tabular-nums">
-                          {cart.length} {cart.length === 1 ? "producto" : "productos"} · {units} bolsas
+                          {cart.length} {cart.length === 1 ? "producto" : "productos"} · {bolsas(units)}
                         </div>
                       </div>
                       {priced ? (

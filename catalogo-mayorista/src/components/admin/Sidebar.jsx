@@ -4,10 +4,10 @@ import { useAuth } from "../../context/AuthContext";
 import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 
 const NAV = [
-  { id: "dashboard", label: "Dashboard",  icon: BarChart3 },
+  { id: "dashboard", label: "Resumen",    icon: BarChart3 },
   { id: "products",  label: "Productos",  icon: Package },
   { id: "orders",    label: "Pedidos",    icon: ShoppingCart },
-  { id: "settings",  label: "Config",     icon: Settings },
+  { id: "settings",  label: "Configuración", icon: Settings },
 ];
 
 export default function Sidebar({ page, setPage, newOrders, stockAlerts }) {
@@ -20,7 +20,7 @@ export default function Sidebar({ page, setPage, newOrders, stockAlerts }) {
           <div className="flex items-center gap-2.5 mb-1">
             <MasterSnacksLogo height={44} alt="" className="-rotate-3 shrink-0" />
             <div>
-              <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-gold">Admin</div>
+              <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-gold">Panel</div>
               <div className="text-[11px] text-snow/70">{COMPANY.name}</div>
             </div>
           </div>

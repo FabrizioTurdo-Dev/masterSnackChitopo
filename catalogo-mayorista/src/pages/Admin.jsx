@@ -59,6 +59,12 @@ function Shell({ children }) {
           </p>
         </div>
         {children}
+        <a
+          href="#/"
+          className="mt-5 flex items-center justify-center min-h-[44px] font-condensed uppercase tracking-[0.08em] text-sm text-night-soft hover:text-electric no-underline transition-colors"
+        >
+          ← Volver al catálogo
+        </a>
       </motion.div>
     </div>
   );
@@ -112,7 +118,7 @@ function Login() {
     <Shell>
       <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
         <Input
-          label="Email"
+          label="Correo"
           name="email"
           type="email"
           autoComplete="username"

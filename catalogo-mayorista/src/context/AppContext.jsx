@@ -1,20 +1,44 @@
 // src/context/AppContext.jsx
-import { createContext, useContext, useState } from "react";
-import { MOCK_MODE, MOCK_PRODUCTS, INITIAL_PRODUCTS, INITIAL_ORDERS } from "../data/store";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { MOCK_PRODUCTS, STORE_CONFIG } from "../data/store";
 import { ordersOnline, sendOrder } from "../lib/sendOrder";
-
-const DEFAULT_PRODUCTS = MOCK_MODE ? MOCK_PRODUCTS : INITIAL_PRODUCTS;
-const DEFAULT_ORDERS   = INITIAL_ORDERS;
+import { dbOnline, fetchCatalog } from "../lib/supabaseRest";
 
 const AppContext = createContext(null);
 
+// Estado de los productos:
+//   loading → pidiéndolos a la base
+//   db      → vienen de la base (lo que editan los dueños en el panel)
+//   local   → sin credenciales (desarrollo, modo demo): products.js en memoria
+//   error   → la base no respondió; se muestra products.js para que el
+//             catálogo no quede vacío, y el panel no deja editar
 export function AppProvider({ children }) {
-  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
-  const [orders, setOrders]     = useState(DEFAULT_ORDERS);
+  const [products, setProducts] = useState(dbOnline ? [] : MOCK_PRODUCTS);
+  const [productsStatus, setProductsStatus] = useState(dbOnline ? "loading" : "local");
+  const [stockThreshold, setStockThreshold] = useState(STORE_CONFIG.defaultStockThreshold);
+  const [orders, setOrders] = useState([]);
 
-  // Los pedidos van a Supabase apenas hay credenciales, aunque los productos
-  // sigan en MOCK_MODE: el local los manda desde su celular y el panel los
-  // lee desde otro navegador, así que en memoria nunca se cruzarían.
+  const reloadProducts = useCallback(async () => {
+    if (!dbOnline) return;
+    try {
+      const { products: rows, lowStock } = await fetchCatalog();
+      setProducts(rows);
+      if (lowStock !== null) setStockThreshold(lowStock);
+      setProductsStatus("db");
+    } catch (err) {
+      console.error("No se pudieron cargar los productos de la base:", err.message);
+      setProducts(prev => (prev.length ? prev : MOCK_PRODUCTS));
+      setProductsStatus("error");
+    }
+  }, []);
+
+  useEffect(() => {
+    reloadProducts();
+  }, [reloadProducts]);
+
+  // Los pedidos van a Supabase apenas hay credenciales: el local los manda
+  // desde su celular y el panel los lee desde otro navegador, así que en
+  // memoria nunca se cruzarían.
   function addOrder(order) {
     const row = { ...order, status: "nuevo" };
     if (ordersOnline) {
@@ -27,7 +51,19 @@ export function AppProvider({ children }) {
   }
 
   return (
-    <AppContext.Provider value={{ products, setProducts, orders, setOrders, addOrder }}>
+    <AppContext.Provider
+      value={{
+        products,
+        setProducts,
+        productsStatus,
+        reloadProducts,
+        stockThreshold,
+        setStockThreshold,
+        orders,
+        setOrders,
+        addOrder,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

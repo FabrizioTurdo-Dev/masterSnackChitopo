@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { useApp } from "../../context/AppContext";
-import { STORE_CONFIG } from "../../data/store";
 import { COMPANY } from "../../data/brands";
 import { isSupabaseConfigured } from "../../config/supabase";
 import { ordersService } from "../../services/ordersService";
@@ -14,11 +13,10 @@ import OrdersList from "./OrdersList";
 import SettingsPanel from "./SettingsPanel";
 
 export default function AdminApp() {
-  const { products, orders, setOrders } = useApp();
+  const { products, orders, setOrders, stockThreshold } = useApp();
   const prefersReduced = useReducedMotion();
   const [page, setPage] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [stockThreshold, setStockThreshold] = useState(STORE_CONFIG.defaultStockThreshold);
 
   // Los pedidos se cargan acá y no en su pestaña: el sidebar y el dashboard
   // también muestran cuántos hay nuevos.
@@ -63,7 +61,7 @@ export default function AdminApp() {
     dashboard: <Dashboard products={products} orders={orders} setPage={setPage} stockThreshold={stockThreshold} />,
     products:  <ProductsTable stockThreshold={stockThreshold} />,
     orders:    <OrdersList sync={ordersSync} onRefresh={refreshOrders} />,
-    settings:  <SettingsPanel stockThreshold={stockThreshold} onStockThresholdChange={setStockThreshold} />,
+    settings:  <SettingsPanel />,
   };
 
   return (
@@ -111,7 +109,7 @@ export default function AdminApp() {
           <div className="flex items-center gap-2.5">
             <MasterSnacksLogo height={38} alt="" className="-rotate-3" />
             <div>
-              <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-night">Admin</div>
+              <div className="font-condensed uppercase tracking-[0.12em] text-lg leading-none text-night">Panel</div>
               <div className="text-[11px] text-night-soft">{COMPANY.name}</div>
             </div>
           </div>

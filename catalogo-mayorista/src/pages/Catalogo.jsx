@@ -15,7 +15,7 @@ import { BurstProvider } from "../lib/burst";
 import { prefersReducedMotion } from "../lib/motion";
 import { LANDING_URL } from "../lib/landingUrl";
 import { useApp } from "../context/AppContext";
-import { STORE_CONFIG, WHATSAPP_LINK, totalUnits, brandsIn } from "../data/store";
+import { STORE_CONFIG, WHATSAPP_LINK, totalUnits, brandsIn, bolsas } from "../data/store";
 import { COMPANY, DEFAULT_BRAND, brandOf } from "../data/brands";
 
 // La empresa ya la presentó la landing: acá la cinta repite lo que el local
@@ -65,7 +65,7 @@ export default function Catalogo() {
 }
 
 function CatalogoPage() {
-  const { products } = useApp();
+  const { products, productsStatus, stockThreshold } = useApp();
   const [brandFilter, setBrandFilter] = useState("todas");
   const [lineFilter, setLineFilter] = useState("todos");
   const [formatFilter, setFormatFilter] = useState(null);
@@ -75,17 +75,13 @@ function CatalogoPage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [detailProduct, setDetailProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Esqueleto mientras llegan los productos de la base.
+  const loading = productsStatus === "loading";
 
   const prefersReduced = useReducedMotion();
   const cartBump = useRef(null);
   const prevUnits = useRef(0);
   const toastTimer = useRef(null);
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 350);
-    return () => clearTimeout(t);
-  }, []);
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
@@ -249,7 +245,7 @@ function CatalogoPage() {
               <button
                 onClick={() => setCartOpen(true)}
                 className="relative inline-flex items-center gap-2 min-h-[44px] px-3 sm:px-4 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-sm border-[3px] border-night [box-shadow:3px_3px_0_var(--color-night)] nb-press cursor-pointer"
-                aria-label={`Ver pedido, ${units} bolsas`}
+                aria-label={`Ver pedido, ${bolsas(units)}`}
               >
                 <ShoppingCart size={18} aria-hidden="true" />
                 <span className="hidden sm:inline">Mi pedido</span>
@@ -375,9 +371,15 @@ function CatalogoPage() {
           </div>
 
           <p className="font-condensed uppercase tracking-[0.14em] text-sm text-night-soft mb-5 m-0" aria-live="polite">
-            {filtered.length} producto{filtered.length !== 1 ? "s" : ""}
-            {formatFilter ? ` en ${formatFilter}` : ""}
-            {search ? ` · "${search}"` : ""}
+            {loading ? (
+              "Cargando productos…"
+            ) : (
+              <>
+                {filtered.length} producto{filtered.length !== 1 ? "s" : ""}
+                {formatFilter ? ` en ${formatFilter}` : ""}
+                {search ? ` · "${search}"` : ""}
+              </>
+            )}
           </p>
 
           {loading ? (
@@ -429,7 +431,7 @@ function CatalogoPage() {
                       index={i}
                       onAdd={addToCart}
                       onDetail={setDetailProduct}
-                      stockThreshold={STORE_CONFIG.defaultStockThreshold}
+                      stockThreshold={stockThreshold}
                     />
                   ))}
                 </motion.div>
@@ -459,7 +461,7 @@ function CatalogoPage() {
             product={detailProduct}
             onClose={() => setDetailProduct(null)}
             onAdd={addToCart}
-            stockThreshold={STORE_CONFIG.defaultStockThreshold}
+            stockThreshold={stockThreshold}
           />
         )}
       </AnimatePresence>

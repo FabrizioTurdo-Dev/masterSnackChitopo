@@ -3,13 +3,25 @@ import { AnimatePresence } from "framer-motion";
 import { Package, Plus, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import Btn from "./ui/Btn";
 import PageHeader from "./ui/PageHeader";
-import { CARD, FIELD, TH, PILL, TONES, chip } from "./ui/styles";
+import { ALERT, CARD, FIELD, TH, PILL, TONES, chip } from "./ui/styles";
 import Modal from "./Modal";
 import ProductForm from "./ProductForm";
 import { useApp } from "../../context/AppContext";
-import { formatPrice, hasPrice, STORE_CONFIG, lineLabel, totalStock, brandsIn } from "../../data/store";
+import {
+  formatPrice,
+  hasPrice,
+  STORE_CONFIG,
+  lineLabel,
+  totalStock,
+  brandsIn,
+  flavorLabel,
+  bolsas,
+  plural,
+  DEV_CREDIT,
+} from "../../data/store";
 import { brandOf, DEFAULT_BRAND } from "../../data/brands";
 import { productsService } from "../../services/productsService";
+import { isSupabaseConfigured } from "../../config/supabase";
 import BrandMark from "../brand/BrandMark";
 
 function FormatTag({ format, threshold }) {
@@ -18,7 +30,7 @@ function FormatTag({ format, threshold }) {
   return (
     <span
       className={`${PILL} ${isZero ? TONES.red : isLow ? TONES.gold : TONES.green}`}
-      title={`${format.label} de ${format.units} bolsas — ${format.stock} en stock`}
+      title={`${format.label} de ${bolsas(format.units)}: ${format.stock} en stock`}
     >
       {format.label} ×{format.units}: {format.stock}
     </span>
@@ -74,15 +86,24 @@ export default function ProductsTable({ stockThreshold }) {
   const [stockFilter, setStockFilter] = useState("todos");
   const [sortField, setSortField] = useState("id");
   const [sortDir, setSortDir] = useState("asc");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
+  // Si la base no respondió, lo que hay en pantalla puede ser el respaldo
+  // local: no se deja editar para no pisar la base con datos viejos.
+  const [loadError, setLoadError] = useState(null);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const PER_PAGE = 10;
+  const locked = Boolean(loadError);
 
+  // Con base, datos frescos con la sesión del admin (el catálogo los pudo
+  // haber cargado hace rato). Sin base, se sigue con lo que hay en memoria.
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     let cancelled = false;
     productsService.list().then(res => {
       if (cancelled) return;
       if (res.success) setProducts(res.data);
+      else setLoadError(res.error);
       setLoading(false);
     });
     return () => { cancelled = true; };
@@ -105,12 +126,13 @@ export default function ProductsTable({ stockThreshold }) {
     }
   }
 
+  // Devuelve el resultado: si falla, el formulario muestra el error sin
+  // cerrarse y no se pierde lo cargado.
   async function saveProduct(formData) {
     const res = formData.id
       ? await productsService.update(formData.id, formData)
       : await productsService.create(formData);
-
-    if (!res.success) return alert(`Error: ${res.error}`);
+    if (!res.success) return res;
 
     setProducts(prev =>
       formData.id
@@ -118,19 +140,22 @@ export default function ProductsTable({ stockThreshold }) {
         : [...prev, res.data]
     );
     setModal(null);
+    return res;
   }
 
-  async function deleteProduct(id) {
-    if (!window.confirm("¿Eliminar este producto para siempre?")) return;
-    const res = await productsService.remove(id);
-    if (!res.success) return alert(`Error: ${res.error}`);
-    setProducts(prev => prev.filter(p => p.id !== id));
+  async function deleteProduct(product) {
+    if (!window.confirm(`¿Eliminar «${product.name}» para siempre?`)) return;
+    setError(null);
+    const res = await productsService.remove(product.id);
+    if (!res.success) return setError(res.error);
+    setProducts(prev => prev.filter(p => p.id !== product.id));
   }
 
   async function toggleActive(product) {
     const next = !product.active;
+    setError(null);
     const res = await productsService.toggleActive(product.id, next);
-    if (!res.success) return alert(`Error: ${res.error}`);
+    if (!res.success) return setError(res.error);
     setProducts(prev => prev.map(p => (p.id === product.id ? { ...p, active: next } : p)));
   }
 
@@ -140,7 +165,7 @@ export default function ProductsTable({ stockThreshold }) {
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(p =>
-        `${p.name} ${p.flavor || ""} ${brandOf(p.brand).name}`.toLowerCase().includes(q)
+        `${p.name} ${flavorLabel(p.flavor)} ${brandOf(p.brand).name}`.toLowerCase().includes(q)
       );
     }
     if (brandFilter !== "todas") list = list.filter(p => brandIdOf(p) === brandFilter);
@@ -251,15 +276,23 @@ export default function ProductsTable({ stockThreshold }) {
       <PageHeader
         eyebrow="Catálogo"
         title="Productos"
-        subtitle={`${products.length} cargados · ${filtered.length} visibles${totalPages > 1 ? ` · Pág. ${page}/${totalPages}` : ""}`}
+        subtitle={`${plural(products.length, "producto")}${hasFilters ? ` · ${filtered.length} con estos filtros` : ""}${totalPages > 1 ? ` · Pág. ${page}/${totalPages}` : ""}`}
       >
         <Btn variant="ghost" onClick={exportCSV} disabled={filtered.length === 0}>
-          Exportar CSV
+          Descargar planilla
         </Btn>
-        <Btn onClick={() => setModal("new")}>
+        <Btn onClick={() => setModal("new")} disabled={locked || loading}>
           <Plus size={16} aria-hidden="true" /> Nuevo producto
         </Btn>
       </PageHeader>
+
+      {(loadError || error) && (
+        <div className={`${ALERT} mb-5`} role="alert">
+          {loadError
+            ? `${loadError} Mientras tanto no se pueden editar productos. Recarga la página en un rato; si sigue igual, avísale a ${DEV_CREDIT.name}.`
+            : error}
+        </div>
+      )}
 
       <div className={`${CARD} mb-6 p-4`}>
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
@@ -329,18 +362,20 @@ export default function ProductsTable({ stockThreshold }) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => toggleActive(p)}
-                        className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.snow}`}
+                        disabled={locked}
+                        className={`${PILL} cursor-pointer hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 ${p.active ? TONES.green : TONES.snow}`}
                       >
                         {p.active ? "● Visible" : "○ Oculto"}
                       </button>
                       {statusPill(p)}
-                      <span className="text-xs text-night-faint">{totalStock(p)} bolsas</span>
+                      <span className="text-xs text-night-faint">{bolsas(totalStock(p))}</span>
                     </div>
                     <div className="flex gap-1.5">
-                      <Btn small variant="ghost" onClick={() => setModal(p)}>Editar</Btn>
+                      <Btn small variant="ghost" onClick={() => setModal(p)} disabled={locked}>Editar</Btn>
                       <button
-                        onClick={() => deleteProduct(p.id)}
-                        className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-night hover:bg-[#ffd9cc] transition-colors cursor-pointer"
+                        onClick={() => deleteProduct(p)}
+                        disabled={locked}
+                        className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-night hover:bg-[#ffd9cc] transition-colors cursor-pointer disabled:opacity-40 disabled:pointer-events-none"
                         aria-label={`Eliminar ${p.name}`}
                       >
                         <Trash2 size={15} aria-hidden="true" />
@@ -378,7 +413,7 @@ export default function ProductsTable({ stockThreshold }) {
                           </div>
                           <div>
                             <div className="font-condensed uppercase text-base leading-tight text-night">{p.name}</div>
-                            <div className="text-xs text-night-faint">{p.flavor}</div>
+                            <div className="text-xs text-night-faint">{flavorLabel(p.flavor)}</div>
                           </div>
                         </div>
                       </td>
@@ -396,13 +431,14 @@ export default function ProductsTable({ stockThreshold }) {
                             <FormatTag key={f.id} format={f} threshold={stockThreshold} />
                           ))}
                         </div>
-                        <div className="text-xs text-night-faint mt-1">{totalStock(p)} bolsas</div>
+                        <div className="text-xs text-night-faint mt-1">{bolsas(totalStock(p))}</div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-col gap-1 items-start">
                           <button
                             onClick={() => toggleActive(p)}
-                            className={`${PILL} cursor-pointer hover:brightness-95 ${p.active ? TONES.green : TONES.snow}`}
+                            disabled={locked}
+                            className={`${PILL} cursor-pointer hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 ${p.active ? TONES.green : TONES.snow}`}
                           >
                             {p.active ? "● Visible" : "○ Oculto"}
                           </button>
@@ -411,10 +447,11 @@ export default function ProductsTable({ stockThreshold }) {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1.5">
-                          <Btn small variant="ghost" onClick={() => setModal(p)}>Editar</Btn>
+                          <Btn small variant="ghost" onClick={() => setModal(p)} disabled={locked}>Editar</Btn>
                           <button
-                            onClick={() => deleteProduct(p.id)}
-                            className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-night hover:bg-[#ffd9cc] transition-colors cursor-pointer"
+                            onClick={() => deleteProduct(p)}
+                            disabled={locked}
+                            className="size-[34px] grid place-items-center text-[#8a1c03] border-2 border-transparent hover:border-night hover:bg-[#ffd9cc] transition-colors cursor-pointer disabled:opacity-40 disabled:pointer-events-none"
                             aria-label={`Eliminar ${p.name}`}
                           >
                             <Trash2 size={15} aria-hidden="true" />

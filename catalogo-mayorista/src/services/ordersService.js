@@ -1,9 +1,10 @@
 import { supabase, isSupabaseConfigured } from "../config/supabase";
+import { friendlyError, noRowsError } from "./dbError";
 
 // Lo usa solo el panel. El alta la hace el catálogo con src/lib/sendOrder.js,
 // sin cargar supabase-js en el sitio público.
 //
-// Los pedidos dependen de que haya credenciales y no de MOCK_MODE: el local
+// Los pedidos dependen de que haya credenciales: el local
 // los crea desde su celular y el panel los lee desde otro navegador, así que
 // en memoria nunca llegarían.
 export const ordersService = {
@@ -20,7 +21,7 @@ export const ordersService = {
       return { success: true, data };
     } catch (error) {
       console.error("Error al listar pedidos:", error.message);
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "cargar los pedidos") };
     }
   },
 
@@ -36,11 +37,11 @@ export const ordersService = {
         .select();
       if (error) throw error;
       // RLS no da error cuando filtra: sin filas es que no se pudo escribir.
-      if (!data?.length) throw new Error("La base no aceptó el cambio (¿la cuenta está en admins?)");
+      if (!data?.length) throw noRowsError();
       return { success: true, data };
     } catch (error) {
       console.error("Error al actualizar pedido:", error.message);
-      return { success: false, error: error.message };
+      return { success: false, error: friendlyError(error, "cambiar el estado del pedido") };
     }
   },
 };

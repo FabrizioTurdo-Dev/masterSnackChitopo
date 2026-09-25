@@ -1,6 +1,6 @@
 # Estado del proyecto — Master Snacks (Chitopo y las marcas que vengan)
 
-Última actualización: 2026-09-24
+Última actualización: 2026-09-25
 
 ## 1. Resumen
 
@@ -19,31 +19,35 @@ Un solo repositorio con dos apps React + Vite independientes, desplegadas juntas
 En producción quedan bajo el mismo dominio: la home en `/`, Chitopo en `/chitopo/` y el catálogo en `/catalogo/`.
 
 - Repo: https://github.com/FabrizioTurdo-Dev/masterSnackChitopo
-- Link de producción: **completar acá una vez conectado el sitio en Netlify**
+- Link de producción: https://mastersnackchitopo.netlify.app/ (panel: https://mastersnackchitopo.netlify.app/catalogo/#/admin, o `/admin`)
 
 ## 2. Qué está hecho y funcionando
 
 - Landing completa en dos páginas (home de Master Snacks y página de Chitopo), animaciones (GSAP + Lenis), responsive.
 - Catálogo: browse de productos, filtros, carrito, pedido derivado a WhatsApp. El filtro por marca aparece solo cuando hay productos de más de una marca; si un pedido las mezcla, el mensaje las agrupa.
-- Pedidos: al tocar "Enviar por WhatsApp" el pedido se guarda en Supabase como **nuevo**, con un código (`MS-XXXX`; los anteriores al cambio de marca quedaron con `CH-XXXX`) que también va en el mensaje. En el panel los dueños lo avanzan: nuevo → pendiente (cotización enviada) → confirmado → enviado, o cancelado. Esto funciona apenas hay credenciales de Supabase, aunque `MOCK_MODE` siga en `true`. Límite: se registra al abrir WhatsApp; si el local no aprieta enviar, queda un "nuevo" sin mensaje, y se cancela desde el panel.
+- Pedidos: al tocar "Enviar por WhatsApp" el pedido se guarda en Supabase como **nuevo**, con un código (`MS-XXXX`; los anteriores al cambio de marca quedaron con `CH-XXXX`) que también va en el mensaje. En el panel los dueños lo avanzan: nuevo → pendiente (cotización enviada) → confirmado → enviado, o cancelado. Límite: se registra al abrir WhatsApp; si el local no aprieta enviar, queda un "nuevo" sin mensaje, y se cancela desde el panel.
 - Dos identidades visuales compartidas por las dos apps en `shared/marca/`:
   - **Master Snacks** (home, catálogo y panel): los colores del logo — amarillo, azul eléctrico, azul rey y contorno negro — con trama de puntos de cómic.
   - **Chitopo** (`/chitopo/` y su tarjeta en la home): dorado con damero, café y rojo.
 
   Cada página elige con `data-brand` en su `<html>` (o en un bloque, para las "islas" de otra marca). Los datos de la empresa y de cada marca viven en `src/data/brands.js` de cada app (espejo uno del otro).
-- Panel de admin (`/catalogo/#/admin`): dashboard, CRUD de productos, listado de pedidos, configuración de tienda — todo funcional en UI.
-- Login del panel con **Supabase Auth** (email + contraseña, sesión persistente, cerrar sesión): ya no hay credenciales hardcodeadas en el bundle. Falta conectar el proyecto de Supabase para que tenga contra qué autenticar.
-- Infra: repo unificado, build combinado (`build.mjs`) que compila ambas apps y las publica bajo un mismo dominio, `netlify.toml` con el redirect necesario para el panel admin.
-- **Modo actual: `MOCK_MODE = true`** (`catalogo-mayorista/src/data/store.js`) — el catálogo y el panel admin trabajan con datos en memoria (`src/data/products.js`). Nada de lo que se edite en el panel admin persiste: se pierde al recargar la página.
+- Panel de admin (`/catalogo/#/admin`, con acceso en el pie de las páginas): resumen, productos (crear, editar, ocultar, borrar), pedidos y configuración.
+- Login del panel con **Supabase Auth** (correo + contraseña, sesión persistente, cerrar sesión). No hay credenciales en el bundle.
+- **Productos y config en Supabase (desde el 2026-09-25).** El catálogo público lee los productos y el umbral de stock bajo de la base (`src/lib/supabaseRest.js`, con fetch y sin supabase-js). Lo que los dueños editan en el panel se guarda ahí y lo ven los clientes al recargar. Si la base no responde, el catálogo muestra `src/data/products.js` de respaldo y el panel no deja editar. Sin credenciales (desarrollo, modo demo) todo sigue en memoria.
+- Las fotos que se suben desde el panel se achican a 800 px y quedan guardadas dentro del producto.
+- Infra: repo unificado, build combinado (`build.mjs`) que compila ambas apps y las publica bajo un mismo dominio. `netlify.toml` manda `/admin` al panel.
 
 ## 3. Pendientes críticos para "terminar"
 
 ### 3.1 Conexión real a Supabase (base de datos + auth del admin)
 
-El proyecto de Supabase ya está creado, **en la cuenta del cliente (Master Snacks)**. El
-código del front ya está escrito: falta correr el SQL y cargar las credenciales.
+El proyecto de Supabase está en la **cuenta del cliente (Master Snacks)**, con las
+credenciales cargadas en Netlify. Al 2026-09-25 ya estaban corridos `schema.sql`,
+`seed.sql`, `migration-auth.sql` y `migration-pedidos.sql`, y creadas las cuentas.
+Faltaba `migration-marcas.sql` (la base no tenía la columna `brand`) y volver a correr
+`seed.sql` para los nombres nuevos.
 
-Pasos, en orden:
+Pasos para armar una base desde cero, en orden:
 
 1. **SQL Editor de Supabase**, uno detrás del otro:
    `catalogo-mayorista/supabase/schema.sql` → `seed.sql` → `migration-auth.sql` →
@@ -53,9 +57,8 @@ Pasos, en orden:
 
    **Si la base ya existía antes del 2026-09-22**, correr también
    `migration-marcas.sql` (agrega la columna `brand` a los productos) **antes** de volver a
-   correr `seed.sql` y antes de poner `MOCK_MODE` en `false`. Sin esa columna, crear o
-   editar productos desde el panel falla con "column brand does not exist". En una base
-   nueva no hace falta: `schema.sql` ya la trae.
+   correr `seed.sql`. Sin esa columna, crear o editar productos desde el panel falla. En
+   una base nueva no hace falta: `schema.sql` ya la trae.
 2. **Authentication → Providers → Email**: desactivar *Enable email signups*.
 3. **Authentication → Users → Add user**: crear a mano la cuenta de Alex y la de Fabrizio,
    con los mismos emails que se pusieron en `migration-auth.sql`. Cada uno elige su propia
@@ -65,11 +68,9 @@ Pasos, en orden:
 5. Probar el login: entrar al panel, recargar (la sesión se mantiene), cerrar sesión.
    Después mandar un pedido de prueba desde el catálogo y revisar que aparezca en Pedidos
    como "nuevo".
-6. **Todavía no poner `MOCK_MODE` en `false`.** El catálogo público lee los productos del
-   estado en memoria, no de Supabase: con el flag apagado los visitantes verían el catálogo
-   vacío. Falta una etapa de código: que el catálogo cargue los productos desde la base y
-   que el panel de configuración persista. Los pedidos ya no dependen de este flag: van a
-   Supabase en cuanto están las credenciales.
+
+Ojo: `seed.sql` hace upsert por `slug` y **pisa** nombre, stock y demás campos de esos
+productos. Una vez que los dueños editan desde el panel, no se vuelve a correr.
 
 Qué protege qué, para tenerlo claro:
 
@@ -95,6 +96,8 @@ En `catalogo-mayorista/src/data/products.js`:
 
 Hoy el sitio queda en un subdominio `*.netlify.app`. Falta decidir y comprar un dominio propio (ej. algo con "Master Snacks" o "Chitopo") y configurarlo en Netlify — es un trámite de minutos una vez que se elige el dominio, Netlify emite el certificado HTTPS solo.
 
+Cuando esté, cambiar `og:url` y `og:image` en los tres `index.html` (`landing/`, `landing/chitopo/` y `catalogo-mayorista/`): van con la dirección completa para que la vista previa de WhatsApp muestre la imagen.
+
 ### 3.4 Otros gaps
 
 - Tipografía del logo sin licencia confirmada (hoy usa alternativas libres de Google Fonts: Baloo 2, Archivo, Anton).
@@ -102,7 +105,8 @@ Hoy el sitio queda en un subdominio `*.netlify.app`. Falta decidir y comprar un 
 
 ## 4. Riesgos / deuda técnica conocida (no bloqueante para el deploy actual)
 
-- Las imágenes de producto en `catalogo-mayorista/src/data/products.js` usan rutas absolutas (`/img/productos/...`). Hoy "funcionan" bajo `/catalogo/` solo porque `landing/public` tiene archivos con los mismos nombres en la raíz del sitio — es un acoplamiento frágil e invisible: se rompe apenas se suba un producto o imagen nueva desde el panel admin que no exista también en `landing/public`. Fix recomendado a futuro: anteponer `import.meta.env.BASE_URL` a esos strings.
+- Las imágenes de los productos originales usan rutas absolutas (`/img/productos/...`, en `products.js` y en la base). Funcionan bajo `/catalogo/` porque `landing/public` tiene esos archivos en la raíz del sitio: si se borran de ahí, el catálogo se queda sin fotos. Las que se suben desde el panel no dependen de esto (van dentro del producto).
+- El hero de `/chitopo/` usa su propia lista de sabores (`landing/src/data/products.js`): ocultar o crear un producto en el panel no cambia la landing.
 - Código duplicado entre `landing/` y `catalogo-mayorista/` (Logo, sello de advertencia, imágenes de producto, favicons, fuentes) — deliberadamente fuera de alcance de la unificación de hoy, candidato a extraer a una carpeta/paquete compartido más adelante.
 - El registro de marcas (`src/data/brands.js`) está duplicado en las dos apps y puede desincronizarse; `npm run seed:sql` al menos valida que cada producto use una marca conocida. Sumar una marca es un cambio de código (brands.js en las dos apps, su logo en `BrandMark.jsx` y, si trae líneas o sabores nuevos, `store.js`), no de base de datos.
 - Las líneas (suflés, maní, aros) y los sabores son hoy los de Chitopo. Cuando llegue la marca no horneada habrá que sumar los suyos.

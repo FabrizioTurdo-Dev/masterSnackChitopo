@@ -7,7 +7,7 @@ import ImageLightbox from "./ImageLightbox";
 import { Bag, QtyStepper } from "./ProductCard";
 import { useBurst } from "../lib/burst";
 import BrandMark from "./brand/BrandMark";
-import { formatPrice, hasPrice, flavorAccent, formatsOf, SELLER_PHONE } from "../data/store";
+import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, SELLER_PHONE } from "../data/store";
 import { brandOf } from "../data/brands";
 
 function Dato({ label, children }) {
@@ -227,7 +227,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
             {soon ? (
               <div className="dots-snow border-[3px] border-night px-4 py-4 flex flex-col gap-3">
                 <p className="text-sm text-night-soft leading-relaxed m-0">
-                  Este sabor está en camino. Si quieres reservar cajas para el lanzamiento,
+                  Este producto está en camino. Si quieres reservar cajas para el lanzamiento,
                   escríbenos y te avisamos apenas salga.
                 </p>
                 <button
@@ -261,7 +261,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                           onClick={() => { setSelectedId(f.id); setQty(1); }}
                           role="radio"
                           aria-checked={isSel}
-                          aria-label={`${f.label} de ${f.units} unidades, ${f.stock} disponibles`}
+                          aria-label={`${f.label} de ${bolsas(f.units)}, ${f.stock} disponibles`}
                           className={`px-4 py-2 text-left border-[3px] border-night transition-colors cursor-pointer ${
                             isSel ? "bg-night text-gold" : "bg-snow text-night hover:bg-snow-2"
                           }`}
@@ -283,7 +283,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <span className="text-sm text-night font-semibold">
-                          {selected.label} de {selected.units} bolsas
+                          {selected.label} de {bolsas(selected.units)}
                         </span>
                         <span className="block text-xs text-night-faint tabular-nums">
                           Stock: {selected.stock} {selected.stock === 1 ? "bulto" : "bultos"}
@@ -292,7 +292,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                       <QtyStepper qty={qty} max={maxQty} onChange={setQty} size="lg" />
                     </div>
                     <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-night/20">
-                      <span className="text-sm text-night-soft">{selected.units * qty} bolsas en total</span>
+                      <span className="text-sm text-night-soft">{bolsas(selected.units * qty)} en total</span>
                       <span className="font-condensed text-xl text-electric tabular-nums">
                         {hasPrice(selected.price) ? formatPrice(selected.price * qty) : "A consultar"}
                       </span>

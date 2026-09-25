@@ -38,3 +38,6 @@ export const CODE = "font-mono text-[0.92em] px-1 bg-snow-2 border border-night/
 
 // Rojo oscuro para errores: pasa 4.5:1 también sobre snow-2.
 export const ERROR_TEXT = "text-sm font-semibold text-[#a32004]";
+
+// Aviso de error arriba de una página del panel (pedidos, productos, config).
+export const ALERT = "px-4 py-3 border-[3px] border-night bg-[#ffd9cc] text-[#8a1c03] text-sm font-semibold";
