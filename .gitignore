@@ -20,3 +20,6 @@ Lilita_One/
 
 # Instaladores y descargas sueltas
 *.exe
+
+# Mockups para Instagram: quedan solo en local
+mockups/
