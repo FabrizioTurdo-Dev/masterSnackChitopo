@@ -11,6 +11,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "../config/supabase";
+import { DEV_CREDIT } from "../data/store";
 
 // Sin credenciales de Supabase no hay contra qué autenticar. En desarrollo
 // dejamos abrir el panel en modo demo (datos en memoria) para poder mostrarlo;
@@ -112,7 +113,10 @@ export function AuthProvider({ children }) {
   async function signIn(email, password) {
     setNotice("");
     if (!isSupabaseConfigured) {
-      return { success: false, error: "El panel no está conectado a Supabase todavía." };
+      return {
+        success: false,
+        error: `El panel todavía no está habilitado. Avísale a ${DEV_CREDIT.name}.`,
+      };
     }
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim().toLowerCase(),

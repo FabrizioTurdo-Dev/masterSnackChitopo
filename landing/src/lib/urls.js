@@ -13,3 +13,6 @@ export function brandUrl(brand) {
 // VITE_CATALOGO_URL, cae igual en /catalogo/; en local, al dev server.
 export const CATALOGO_URL =
   import.meta.env.VITE_CATALOGO_URL || (import.meta.env.DEV ? "http://localhost:5173" : "/catalogo/");
+
+// Panel de administración del catálogo (ruta con hash: el catálogo usa HashRouter).
+export const ADMIN_URL = `${CATALOGO_URL}#/admin`;

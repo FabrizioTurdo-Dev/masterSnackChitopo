@@ -1,4 +1,4 @@
-import { MapPin, Clock, Truck, MessageCircle, ArrowLeft, ArrowUpRight } from "lucide-react";
+import { MapPin, Clock, Truck, MessageCircle, ArrowLeft, ArrowUpRight, Lock } from "lucide-react";
 import MasterSnacksLogo from "./brand/MasterSnacksLogo";
 import { LANDING_URL, brandSiteUrl } from "../lib/landingUrl";
 import {
@@ -119,14 +119,26 @@ export default function Footer() {
         <div className="mt-10 pt-6 border-t-2 border-snow/15 flex flex-col gap-4">
           <p className="text-[11px] text-snow/70 leading-relaxed max-w-3xl m-0">
             {COMPANY.sesma} · Hecho en Chile. Productos con sello de advertencia según la
-            Ley 20.606 de Etiquetado de Alimentos. Este catálogo es mayorista y está dirigido a
+            Ley 20.606 de Etiquetado de Alimentos. Este catálogo es mayorista y está pensado para
             comerciantes adultos: no constituye publicidad dirigida a menores de 14 años.
           </p>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <p className="text-[11px] text-snow/70 m-0">
-              &copy; {COMPANY.copyrightYear} {COMPANY.legalName}
-            </p>
+            {/* El acceso al panel va acá, chico, para que los dueños lo
+                encuentren sin que les llame la atención a los clientes. El
+                catálogo usa HashRouter: el hash cambia de ruta sin recargar. */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-x-4">
+              <p className="text-[11px] text-snow/70 m-0">
+                &copy; {COMPANY.copyrightYear} {COMPANY.legalName}
+              </p>
+              <a
+                href="#/admin"
+                className="self-start inline-flex items-center gap-1.5 min-h-[44px] text-[11px] text-snow/70 hover:text-gold no-underline transition-colors"
+              >
+                <Lock size={12} aria-hidden="true" />
+                Panel de administración
+              </a>
+            </div>
 
             <a
               href={DEV_WHATSAPP_LINK}

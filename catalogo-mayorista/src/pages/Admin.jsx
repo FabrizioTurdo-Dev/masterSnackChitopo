@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ShieldAlert } from "lucide-react";
 import Input from "../components/admin/ui/Input";
@@ -10,6 +10,12 @@ import { STORE_CONFIG } from "../data/store";
 import { COMPANY } from "../data/brands";
 
 export default function Admin() {
+  // Se entra desde el pie del catálogo: sin esto el panel abre scrolleado
+  // hasta donde estaba el pie.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <AuthProvider>
       <AdminGate />

@@ -1,4 +1,4 @@
-import { MapPin, Clock, Truck, MessageCircle, ArrowUpRight } from "lucide-react";
+import { MapPin, Clock, Truck, MessageCircle, ArrowUpRight, Lock } from "lucide-react";
 import Logo from "../brand/Logo";
 import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import InstagramIcon from "../brand/InstagramIcon";
@@ -10,7 +10,7 @@ import {
   DEV_WHATSAPP_LINK,
 } from "../../data/store";
 import { COMPANY, BRANDS, CHITOPO } from "../../data/brands";
-import { CATALOGO_URL, HOME_URL, brandUrl } from "../../lib/urls";
+import { ADMIN_URL, CATALOGO_URL, HOME_URL, brandUrl } from "../../lib/urls";
 import { useBrand, useTone } from "../../lib/brand";
 
 const TONES = {
@@ -63,7 +63,7 @@ export default function Footer() {
               <>
                 <Logo height={44} withTagline />
                 <p className={`text-[13px] leading-relaxed mt-4 max-w-[280px] ${t.soft}`}>
-                  Suflés horneados y maní hechos en La Pintana, para almacenes,
+                  Suflés horneados hechos en La Pintana, para almacenes,
                   distribuidoras y locales de barrio.
                 </p>
               </>
@@ -174,15 +174,26 @@ export default function Footer() {
         <div className={`mt-10 pt-6 border-t-2 flex flex-col gap-4 ${t.rule}`}>
           <p className={`text-[11px] leading-relaxed max-w-3xl m-0 ${t.softer}`}>
             {COMPANY.sesma} · Hecho en Chile. Productos con sello de advertencia según la
-            Ley 20.606 de Etiquetado de Alimentos. Este sitio está dirigido a personas adultas:
+            Ley 20.606 de Etiquetado de Alimentos. Este sitio está pensado para personas adultas:
             no constituye publicidad dirigida a menores de 14 años.
           </p>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <p className={`text-[11px] m-0 ${t.softer}`}>
-              &copy; {COMPANY.copyrightYear}{" "}
-              {isChitopo ? `${CHITOPO.name} — ${COMPANY.legalName}` : COMPANY.legalName}
-            </p>
+            {/* El acceso al panel va acá, chico, para que los dueños lo
+                encuentren sin que les llame la atención a los clientes. */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-x-4">
+              <p className={`text-[11px] m-0 ${t.softer}`}>
+                &copy; {COMPANY.copyrightYear}{" "}
+                {isChitopo ? `${CHITOPO.name} — ${COMPANY.legalName}` : COMPANY.legalName}
+              </p>
+              <a
+                href={ADMIN_URL}
+                className={`self-start inline-flex items-center gap-1.5 min-h-[44px] text-[11px] no-underline transition-colors ${t.softer} hover:text-gold`}
+              >
+                <Lock size={12} aria-hidden="true" />
+                Panel de administración
+              </a>
+            </div>
 
             <a
               href={DEV_WHATSAPP_LINK}
