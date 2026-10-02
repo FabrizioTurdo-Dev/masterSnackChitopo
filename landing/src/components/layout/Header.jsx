@@ -3,7 +3,7 @@ import { Menu, X, MessageCircle } from "lucide-react";
 import Logo from "../brand/Logo";
 import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import { CATALOGO_URL, HOME_URL } from "../../lib/urls";
-import { WHATSAPP_LINK } from "../../data/store";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { COMPANY, CHITOPO } from "../../data/brands";
 import { useBrand, useTone } from "../../lib/brand";
 
@@ -34,6 +34,7 @@ const TONES = {
 // en la de Chitopo suma el sello "una marca de Master Snacks" que lleva a
 // la home.
 export default function Header({ nav }) {
+  const site = useSiteConfig();
   const brand = useBrand();
   const t = useTone(TONES);
   const [open, setOpen] = useState(false);
@@ -107,7 +108,7 @@ export default function Header({ nav }) {
           </a>
 
           <a
-            href={WHATSAPP_LINK}
+            href={site.whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Escríbenos por WhatsApp"

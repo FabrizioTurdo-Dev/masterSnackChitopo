@@ -4,18 +4,17 @@ import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/SplitText";
 import StampBadge from "./brand/StampBadge";
 import BrandMark from "./brand/BrandMark";
-import { STORE_CONFIG, FLAVOR_ACCENTS } from "../data/store";
+import { FLAVOR_ACCENTS } from "../data/store";
+import { useApp } from "../context/AppContext";
 import { BRANDS } from "../data/brands";
 import { prefersReducedMotion } from "../lib/motion";
 
 gsap.registerPlugin(SplitText, useGSAP);
 
-const STEPS = [
+// El mínimo lo editan los dueños desde el panel.
+const steps = minOrder => [
   { title: "Elige", text: "Sabor y formato: caja, display o unidad." },
-  {
-    title: `Suma ${STORE_CONFIG.minOrderUnits}`,
-    text: "Es el pedido mínimo. Puedes mezclar sabores.",
-  },
+  { title: `Suma ${minOrder}`, text: "Es el pedido mínimo. Puedes mezclar sabores." },
   { title: "Envía", text: "Te respondemos por WhatsApp con precio y despacho." },
 ];
 
@@ -33,6 +32,7 @@ const STICKERS = [
 // así que el titular y los pasos entran en una pantalla junto con el
 // comienzo de la grilla.
 export default function CatalogHero() {
+  const { settings } = useApp();
   const root = useRef(null);
   const title = useRef(null);
 
@@ -100,7 +100,7 @@ export default function CatalogHero() {
       </div>
 
       <StampBadge
-        text="Pedido mínimo 100 u · Cerramos por WhatsApp · "
+        text={`Pedido mínimo ${settings.minOrder} u · Cerramos por WhatsApp · `}
         className="ch-stamp absolute right-3 top-4 w-20 sm:right-6 sm:top-6 sm:w-28 lg:right-8 lg:top-8 lg:w-36 z-10"
       />
 
@@ -119,9 +119,8 @@ export default function CatalogHero() {
 
         <div className="mt-4 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)] xl:items-end">
           <div className="max-w-xl">
-            <p className="ch-fade text-night-soft text-base sm:text-lg leading-relaxed font-medium m-0">
-              Snacks de nuestra fábrica en La Pintana, al por mayor. Arma tu pedido acá: por WhatsApp
-              cerramos precio, pago y despacho al tiro.
+            <p className="ch-fade text-night-soft text-base sm:text-lg leading-relaxed font-medium m-0 whitespace-pre-line">
+              {settings.welcome}
             </p>
             <ul className="ch-fade list-none p-0 m-0 mt-4 flex flex-wrap items-center gap-2" aria-label="Marcas del catálogo">
               {BRANDS.map(b => (
@@ -139,8 +138,8 @@ export default function CatalogHero() {
           </div>
 
           <ol className="grid grid-cols-3 gap-2 sm:gap-3 list-none p-0 m-0">
-            {STEPS.map((s, i) => (
-              <li key={s.title} className="ch-step nb-soft bg-snow p-2 sm:p-3 flex flex-col sm:flex-row items-start gap-1.5 sm:gap-3">
+            {steps(settings.minOrder).map((s, i) => (
+              <li key={i} className="ch-step nb-soft bg-snow p-2 sm:p-3 flex flex-col sm:flex-row items-start gap-1.5 sm:gap-3">
                 <span
                   className="shrink-0 grid place-items-center size-7 sm:size-9 bg-electric text-snow border-2 border-night font-condensed text-base sm:text-xl leading-none"
                   aria-hidden="true"

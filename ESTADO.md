@@ -1,6 +1,6 @@
 # Estado del proyecto — Master Snacks (Chitopo y las marcas que vengan)
 
-Última actualización: 2026-09-25
+Última actualización: 2026-10-02
 
 ## 1. Resumen
 
@@ -34,6 +34,7 @@ En producción quedan bajo el mismo dominio: la home en `/`, Chitopo en `/chitop
 - Panel de admin (`/catalogo/#/admin`, con acceso en el pie de las páginas): resumen, productos (crear, editar, ocultar, borrar), pedidos y configuración.
 - Login del panel con **Supabase Auth** (correo + contraseña, sesión persistente, cerrar sesión). No hay credenciales en el bundle.
 - **Productos y config en Supabase (desde el 2026-09-25).** El catálogo público lee los productos y el umbral de stock bajo de la base (`src/lib/supabaseRest.js`, con fetch y sin supabase-js). Lo que los dueños editan en el panel se guarda ahí y lo ven los clientes al recargar. Si la base no responde, el catálogo muestra `src/data/products.js` de respaldo y el panel no deja editar. Sin credenciales (desarrollo, modo demo) todo sigue en memoria.
+- **Configuración desde el panel (desde el 2026-10-02).** En la pestaña Configuración los dueños editan el nombre del comercio (encabeza los mensajes de pedido), el WhatsApp de pedidos, el pedido mínimo, si el catálogo muestra precios, el umbral de stock bajo, la bienvenida del catálogo y un aviso destacado opcional. Todo vive en la fila única de la tabla `config`. El catálogo lo lee junto con los productos y la landing lee el WhatsApp y el mínimo por su lado (`landing/src/lib/siteConfig.js`). Las dos apps guardan la última config en el navegador y, si la base no responde, usan los valores de `store.js`. La moneda queda fija en CLP.
 - Las fotos que se suben desde el panel se achican a 800 px y quedan guardadas dentro del producto.
 - Infra: repo unificado, build combinado (`build.mjs`) que compila ambas apps y las publica bajo un mismo dominio. `netlify.toml` manda `/admin` al panel.
 
@@ -52,6 +53,10 @@ Pasos para armar una base desde cero, en orden:
 1. **SQL Editor de Supabase**, uno detrás del otro:
    `catalogo-mayorista/supabase/schema.sql` → `seed.sql` → `migration-auth.sql` →
    `migration-pedidos.sql`.
+
+   **Si la base ya existía antes del 2026-10-02**, correr también `migration-config.sql`
+   (agrega la bienvenida y el aviso a `config`). Sin esas columnas, guardar la
+   Configuración del panel falla. En una base nueva no hace falta.
    Antes de correr el último, editar adentro la lista de emails con acceso (hoy son dos
    placeholders: Alex y Fabrizio).
 
@@ -64,7 +69,8 @@ Pasos para armar una base desde cero, en orden:
    con los mismos emails que se pusieron en `migration-auth.sql`. Cada uno elige su propia
    contraseña; no se comparte una sola cuenta.
 4. **Project Settings → API**: copiar URL y publishable key a
-   `catalogo-mayorista/.env.local` y a las variables de entorno del sitio en Netlify.
+   `catalogo-mayorista/.env.local`, a `landing/.env.local` y a las variables de entorno del
+   sitio en Netlify (valen para las dos apps).
 5. Probar el login: entrar al panel, recargar (la sesión se mantiene), cerrar sesión.
    Después mandar un pedido de prueba desde el catálogo y revisar que aparezca en Pedidos
    como "nuevo".

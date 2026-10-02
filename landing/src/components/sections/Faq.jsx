@@ -3,6 +3,7 @@ import Section from "../ui/Section";
 import Reveal from "../ui/Reveal";
 import { preguntasDe } from "../../data/faq";
 import { useTone } from "../../lib/brand";
+import { useSiteConfig } from "../../lib/siteConfig";
 
 const TONES = {
   chitopo: { card: "bg-cream", q: "text-ink", icon: "text-fire", a: "text-ink-soft" },
@@ -12,6 +13,7 @@ const TONES = {
 // `scope`: "empresa" en la home, el id de la marca en su página (ver data/faq.js).
 export default function Faq({ scope = "empresa" }) {
   const t = useTone(TONES);
+  const site = useSiteConfig();
 
   return (
     <Section
@@ -23,7 +25,7 @@ export default function Faq({ scope = "empresa" }) {
       intro="Si tienes un almacén, una distribuidora o un local de barrio, esto es lo que necesitas saber."
     >
       <Reveal stagger className="flex flex-col gap-3 max-w-4xl">
-        {preguntasDe(scope).map(({ q, a }) => (
+        {preguntasDe(scope, site).map(({ q, a }) => (
           <details key={q} className={`group nb-soft ${t.card}`}>
             <summary className={`flex items-center justify-between gap-4 cursor-pointer list-none p-5 font-condensed uppercase text-lg sm:text-xl ${t.q}`}>
               {q}

@@ -11,7 +11,7 @@ import { useBurstOnHover } from "../../lib/useBurstOnHover";
 import { prefersReducedMotion } from "../../lib/useLenis";
 import { brandUrl } from "../../lib/urls";
 import { CHITOPO, COMPANY } from "../../data/brands";
-import { whatsappWith } from "../../data/store";
+import { useSiteConfig } from "../../lib/siteConfig";
 import PRODUCTS from "../../data/products";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -133,6 +133,7 @@ function ChitopoCard() {
 // Próximos lanzamientos: todavía bajo llave. La bolsa misteriosa se mece
 // sola y el botón deja pedir aviso por WhatsApp.
 function ProximamenteCard() {
+  const { whatsappWith } = useSiteConfig();
   const card = useRef(null);
 
   useGSAP(

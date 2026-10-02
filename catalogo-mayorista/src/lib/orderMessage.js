@@ -1,5 +1,6 @@
 // Textos de WhatsApp de los pedidos. Funciones puras (solo leen brands.js),
-// así se pueden probar con Node sin levantar la app.
+// así se pueden probar con Node sin levantar la app. El nombre del comercio
+// llega por parámetro: lo editan los dueños desde el panel.
 //
 // Con productos de una sola marca el detalle va de corrido, como siempre;
 // si el pedido mezcla marcas, los ítems se agrupan bajo el nombre de cada
@@ -32,7 +33,17 @@ function detail(items, line) {
 
 // Pedido nuevo que el local le manda a la empresa desde el carro.
 // `money` formatea montos; va en null mientras el catálogo no muestre precios.
-export function newOrderMessage({ ref, shop, contact, phone, items, units, total, money }) {
+export function newOrderMessage({
+  ref,
+  shop,
+  contact,
+  phone,
+  items,
+  units,
+  total,
+  money,
+  shopName = COMPANY.name,
+}) {
   const line = item => {
     const bags = (item.units || 1) * item.qty;
     const base =
@@ -41,7 +52,7 @@ export function newOrderMessage({ ref, shop, contact, phone, items, units, total
     return money ? `${base} = ${money(item.price * item.qty)}` : base;
   };
 
-  let msg = `*Nuevo pedido mayorista — ${COMPANY.name}*\n`;
+  let msg = `*Nuevo pedido mayorista — ${shopName}*\n`;
   msg += `*Código:* ${ref}\n\n`;
   msg += `*Local:* ${shop}\n`;
   msg += `*Contacto:* ${contact}\n`;
@@ -55,14 +66,14 @@ export function newOrderMessage({ ref, shop, contact, phone, items, units, total
 }
 
 // Respuesta de los dueños desde el panel, sobre un pedido guardado.
-export function followUpMessage(order, money) {
+export function followUpMessage(order, money, shopName = COMPANY.name) {
   const line = i =>
     `• ${i.name} — ${i.format} ×${i.units} · ` +
     `${i.qty} ${i.qty === 1 ? "bulto" : "bultos"} (${bolsas((i.units || 1) * i.qty)})`;
   const codigo = order.ref ? ` ${order.ref}` : "";
   const monto = money ? `\nMonto: ${money(order.total)}` : "";
   return (
-    `¡Hola, ${order.client}! Te escribimos de ${COMPANY.name} por tu pedido${codigo}:\n\n` +
+    `¡Hola, ${order.client}! Te escribimos de ${shopName} por tu pedido${codigo}:\n\n` +
     detail(order.items || [], line) +
     `\n\nTotal: ${order.units} bolsas` +
     monto

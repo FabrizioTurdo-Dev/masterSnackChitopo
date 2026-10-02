@@ -1,10 +1,33 @@
 // src/context/AppContext.jsx
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { MOCK_PRODUCTS, STORE_CONFIG } from "../data/store";
+import { MOCK_PRODUCTS, DEFAULT_SETTINGS, applySettings, settingsFromRow } from "../data/store";
 import { ordersOnline, sendOrder } from "../lib/sendOrder";
 import { dbOnline, fetchCatalog } from "../lib/supabaseRest";
 
 const AppContext = createContext(null);
+
+// La última config que llegó de la base queda en el navegador: en la visita
+// siguiente el catálogo arranca con el número, el mínimo y los textos
+// correctos, sin mostrar un instante los de fábrica. Si el navegador no deja
+// guardar (modo privado, datos bloqueados), arranca con los de fábrica.
+const SETTINGS_KEY = "ms-config";
+
+function cachedSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    return raw ? { ...DEFAULT_SETTINGS, ...JSON.parse(raw) } : DEFAULT_SETTINGS;
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+}
+
+function cacheSettings(settings) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch {
+    // Sin almacenamiento: la próxima visita vuelve a esperar a la base.
+  }
+}
 
 // Estado de los productos:
 //   loading → pidiéndolos a la base
@@ -12,25 +35,40 @@ const AppContext = createContext(null);
 //   local   → sin credenciales (desarrollo, modo demo): products.js en memoria
 //   error   → la base no respondió; se muestra products.js para que el
 //             catálogo no quede vacío, y el panel no deja editar
+//
+// La configuración (WhatsApp, mínimo, precios, textos) llega en el mismo
+// pedido que los productos y la editan los dueños desde el panel.
 export function AppProvider({ children }) {
   const [products, setProducts] = useState(dbOnline ? [] : MOCK_PRODUCTS);
   const [productsStatus, setProductsStatus] = useState(dbOnline ? "loading" : "local");
-  const [stockThreshold, setStockThreshold] = useState(STORE_CONFIG.defaultStockThreshold);
+  const [settings, setSettings] = useState(() => {
+    const initial = dbOnline ? cachedSettings() : DEFAULT_SETTINGS;
+    applySettings(initial);
+    return initial;
+  });
   const [orders, setOrders] = useState([]);
+
+  // Las funciones de precio leen los settings del módulo store.js: se
+  // actualizan antes del estado para que el render que sigue ya los vea.
+  const updateSettings = useCallback(next => {
+    applySettings(next);
+    setSettings(next);
+    if (dbOnline) cacheSettings(next);
+  }, []);
 
   const reloadProducts = useCallback(async () => {
     if (!dbOnline) return;
     try {
-      const { products: rows, lowStock } = await fetchCatalog();
+      const { products: rows, config } = await fetchCatalog();
       setProducts(rows);
-      if (lowStock !== null) setStockThreshold(lowStock);
+      if (config) updateSettings(settingsFromRow(config));
       setProductsStatus("db");
     } catch (err) {
       console.error("No se pudieron cargar los productos de la base:", err.message);
       setProducts(prev => (prev.length ? prev : MOCK_PRODUCTS));
       setProductsStatus("error");
     }
-  }, []);
+  }, [updateSettings]);
 
   useEffect(() => {
     reloadProducts();
@@ -57,8 +95,9 @@ export function AppProvider({ children }) {
         setProducts,
         productsStatus,
         reloadProducts,
-        stockThreshold,
-        setStockThreshold,
+        settings,
+        updateSettings,
+        stockThreshold: settings.lowStock,
         orders,
         setOrders,
         addOrder,

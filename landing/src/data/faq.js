@@ -1,8 +1,9 @@
 import { COMPANY } from "./brands";
-import { STORE_CONFIG } from "./store";
 
 // Preguntas frecuentes. `scope` dice en qué página salen: "todas", solo en
 // la home de la empresa ("empresa") o solo en la de una marca ("chitopo").
+// `a` puede ser una función: recibe la config que editan los dueños en el
+// panel (por ahora, el pedido mínimo).
 export const PREGUNTAS = [
   {
     scope: "todas",
@@ -12,7 +13,7 @@ export const PREGUNTAS = [
   {
     scope: "todas",
     q: "¿Cuál es el pedido mínimo?",
-    a: `${STORE_CONFIG.minOrderUnits} unidades. Puedes mezclar productos y formatos para llegar al mínimo: no hace falta que sea todo lo mismo.`,
+    a: ({ minOrder }) => `${minOrder} unidades. Puedes mezclar productos y formatos para llegar al mínimo: no hace falta que sea todo lo mismo.`,
   },
   {
     scope: "todas",
@@ -41,6 +42,9 @@ export const PREGUNTAS = [
   },
 ];
 
-export function preguntasDe(scope) {
-  return PREGUNTAS.filter((p) => p.scope === "todas" || p.scope === scope);
+export function preguntasDe(scope, config) {
+  return PREGUNTAS.filter((p) => p.scope === "todas" || p.scope === scope).map((p) => ({
+    ...p,
+    a: typeof p.a === "function" ? p.a(config) : p.a,
+  }));
 }

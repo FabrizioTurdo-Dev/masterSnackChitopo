@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Store, ArrowRight } from "lucide-react";
 import Button from "../ui/Button";
 import { CATALOGO_URL } from "../../lib/urls";
-import { STORE_CONFIG } from "../../data/store";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { prefersReducedMotion } from "../../lib/useLenis";
 import { useTone } from "../../lib/brand";
 
@@ -18,6 +18,7 @@ const TONES = {
 
 // Clímax de la página: el bloque que manda al catálogo.
 export default function CtaCatalogo() {
+  const { minOrder } = useSiteConfig();
   const root = useRef(null);
   const box = useTone(TONES);
 
@@ -66,7 +67,7 @@ export default function CtaCatalogo() {
 
           <p className="text-sm mt-6 opacity-90">
             Cotizas online, cerramos por WhatsApp · Pedido mínimo{" "}
-            {STORE_CONFIG.minOrderUnits} unidades
+            {minOrder} unidades
           </p>
         </div>
       </div>

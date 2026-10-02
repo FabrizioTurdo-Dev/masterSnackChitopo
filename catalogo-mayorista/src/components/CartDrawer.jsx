@@ -12,8 +12,7 @@ import {
   itemUnits,
   bolsas,
   flavorAccent,
-  SELLER_PHONE,
-  STORE_CONFIG,
+  whatsappLink,
 } from "../data/store";
 
 function WhatsAppIcon({ size = 20 }) {
@@ -29,8 +28,7 @@ function WhatsAppIcon({ size = 20 }) {
 const ERROR_TEXT = "text-xs font-semibold text-[#a32004] mt-1 block";
 
 // Barra hacia el pedido mínimo: se llena en rojo y pasa a verde al llegar.
-function MinOrderMeter({ units }) {
-  const min = STORE_CONFIG.minOrderUnits;
+function MinOrderMeter({ units, min }) {
   const done = units >= min;
   const pct = Math.min(100, Math.round((units / min) * 100));
   return (
@@ -60,7 +58,7 @@ function MinOrderMeter({ units }) {
 }
 
 export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove, onSent, onClear }) {
-  const { addOrder } = useApp();
+  const { addOrder, settings } = useApp();
   const prefersReduced = useReducedMotion();
   const fire = useBurst();
   const sendBtn = useRef(null);
@@ -71,7 +69,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
   const [errors, setErrors] = useState({});
 
   const units = totalUnits(cart);
-  const belowMin = units < STORE_CONFIG.minOrderUnits;
+  const belowMin = units < settings.minOrder;
 
   // Solo hay total real si todos los ítems tienen precio cargado.
   const priced = cart.length > 0 && cart.every(c => hasPrice(c.price));
@@ -101,6 +99,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
       units,
       total,
       money: priced ? formatPrice : null,
+      shopName: settings.shopName,
     });
 
     // Se registra antes de abrir WhatsApp: en el celular la pestaña puede
@@ -124,7 +123,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
     const r = sendBtn.current?.getBoundingClientRect();
     if (r) fire(r.left + r.width / 2, r.top + 6);
 
-    window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(whatsappLink(settings.phone, msg), "_blank");
     setSent(ref);
   }
 
@@ -322,7 +321,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
 
                 {cart.length > 0 && (
                   <div className="px-4 sm:px-6 py-5 border-t-[3px] border-night bg-snow-2 flex flex-col gap-4 max-h-[62vh] overflow-y-auto">
-                    <MinOrderMeter units={units} />
+                    <MinOrderMeter units={units} min={settings.minOrder} />
 
                     <div className="flex justify-between items-center gap-3 px-4 py-3 bg-snow border-2 border-night">
                       <div>

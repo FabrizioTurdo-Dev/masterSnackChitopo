@@ -26,11 +26,12 @@ async function readJson(path) {
   return res.json();
 }
 
-// Productos y umbral de stock bajo, lo que el catálogo necesita al abrir.
+// Productos y configuración, lo que el catálogo necesita al abrir. La
+// config llega como fila cruda: AppContext la pasa a settings.
 export async function fetchCatalog() {
   const [products, config] = await Promise.all([
     readJson("productos?select=*&order=id.asc"),
-    readJson("config?select=low_stock&order=id.asc&limit=1"),
+    readJson("config?select=*&order=id.asc&limit=1"),
   ]);
-  return { products, lowStock: config[0]?.low_stock ?? null };
+  return { products, config: config[0] ?? null };
 }

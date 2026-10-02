@@ -9,7 +9,8 @@ import FlavorChips from "../ui/FlavorChips";
 import StampBadge from "../brand/StampBadge";
 import { HeroBackdrop, HeroFloaters, BagStack } from "./FlavorStage";
 import { CATALOGO_URL } from "../../lib/urls";
-import { WHATSAPP_LINK, flavorAccent } from "../../data/store";
+import { flavorAccent } from "../../data/store";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { prefersReducedMotion } from "../../lib/useLenis";
 import { useBurst } from "../../lib/burst";
 import PRODUCTS from "../../data/products";
@@ -26,6 +27,7 @@ const circle = (r, { x, y }) => `circle(${r} at ${x}px ${y}px)`;
 // flotando alrededor. Sin pin de scroll: la gente sentía eterno el hero
 // pineado, así que los sabores pasan solos y el scroll suelta la página.
 export default function Hero() {
+  const site = useSiteConfig();
   const root = useRef(null);
   const headline = useRef(null);
   const poster = useRef(null);
@@ -529,7 +531,7 @@ export default function Hero() {
               <span className="hidden sm:inline">Ver catálogo mayorista</span>
             </Button>
             <Button
-              href={WHATSAPP_LINK}
+              href={site.whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
               variant="whatsapp"

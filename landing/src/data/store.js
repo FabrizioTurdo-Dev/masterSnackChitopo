@@ -2,19 +2,16 @@
 // cada marca vive en brands.js. Espejo recortado de
 // catalogo-mayorista/src/data/store.js.
 
+// El pedido mínimo y el WhatsApp los editan los dueños desde el panel: los
+// componentes los leen con useSiteConfig() (lib/siteConfig.js). Estos son
+// los valores con los que arranca la página y los que quedan si la base no
+// responde.
 export const STORE_CONFIG = {
   minOrderUnits: 100,
 };
 
 // WhatsApp del socio — formato internacional sin +
 export const SELLER_PHONE = "56978632055";
-export const SELLER_PHONE_PRETTY = "+56 9 7863 2055";
-export const WHATSAPP_LINK = `https://wa.me/${SELLER_PHONE}`;
-
-// Link de WhatsApp con el mensaje ya escrito.
-export function whatsappWith(text) {
-  return `${WHATSAPP_LINK}?text=${encodeURIComponent(text)}`;
-}
 
 // Crédito de desarrollo del footer. Celular de Buenos Aires en formato
 // internacional: 54 + 9 (móvil) + 11 5492-2800. El mensaje queda abierto

@@ -7,7 +7,8 @@ import ImageLightbox from "./ImageLightbox";
 import { Bag, QtyStepper } from "./ProductCard";
 import { useBurst } from "../lib/burst";
 import BrandMark from "./brand/BrandMark";
-import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, SELLER_PHONE } from "../data/store";
+import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, whatsappLink } from "../data/store";
+import { useApp } from "../context/AppContext";
 import { brandOf } from "../data/brands";
 
 function Dato({ label, children }) {
@@ -24,6 +25,7 @@ const CLAIM = "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1.5 
 
 export default function ProductModal({ product, onClose, onAdd, stockThreshold }) {
   const prefersReduced = useReducedMotion();
+  const { settings } = useApp();
   const available = formatsOf(product || {});
   const [selectedId, setSelectedId] = useState(available[0]?.id ?? null);
   const [qty, setQty] = useState(1);
@@ -65,7 +67,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
 
   function notifyMe() {
     const msg = `¡Hola! Quiero que me avisen cuando llegue ${product.name}, de ${brandOf(product.brand).name}.`;
-    window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(whatsappLink(settings.phone, msg), "_blank");
   }
 
   function add() {

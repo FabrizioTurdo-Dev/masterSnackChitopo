@@ -5,7 +5,8 @@ import SelloAdvertencia from "./brand/SelloAdvertencia";
 import BrandMark from "./brand/BrandMark";
 import { useBurst } from "../lib/burst";
 import { useBurstOnHover } from "../lib/useBurstOnHover";
-import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, SELLER_PHONE } from "../data/store";
+import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, whatsappLink } from "../data/store";
+import { useApp } from "../context/AppContext";
 import { brandOf } from "../data/brands";
 
 // Stepper cuadrado de cantidad; lo comparten la tarjeta y la ficha.
@@ -62,6 +63,9 @@ export function Bag({ src, alt, onError, className = "", imgClassName = "h-48 sm
 
 const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDetail, stockThreshold }) {
   const prefersReduced = useReducedMotion();
+  // Leer el contexto también la vuelve a dibujar cuando cambia la config
+  // (número de WhatsApp, precios visibles), aunque esté memoizada.
+  const { settings } = useApp();
   const accent = flavorAccent(product.flavor);
   const brand = brandOf(product.brand);
   const available = formatsOf(product);
@@ -83,7 +87,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
 
   function notifyMe() {
     const msg = `¡Hola! Quiero que me avisen cuando llegue ${product.name}, de ${brand.name}.`;
-    window.open(`https://wa.me/${SELLER_PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(whatsappLink(settings.phone, msg), "_blank");
   }
 
   function add() {

@@ -81,7 +81,7 @@ function Stepper({ order, onSet }) {
 }
 
 export default function OrdersList({ sync = {}, onRefresh }) {
-  const { orders, setOrders } = useApp();
+  const { orders, setOrders, settings } = useApp();
   const prefersReduced = useReducedMotion();
   const [filter, setFilter] = useState("todos");
   const [error, setError] = useState(null);
@@ -103,7 +103,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
   }
 
   function openChat(order) {
-    const msg = followUpMessage(order, hasPrice(order.total) ? formatPrice : null);
+    const msg = followUpMessage(order, hasPrice(order.total) ? formatPrice : null, settings.shopName);
     window.open(`https://wa.me/${waNumber(order.phone)}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 

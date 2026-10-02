@@ -1,13 +1,8 @@
 import { MapPin, Clock, Truck, MessageCircle, ArrowLeft, ArrowUpRight, Lock } from "lucide-react";
 import MasterSnacksLogo from "./brand/MasterSnacksLogo";
 import { LANDING_URL, brandSiteUrl } from "../lib/landingUrl";
-import {
-  STORE_CONFIG,
-  WHATSAPP_LINK,
-  SELLER_PHONE_PRETTY,
-  DEV_CREDIT,
-  DEV_WHATSAPP_LINK,
-} from "../data/store";
+import { DEV_CREDIT, DEV_WHATSAPP_LINK, phonePretty, whatsappLink } from "../data/store";
+import { useApp } from "../context/AppContext";
 import { COMPANY, BRANDS } from "../data/brands";
 
 function InstagramIcon({ size = 14 }) {
@@ -49,6 +44,7 @@ const HEADING = "font-condensed text-sm text-gold uppercase tracking-[0.12em] mb
 // Mismo footer que la home de Master Snacks, con el link cruzado al revés
 // (acá lleva al sitio) y el aviso legal propio de un catálogo mayorista.
 export default function Footer() {
+  const { settings } = useApp();
   return (
     <footer className="on-dark relative z-10 border-t-[3px] border-night halftone-night text-snow">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
@@ -70,12 +66,12 @@ export default function Footer() {
             <ul className="flex flex-col gap-2 list-none p-0 m-0">
               <li>
                 <a
-                  href={WHATSAPP_LINK}
+                  href={whatsappLink(settings.phone)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${FOOT_LINK} text-snow hover:text-green font-semibold`}
                 >
-                  WhatsApp {SELLER_PHONE_PRETTY}
+                  WhatsApp {phonePretty(settings.phone)}
                 </a>
               </li>
               <li>
@@ -85,7 +81,7 @@ export default function Footer() {
               </li>
               <Item icon={Clock}>{COMPANY.schedule}</Item>
               <Item icon={Truck}>{COMPANY.shipping}</Item>
-              <Item icon={Truck}>Pedido mínimo: {STORE_CONFIG.minOrderUnits} unidades</Item>
+              <Item icon={Truck}>Pedido mínimo: {settings.minOrder} unidades</Item>
             </ul>
           </div>
 

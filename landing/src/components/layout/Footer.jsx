@@ -2,13 +2,8 @@ import { MapPin, Clock, Truck, MessageCircle, ArrowUpRight, Lock } from "lucide-
 import Logo from "../brand/Logo";
 import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import InstagramIcon from "../brand/InstagramIcon";
-import {
-  STORE_CONFIG,
-  WHATSAPP_LINK,
-  SELLER_PHONE_PRETTY,
-  DEV_CREDIT,
-  DEV_WHATSAPP_LINK,
-} from "../../data/store";
+import { DEV_CREDIT, DEV_WHATSAPP_LINK } from "../../data/store";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { COMPANY, BRANDS, CHITOPO } from "../../data/brands";
 import { ADMIN_URL, CATALOGO_URL, HOME_URL, brandUrl } from "../../lib/urls";
 import { useBrand, useTone } from "../../lib/brand";
@@ -51,6 +46,7 @@ const HEADING = "font-condensed text-sm text-gold uppercase tracking-[0.12em] fo
 // Pie de las dos páginas: en la home firma la empresa y lista sus marcas;
 // en la de Chitopo firma la marca y lleva a la empresa.
 export default function Footer() {
+  const site = useSiteConfig();
   const isChitopo = useBrand() === "chitopo";
   const t = useTone(TONES);
 
@@ -87,12 +83,12 @@ export default function Footer() {
             <ul className="flex flex-col gap-2 list-none p-0 m-0">
               <li>
                 <a
-                  href={WHATSAPP_LINK}
+                  href={site.whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${FOOT_LINK} ${t.link} hover:text-green font-semibold`}
                 >
-                  WhatsApp {SELLER_PHONE_PRETTY}
+                  WhatsApp {site.phonePretty}
                 </a>
               </li>
               <li>
@@ -108,7 +104,7 @@ export default function Footer() {
               <Item icon={Clock} className={t.soft}>{COMPANY.schedule}</Item>
               <Item icon={Truck} className={t.soft}>{COMPANY.shipping}</Item>
               <Item icon={Truck} className={t.soft}>
-                Pedido mínimo: {STORE_CONFIG.minOrderUnits} unidades
+                Pedido mínimo: {site.minOrder} unidades
               </Item>
             </ul>
           </div>

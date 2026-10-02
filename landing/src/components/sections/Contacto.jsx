@@ -2,7 +2,7 @@ import { MessageCircle, Clock, MapPin, Truck } from "lucide-react";
 import Section from "../ui/Section";
 import Reveal from "../ui/Reveal";
 import Button from "../ui/Button";
-import { WHATSAPP_LINK, SELLER_PHONE_PRETTY } from "../../data/store";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { COMPANY } from "../../data/brands";
 import { useTone } from "../../lib/brand";
 
@@ -30,6 +30,7 @@ const TONES = {
 };
 
 export default function Contacto() {
+  const site = useSiteConfig();
   const t = useTone(TONES);
 
   return (
@@ -46,11 +47,11 @@ export default function Contacto() {
               WhatsApp
             </p>
             <p className={`font-condensed text-3xl sm:text-4xl m-0 ${t.phone}`}>
-              {SELLER_PHONE_PRETTY}
+              {site.phonePretty}
             </p>
           </div>
           <Button
-            href={WHATSAPP_LINK}
+            href={site.whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
             variant="whatsapp"

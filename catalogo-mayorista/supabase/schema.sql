@@ -1,7 +1,8 @@
 -- ============================================================
 -- Master Snacks — catálogo mayorista (Chitopo y las marcas que vengan)
 -- Ejecutar en el SQL Editor de Supabase, sobre un proyecto nuevo. Ya trae
--- la columna brand: migration-marcas.sql es solo para bases anteriores.
+-- la columna brand y los textos del catálogo: migration-marcas.sql y
+-- migration-config.sql son solo para bases anteriores.
 -- Después correr seed.sql para cargar los 5 productos reales, y al final
 -- migration-auth.sql.
 --
@@ -108,6 +109,8 @@ CREATE TABLE IF NOT EXISTS config (
   currency    TEXT    DEFAULT 'CLP',
   show_prices BOOLEAN DEFAULT false,   -- false = modo "a consultar"
   low_stock   INT     DEFAULT 5,       -- umbral en bultos
+  welcome     TEXT,                    -- bajada del catálogo; NULL = la del código
+  notice      TEXT,                    -- aviso destacado; NULL = no se muestra
   updated_at  TIMESTAMPTZ DEFAULT now()
 );
 

@@ -8,6 +8,7 @@ import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import CartDrawer from "../components/CartDrawer";
 import CatalogHero from "../components/CatalogHero";
+import NoticeBar from "../components/NoticeBar";
 import Marquee from "../components/ui/Marquee";
 import MasterSnacksLogo from "../components/brand/MasterSnacksLogo";
 import BrandMark from "../components/brand/BrandMark";
@@ -15,13 +16,13 @@ import { BurstProvider } from "../lib/burst";
 import { prefersReducedMotion } from "../lib/motion";
 import { LANDING_URL } from "../lib/landingUrl";
 import { useApp } from "../context/AppContext";
-import { STORE_CONFIG, WHATSAPP_LINK, totalUnits, brandsIn, bolsas } from "../data/store";
+import { STORE_CONFIG, totalUnits, brandsIn, bolsas, whatsappLink } from "../data/store";
 import { COMPANY, DEFAULT_BRAND, brandOf } from "../data/brands";
 
 // La empresa ya la presentó la landing: acá la cinta repite lo que el local
 // necesita para pedir, sobre todo el mínimo.
-const CINTA = [
-  `Pedido mínimo ${STORE_CONFIG.minOrderUnits} unidades`,
+const cinta = minOrder => [
+  `Pedido mínimo ${minOrder} unidades`,
   "Mezcla sabores y formatos",
   "Fábrica propia en La Pintana",
   "Despacho en la RM",
@@ -65,7 +66,8 @@ export default function Catalogo() {
 }
 
 function CatalogoPage() {
-  const { products, productsStatus, stockThreshold } = useApp();
+  const { products, productsStatus, stockThreshold, settings } = useApp();
+  const cintaItems = useMemo(() => cinta(settings.minOrder), [settings.minOrder]);
   const [brandFilter, setBrandFilter] = useState("todas");
   const [lineFilter, setLineFilter] = useState("todos");
   const [formatFilter, setFormatFilter] = useState(null);
@@ -232,7 +234,7 @@ function CatalogoPage() {
             </a>
 
             <a
-              href={WHATSAPP_LINK}
+              href={whatsappLink(settings.phone)}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Escríbenos por WhatsApp"
@@ -261,8 +263,9 @@ function CatalogoPage() {
       </header>
 
       <main className="relative z-10 flex-1">
+        {settings.notice && <NoticeBar text={settings.notice} />}
         <CatalogHero />
-        <Marquee items={CINTA} duration={26} />
+        <Marquee items={cintaItems} duration={26} />
 
         <section
           id="productos"
