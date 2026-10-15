@@ -295,7 +295,7 @@ export default function Fabrica() {
             {DATOS.map(({ icon: Icon, text }) => (
               <li
                 key={text}
-                className="fab-fade inline-flex items-center gap-2 bg-snow/5 border-[3px] border-gold/40 px-3 py-2 text-sm text-snow"
+                className="fab-fade inline-flex items-center gap-2 bg-night border-[3px] border-gold/40 px-3 py-2 text-sm text-snow"
               >
                 <Icon size={16} className="text-gold shrink-0" aria-hidden="true" />
                 {text}

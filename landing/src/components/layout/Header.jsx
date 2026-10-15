@@ -27,6 +27,13 @@ const TONES = {
     divider: "border-night/15",
     mobileLink: "text-night",
     mobileCta: "bg-electric text-snow",
+    // Arriba de todo la cabecera es transparente sobre el hero azul: en
+    // tinta oscura no llegaba al contraste mínimo y el botón azul se perdía.
+    top: {
+      link: "text-snow hover:text-gold",
+      cta: "bg-gold text-night border-night [box-shadow:3px_3px_0_var(--color-night)]",
+      icon: "text-snow",
+    },
   },
 };
 
@@ -36,9 +43,10 @@ const TONES = {
 export default function Header({ nav }) {
   const site = useSiteConfig();
   const brand = useBrand();
-  const t = useTone(TONES);
+  const tone = useTone(TONES);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const t = scrolled ? tone : { ...tone, ...tone.top };
   const isChitopo = brand === "chitopo";
 
   useEffect(() => {
@@ -65,7 +73,7 @@ export default function Header({ nav }) {
               <Logo height={32} />
             ) : (
               <MasterSnacksLogo
-                variant="transparente"
+                variant={scrolled ? "transparente" : "sticker"}
                 height={54}
                 alt={COMPANY.name}
                 className="-rotate-3 mt-2 transition-transform duration-300 hover:rotate-0 hover:scale-105"
@@ -85,12 +93,14 @@ export default function Header({ nav }) {
           )}
         </div>
 
-        <nav className="hidden md:flex items-center gap-6" aria-label="Navegación principal">
+        {/* El menú completo recién desde lg: en tablet (768) no entraba y cada
+            ítem se partía en dos líneas. */}
+        <nav className="hidden lg:flex items-center gap-6" aria-label="Navegación principal">
           {nav.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className={`font-condensed uppercase tracking-[0.1em] text-sm transition-colors no-underline ${t.link}`}
+              className={`font-condensed uppercase tracking-[0.1em] text-sm whitespace-nowrap transition-colors no-underline ${t.link}`}
             >
               {item.label}
             </a>
@@ -102,7 +112,7 @@ export default function Header({ nav }) {
             href={CATALOGO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={`hidden sm:inline-flex items-center min-h-[44px] px-4 font-condensed uppercase tracking-[0.06em] text-sm no-underline border-[3px] nb-press ${t.cta}`}
+            className={`hidden sm:inline-flex items-center min-h-[44px] px-4 font-condensed uppercase tracking-[0.06em] text-sm whitespace-nowrap no-underline border-[3px] nb-press ${t.cta}`}
           >
             Catálogo mayorista
           </a>
@@ -123,7 +133,7 @@ export default function Header({ nav }) {
             aria-expanded={open}
             aria-controls="nav-mobile"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            className={`md:hidden inline-flex items-center justify-center size-11 bg-transparent border-0 cursor-pointer p-0 ${t.icon}`}
+            className={`lg:hidden inline-flex items-center justify-center size-11 bg-transparent border-0 cursor-pointer p-0 ${t.icon}`}
           >
             {open ? <X size={26} aria-hidden="true" /> : <Menu size={26} aria-hidden="true" />}
           </button>
@@ -133,7 +143,7 @@ export default function Header({ nav }) {
       {open && (
         <nav
           id="nav-mobile"
-          className={`md:hidden border-b-[3px] px-4 pb-5 pt-2 ${t.mobile}`}
+          className={`lg:hidden border-b-[3px] px-4 pb-5 pt-2 ${t.mobile}`}
           aria-label="Navegación principal"
         >
           <ul className="list-none p-0 m-0 flex flex-col">

@@ -96,14 +96,15 @@ function CatalogoPage() {
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
-  // Cajas presentes en el catálogo ("Caja 150 g", "Caja 15 g"…), de la
-  // bolsa más grande a la más chica.
+  // Pesos de bolsa de lo que está a la venta (150 g, 15 g…), de mayor a
+  // menor. Lo que todavía no sale no suma opciones: no se puede pedir, y en
+  // el teléfono el filtro pasaba a dos filas.
   const allFormats = useMemo(() => {
-    const map = new Map();
+    const grams = new Set();
     products
-      .filter(p => p.active)
-      .forEach(p => (p.formats || []).forEach(f => map.set(formatTitle(p, f), formatGrams(p, f) || 0)));
-    return [...map.entries()].sort((a, b) => b[1] - a[1]).map(([label]) => label);
+      .filter(p => p.active && p.status === "activo")
+      .forEach(p => (p.formats || []).forEach(f => grams.add(formatGrams(p, f) || 0)));
+    return [...grams].filter(Boolean).sort((a, b) => b - a);
   }, [products]);
 
   // Marcas con productos visibles. Con una sola (hoy, Chitopo) no hay filtro
@@ -116,7 +117,7 @@ function CatalogoPage() {
       if (!p.active) return false;
       if (brandFilter !== "todas" && (p.brand || DEFAULT_BRAND) !== brandFilter) return false;
       if (lineFilter !== "todos" && p.line !== lineFilter) return false;
-      if (formatFilter && !(p.formats || []).some(f => formatTitle(p, f) === formatFilter)) return false;
+      if (formatFilter && !(p.formats || []).some(f => formatGrams(p, f) === formatFilter)) return false;
       if (search) {
         const q = search.toLowerCase();
         const haystack = `${p.name} ${p.flavor} ${p.line} ${brandOf(p.brand).name}`.toLowerCase();
@@ -361,9 +362,9 @@ function CatalogoPage() {
             </div>
 
             {allFormats.length > 1 && (
-              <div className="flex gap-2 items-center flex-wrap" role="group" aria-label="Formato">
+              <div className="flex gap-2 items-center flex-wrap" role="group" aria-label="Peso de la bolsa">
                 <span className="font-condensed text-xs text-night-soft uppercase tracking-[0.14em] shrink-0 mr-1">
-                  Formato
+                  Bolsa de
                 </span>
                 <button
                   onClick={() => setFormatFilter(null)}
@@ -379,7 +380,7 @@ function CatalogoPage() {
                     aria-pressed={formatFilter === f}
                     className={chip(formatFilter === f, true)}
                   >
-                    {f}
+                    {f} g
                   </button>
                 ))}
               </div>
@@ -392,7 +393,7 @@ function CatalogoPage() {
             ) : (
               <>
                 {filtered.length} producto{filtered.length !== 1 ? "s" : ""}
-                {formatFilter ? ` en ${formatFilter}` : ""}
+                {formatFilter ? ` con bolsas de ${formatFilter} g` : ""}
                 {search ? ` · "${search}"` : ""}
               </>
             )}

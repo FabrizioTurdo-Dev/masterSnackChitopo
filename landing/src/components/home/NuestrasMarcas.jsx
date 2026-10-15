@@ -106,10 +106,14 @@ function ChitopoCard() {
           tocino merkén.
         </p>
 
-        <span className="mt-auto pt-8 inline-flex items-center gap-2 self-start bg-fire text-cream border-[3px] border-ink px-5 min-h-[48px] font-condensed uppercase tracking-[0.06em] text-lg shadow-[4px_4px_0_var(--color-ink)]">
-          Conoce {CHITOPO.name}
-          <ArrowUpRight size={20} className="mc-arrow" aria-hidden="true" />
-        </span>
+        {/* El aire va afuera del botón: como padding lo agrandaba y el
+            texto quedaba pegado abajo. */}
+        <div className="mt-auto pt-8">
+          <span className="inline-flex items-center gap-2 bg-fire text-cream border-[3px] border-ink px-5 min-h-[48px] font-condensed uppercase tracking-[0.06em] text-lg shadow-[4px_4px_0_var(--color-ink)]">
+            Conoce {CHITOPO.name}
+            <ArrowUpRight size={20} className="mc-arrow" aria-hidden="true" />
+          </span>
+        </div>
       </div>
 
       <div className="relative sm:w-[46%] h-60 sm:h-auto shrink-0" aria-hidden="true">

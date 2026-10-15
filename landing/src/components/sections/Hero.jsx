@@ -470,10 +470,13 @@ export default function Hero() {
 
                     <StampBadge className="hero-stamp absolute top-[34%] -right-10 w-20 sm:w-24 lg:top-[30%] lg:right-auto lg:-left-32 lg:w-32 z-10" />
 
+                    {/* Hasta lg va abajo a la derecha, sobre el gramaje del
+                        envase, que la etiqueta repite: a la izquierda tapaba
+                        los sellos y el octógono «Alto en calorías». */}
                     <div
                       ref={tag}
                       key={active}
-                      className="absolute -left-8 sm:-left-12 lg:-left-28 bottom-[10%] z-10 flex flex-col items-start gap-1.5 -rotate-6 pointer-events-none"
+                      className="absolute -right-6 sm:-right-10 bottom-[2%] items-end lg:right-auto lg:-left-28 lg:bottom-[10%] lg:items-start z-10 flex flex-col gap-1.5 -rotate-6 pointer-events-none"
                     >
                       <span className="bg-ink text-cream font-condensed uppercase text-lg sm:text-2xl leading-none px-3 py-2 border-[3px] border-ink shadow-[4px_4px_0_var(--color-cream)] whitespace-nowrap">
                         {product.short} · {product.grams}

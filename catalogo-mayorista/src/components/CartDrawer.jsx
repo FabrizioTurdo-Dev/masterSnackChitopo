@@ -252,7 +252,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-condensed uppercase text-base leading-tight text-night truncate">
+                            <div className="font-condensed uppercase text-base leading-tight text-night line-clamp-2">
                               {item.name}
                             </div>
                             <div className="text-xs text-night-faint tabular-nums">
