@@ -3,7 +3,7 @@
 // para la web. Se corre a mano cuando cambian los originales:
 //
 //   npm run media            (todo)
-//   npm run media -- tocino  (un solo paso)
+//   npm run media -- portadas  (un solo paso)
 //
 // Necesita ffmpeg en el PATH para los videos.
 
@@ -276,57 +276,150 @@ async function buildMasterSnacks() {
   console.log(`  ✓ logo-mastersnacks-hd.webp  (${hd.info.width}×${hd.info.height}, landing)`);
 }
 
-// ── Bolsa de Tocino Merkén recortada ────────────────────────────────────
-// Es un render 3D sobre blanco, así que no le sirve el tratamiento de bolsa
-// que el hero le aplica al arte plano. Se saca el blanco con el mismo
-// relleno; como acá el primer plano no es un color fijo, el alfa sale de
-// cuánto se aleja del blanco el canal más oscuro. La sombra gris suave del
-// render queda translúcida, que sobre el fondo de color se ve natural.
-async function buildTocinoCutout() {
-  const { data, info } = await sharp(join(LANDING, "public", "img", "productos", "tocino-merken.webp"))
+// ── Portadas de Frutos del Bosque y Tocino Merkén ───────────────────────
+// Las dos bolsas vienen juntas en un render 3D sobre blanco, así que no les
+// sirve el tratamiento de bolsa que se le aplica al arte plano. Se parte la
+// imagen por la columna más blanca entre las dos y a cada mitad se le saca
+// el blanco con el mismo relleno; como el primer plano no es un color fijo,
+// el alfa sale de cuánto se aleja del blanco el canal más oscuro. La sombra
+// gris suave del render queda translúcida, que sobre color se ve natural.
+const PORTADAS = ["sufle-frutos-del-bosque-cutout.webp", "tocino-merken-cutout.webp"];
+
+async function buildPortadas() {
+  const { data: full, info } = await sharp(join(SRC, "portada-frutos-tocino.png"))
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
   const { width: W, height: H } = info;
 
-  const alphaOf = (i) => {
-    const darkest = Math.min(data[i], data[i + 1], data[i + 2]);
-    // Los primeros 10 niveles son ruido de compresión del blanco.
-    return Math.max(0, Math.min(1, (255 - darkest - 10) / 150));
+  // Columna de corte: la de menos tinta en el tercio central.
+  const ink = (x) => {
+    let sum = 0;
+    for (let y = 0; y < H; y++) {
+      const i = (y * W + x) * 4;
+      sum += 255 - Math.min(full[i], full[i + 1], full[i + 2]);
+    }
+    return sum;
   };
+  let cut = Math.round(W / 3);
+  for (let x = cut; x < Math.round((W * 2) / 3); x++) if (ink(x) < ink(cut)) cut = x;
 
-  floodAlpha(data, W, H, [255, 255, 255], alphaOf);
-  const region = inkRegion(data, W, H, 0.005);
+  const halves = [
+    { left: 0, width: cut },
+    { left: cut, width: W - cut },
+  ];
 
-  await sharp(data, { raw: { width: W, height: H, channels: 4 } })
-    .extract(region)
-    .webp({ quality: 88, alphaQuality: 90 })
-    .toFile(join(LANDING, "public", "img", "productos", "tocino-merken-cutout.webp"));
-  console.log(`  ✓ tocino-merken-cutout.webp  (${region.width}×${region.height})`);
+  for (const [k, half] of halves.entries()) {
+    const { data } = await sharp(full, { raw: { width: W, height: H, channels: 4 } })
+      .extract({ left: half.left, top: 0, width: half.width, height: H })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const w = half.width;
+
+    const alphaOf = (i) => {
+      const darkest = Math.min(data[i], data[i + 1], data[i + 2]);
+      // Los primeros 10 niveles son ruido de compresión del blanco.
+      return Math.max(0, Math.min(1, (255 - darkest - 10) / 150));
+    };
+
+    floodAlpha(data, w, H, [255, 255, 255], alphaOf);
+    const region = inkRegion(data, w, H, 0.005);
+
+    const webp = await sharp(data, { raw: { width: w, height: H, channels: 4 } })
+      .extract(region)
+      .webp({ quality: 88, alphaQuality: 90 })
+      .toBuffer();
+
+    // Va en las dos apps: en producción el catálogo pide /img/productos/ a
+    // la raíz del sitio, que es la landing.
+    for (const app of [LANDING, CATALOGO]) {
+      await sharp(webp).toFile(join(app, "public", "img", "productos", PORTADAS[k]));
+    }
+    console.log(`  ✓ ${PORTADAS[k]}  (${region.width}×${region.height}, landing + catálogo)`);
+  }
 }
 
-// ── Reverso Tocino Merkén ───────────────────────────────────────────────
-// Plancha completa del envase. Se corta la franja de arriba, donde el arte
-// trae un recuadro blanco suelto, y se deja ancha para que la tabla
-// nutricional se lea en el lightbox.
-async function buildReverso() {
-  const img = sharp(join(SRC, "TCM.png"));
-  const { width, height } = await img.metadata();
-  const top = Math.round(height * 0.05);
-  const buffer = await img
-    .extract({ left: 0, top, width, height: height - top })
-    .resize(1600, null, { withoutEnlargement: true })
-    .webp({ quality: 84 })
-    .toBuffer();
+// ── Reversos ────────────────────────────────────────────────────────────
+// Planchas completas del envase, anchas para que la tabla nutricional se
+// lea en el visor de la ficha. A las de Tocino Merkén y Frutos del Bosque
+// se les corta la franja de arriba, donde el arte trae un recuadro blanco
+// suelto. Las de queso y papa son SVG con las fotos incrustadas: sharp los
+// dibuja a la densidad que hace falta para llegar a 1600 px.
+const REVERSOS = [
+  { src: "TCM.png", out: "tocino-merken-reverso.webp", trimTop: 0.05 },
+  { src: "reverso-frutos.png", out: "sufle-frutos-del-bosque-reverso.webp", trimTop: 0.05 },
+  { src: "reverso-queso.svg", out: "sufle-queso-reverso.webp" },
+  { src: "reverso-papa.svg", out: "sufle-papa-reverso.webp" },
+];
 
-  // Va en las dos apps: en producción el catálogo pide /img/productos/ a la
-  // raíz del sitio, que es la landing.
-  for (const app of [LANDING, CATALOGO]) {
-    const out = join(app, "public", "img", "productos");
-    await mkdir(out, { recursive: true });
-    await sharp(buffer).toFile(join(out, "tocino-merken-reverso.webp"));
+async function buildReverso() {
+  for (const { src, out: name, trimTop = 0 } of REVERSOS) {
+    const file = join(SRC, src);
+    const svg = src.endsWith(".svg");
+    const meta = await sharp(file).metadata();
+    const density = svg ? Math.ceil((72 * 1600) / meta.width) : undefined;
+    let img = sharp(file, svg ? { density } : {});
+    const { width, height } = svg ? await img.clone().png().toBuffer({ resolveWithObject: true }).then((r) => r.info) : meta;
+
+    const top = Math.round(height * trimTop);
+    const buffer = await img
+      .extract({ left: 0, top, width, height: height - top })
+      .resize(1600, null, { withoutEnlargement: true })
+      .flatten({ background: "#ffffff" })
+      .webp({ quality: 84 })
+      .toBuffer();
+
+    for (const app of [LANDING, CATALOGO]) {
+      const out = join(app, "public", "img", "productos");
+      await mkdir(out, { recursive: true });
+      await sharp(buffer).toFile(join(out, name));
+    }
+    console.log(`  ✓ ${name}  (landing + catálogo)`);
   }
-  console.log("  ✓ tocino-merken-reverso.webp  (landing + catálogo)");
+}
+
+// ── Sellos: sin gluten, no frito, No GMO ────────────────────────────────
+// Vienen los tres en una imagen, en negro, gris y café sobre blanco. Cada
+// uno sale como máscara de un solo color (blanco con alfa): la web lo pinta
+// con el color del texto de donde aparece (.sello en shared/marca/base.css).
+// El alfa es lo oscuro de cada píxel, saturado pronto; así el aro gris de
+// «No frito» queda a medio tono y conserva sus dos tintas.
+const SELLOS = [
+  { id: "sin-gluten", box: { left: 280, top: 268, width: 270, height: 270 } },
+  { id: "no-frito", box: { left: 612, top: 268, width: 270, height: 270 } },
+  { id: "no-gmo", box: { left: 945, top: 283, width: 240, height: 240 } },
+];
+
+async function buildSellos() {
+  const out = join(CATALOGO, "..", "shared", "marca", "sellos");
+  await mkdir(out, { recursive: true });
+
+  for (const { id, box } of SELLOS) {
+    const { data, info } = await sharp(join(SRC, "sellos.jpeg"))
+      .extract(box)
+      .removeAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const { width: W, height: H } = info;
+
+    const rgba = Buffer.alloc(W * H * 4);
+    for (let p = 0; p < W * H; p++) {
+      const i = p * 3;
+      const dark = 255 - Math.min(data[i], data[i + 1], data[i + 2]);
+      // Bajo 12 es ruido del JPEG sobre el blanco.
+      const a = dark < 12 ? 0 : Math.min(1, dark / 75);
+      rgba.fill(255, p * 4, p * 4 + 3);
+      rgba[p * 4 + 3] = Math.round(a * 255);
+    }
+
+    const region = inkRegion(rgba, W, H, 0.02);
+    await sharp(rgba, { raw: { width: W, height: H, channels: 4 } })
+      .extract(region)
+      .resize(256, 256, { fit: "contain", background: { r: 255, g: 255, b: 255, alpha: 0 } })
+      .png({ compressionLevel: 9 })
+      .toFile(join(out, `${id}.png`));
+    console.log(`  ✓ shared/marca/sellos/${id}.png  (${region.width}×${region.height} → 256 px)`);
+  }
 }
 
 // ── Post de suflés ──────────────────────────────────────────────────────
@@ -395,13 +488,14 @@ async function buildVideos() {
   }
 }
 
-// Se puede correr un solo paso: `npm run media -- tocino`. Los videos
+// Se puede correr un solo paso: `npm run media -- portadas`. Los videos
 // necesitan ffmpeg, así que conviene no rehacerlos si no cambiaron.
 const STEPS = [
   ["logo", "Logo", buildLogo],
   ["mastersnacks", "Logo Master Snacks", buildMasterSnacks],
-  ["reverso", "Catálogo", buildReverso],
-  ["tocino", "Bolsa recortada", buildTocinoCutout],
+  ["reverso", "Reversos", buildReverso],
+  ["portadas", "Bolsas recortadas", buildPortadas],
+  ["sellos", "Sellos", buildSellos],
   ["post", "Redes", buildPost],
   ["videos", "Videos", buildVideos],
 ];

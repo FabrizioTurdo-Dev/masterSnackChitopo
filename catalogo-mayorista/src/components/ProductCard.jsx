@@ -3,38 +3,64 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Plus, Minus, Bell } from "lucide-react";
 import SelloAdvertencia from "./brand/SelloAdvertencia";
 import BrandMark from "./brand/BrandMark";
+import { Sello, sellosDe } from "./brand/Sellos";
 import { useBurst } from "../lib/burst";
 import { useBurstOnHover } from "../lib/useBurstOnHover";
-import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, whatsappLink } from "../data/store";
+import {
+  formatPrice,
+  hasPrice,
+  flavorAccent,
+  formatsOf,
+  bolsas,
+  cajas,
+  formatGrams,
+  gramsLabel,
+  whatsappLink,
+  DISTRIBUIDOR_MSG,
+} from "../data/store";
 import { useApp } from "../context/AppContext";
 import { brandOf } from "../data/brands";
 
-// Stepper cuadrado de cantidad; lo comparten la tarjeta y la ficha.
-export function QtyStepper({ qty, max, onChange, size = "md" }) {
+// Stepper cuadrado de cantidad, en cajas; lo comparten la tarjeta y la
+// ficha. Parte en el mínimo y no baja de ahí. El número también se puede
+// escribir: de 120 a 300 cajas no se llega a puros clics.
+export function QtyStepper({ qty, min = 1, max, onChange, size = "md" }) {
+  const [draft, setDraft] = useState(null);
   const box = size === "lg" ? "size-11" : "size-10";
   const btn = `${box} grid place-items-center text-night hover:bg-snow-2 transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent`;
+  const clamp = n => Math.min(Math.max(n, min), max);
+
+  function commit() {
+    const n = parseInt(draft, 10);
+    if (Number.isFinite(n)) onChange(clamp(n));
+    setDraft(null);
+  }
+
   return (
     <div className="inline-flex items-stretch border-2 border-night bg-snow">
       <button
-        onClick={() => onChange(Math.max(1, qty - 1))}
-        disabled={qty <= 1}
+        onClick={() => onChange(clamp(qty - 1))}
+        disabled={qty <= min}
         className={btn}
-        aria-label="Disminuir cantidad"
+        aria-label="Restar una caja"
       >
         <Minus size={16} aria-hidden="true" />
       </button>
-      <span
-        className={`min-w-10 px-1 grid place-items-center border-x-2 border-night font-condensed text-night tabular-nums ${size === "lg" ? "text-xl" : "text-lg"}`}
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {qty}
-      </span>
+      <input
+        type="text"
+        inputMode="numeric"
+        value={draft ?? qty}
+        onChange={e => setDraft(e.target.value.replace(/\D/g, ""))}
+        onBlur={commit}
+        onKeyDown={e => e.key === "Enter" && e.currentTarget.blur()}
+        className={`w-14 px-1 text-center bg-transparent border-x-2 border-night font-condensed text-night tabular-nums outline-none focus:bg-snow-2 ${size === "lg" ? "text-xl" : "text-lg"}`}
+        aria-label={`Cantidad de cajas, mínimo ${min}`}
+      />
       <button
-        onClick={() => onChange(Math.min(qty + 1, max))}
+        onClick={() => onChange(clamp(qty + 1))}
         disabled={qty >= max}
         className={btn}
-        aria-label="Aumentar cantidad"
+        aria-label="Sumar una caja"
       >
         <Plus size={16} aria-hidden="true" />
       </button>
@@ -42,21 +68,44 @@ export function QtyStepper({ qty, max, onChange, size = "md" }) {
   );
 }
 
+// Leyenda bajo el selector: el mínimo es mayorista y para menos cajas se
+// deriva a un distribuidor por WhatsApp.
+export function DistributorNote({ min, phone, className = "" }) {
+  return (
+    <p className={`text-xs text-night-soft leading-snug m-0 ${className}`}>
+      ¿Menos de {min} cajas?{" "}
+      <a
+        href={whatsappLink(phone, DISTRIBUIDOR_MSG)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-semibold text-electric underline underline-offset-2 hover:text-royal"
+      >
+        Escríbenos por WhatsApp
+      </a>{" "}
+      y te pasamos el contacto de un distribuidor.
+    </p>
+  );
+}
+
 // Arte plano del envase armado como bolsa (.bag-flat, el mismo del hero
-// de la landing) con la sombra dura siguiendo los dientes del sellado.
+// de la landing) con la sombra dura siguiendo los dientes del sellado. Las
+// bolsas ya recortadas (render 3D con alfa, archivos "-cutout") van tal
+// cual: la sombra sigue su silueta.
 export function Bag({ src, alt, onError, className = "", imgClassName = "h-48 sm:h-52" }) {
+  const img = (
+    <img
+      src={src}
+      alt={alt}
+      onError={onError}
+      loading="lazy"
+      draggable={false}
+      className={`block w-auto max-w-none select-none ${imgClassName}`}
+    />
+  );
+  const cutout = /-cutout\.\w+$/.test(src || "");
   return (
     <div className={`relative [filter:drop-shadow(6px_8px_0_var(--color-night))] ${className}`}>
-      <div className="bag-flat">
-        <img
-          src={src}
-          alt={alt}
-          onError={onError}
-          loading="lazy"
-          draggable={false}
-          className={`block w-auto max-w-none select-none ${imgClassName}`}
-        />
-      </div>
+      {cutout ? img : <div className="bag-flat">{img}</div>}
     </div>
   );
 }
@@ -72,7 +121,8 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
   const soon = product.status === "proximamente";
 
   const [selectedId, setSelectedId] = useState(available[0]?.id ?? null);
-  const [qty, setQty] = useState(1);
+  const min = settings.minOrder;
+  const [qty, setQty] = useState(min);
   const [imgError, setImgError] = useState(false);
 
   const fire = useBurst();
@@ -82,8 +132,12 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
   if (!product.active) return null;
 
   const selected = available.find(f => f.id === selectedId) || null;
-  const maxQty = selected ? selected.stock : 1;
+  // El stock cargado puede ser menor que el mínimo: el tope nunca queda
+  // por debajo de él. Si la config sube el mínimo, la cantidad lo sigue.
+  const maxQty = selected ? Math.max(selected.stock, min) : min;
+  const count = Math.min(Math.max(qty, min), maxQty);
   const seal = product.claims?.seals?.[0];
+  const sellos = sellosDe(product);
 
   function notifyMe() {
     const msg = `¡Hola! Quiero que me avisen cuando llegue ${product.name}, de ${brand.name}.`;
@@ -93,7 +147,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
   function add() {
     const r = addBtn.current?.getBoundingClientRect();
     if (r) fire(r.left + r.width / 2, r.top + 6, accent);
-    onAdd(product, selected, qty);
+    onAdd(product, selected, count);
   }
 
   const openDetail = () => onDetail(product);
@@ -169,9 +223,16 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
         <div className="cursor-pointer" onClick={openDetail}>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-night-faint m-0">
             <BrandMark brand={product.brand} height={18} />
-            <span className="font-semibold text-night">{product.grams} g</span>
-            {product.claims?.baked && <span>Horneado, no frito</span>}
-            {product.claims?.glutenFree && <span>Libre de gluten</span>}
+            <span className="font-semibold text-night">{gramsLabel(product)}</span>
+            {sellos.length > 0 && (
+              <span className="inline-flex items-center gap-1.5 text-night">
+                {sellos.map(s => (
+                  <span key={s.id} title={s.label} role="img" aria-label={s.label} className="inline-flex">
+                    <Sello id={s.id} className="size-7" />
+                  </span>
+                ))}
+              </span>
+            )}
           </p>
           <h3 className="font-title uppercase text-2xl leading-[1.05] text-night mt-1.5 mb-0 text-pretty">
             {product.name}
@@ -211,15 +272,15 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
                 return (
                   <button
                     key={f.id}
-                    onClick={() => { setSelectedId(f.id); setQty(1); }}
+                    onClick={() => { setSelectedId(f.id); setQty(min); }}
                     role="radio"
                     aria-checked={isSel}
-                    aria-label={`${f.label} de ${bolsas(f.units)}, ${f.stock} disponibles`}
+                    aria-label={`${f.label} de ${bolsas(f.units)} de ${formatGrams(product, f)} g`}
                     className={`relative min-h-[40px] px-3 text-sm font-bold border-2 border-night transition-colors cursor-pointer ${
                       isSel ? "bg-night text-gold" : "bg-snow text-night hover:bg-snow-2"
                     }`}
                   >
-                    {f.label}
+                    {f.label} {formatGrams(product, f)} g
                     <span className={isSel ? "text-gold/75" : "text-night-faint"}> ×{f.units}</span>
                     {isLow && (
                       <span
@@ -233,14 +294,17 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
             </div>
 
             {selected && (
-              <div className="flex items-center gap-3">
-                <span className="font-condensed text-xs uppercase tracking-[0.14em] text-night-soft">
-                  Cantidad
-                </span>
-                <QtyStepper qty={qty} max={maxQty} onChange={setQty} />
-                <span className="ml-auto text-xs text-night-faint tabular-nums">
-                  {bolsas(selected.units * qty)}
-                </span>
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-3">
+                  <span className="font-condensed text-xs uppercase tracking-[0.14em] text-night-soft">
+                    Cajas
+                  </span>
+                  <QtyStepper qty={count} min={min} max={maxQty} onChange={setQty} />
+                  <span className="ml-auto text-xs text-night-faint tabular-nums">
+                    {bolsas(selected.units * count)}
+                  </span>
+                </div>
+                <DistributorNote min={min} phone={settings.phone} />
               </div>
             )}
 
@@ -251,12 +315,12 @@ const ProductCard = memo(function ProductCard({ product, index = 0, onAdd, onDet
               className="mt-auto w-full min-h-[50px] inline-flex items-center justify-center gap-2 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-lg nb nb-press hover:bg-royal cursor-pointer disabled:bg-snow-2 disabled:text-night-faint disabled:cursor-not-allowed"
               aria-label={
                 selected
-                  ? `Agregar ${qty} ${selected.label} de ${product.name}`
+                  ? `Agregar ${cajas(count)} de ${product.name}`
                   : "Elige un formato primero"
               }
             >
               <Plus size={20} aria-hidden="true" />
-              Agregar{qty > 1 ? ` (×${qty})` : ""}
+              Agregar {cajas(count)}
             </button>
           </>
         )}

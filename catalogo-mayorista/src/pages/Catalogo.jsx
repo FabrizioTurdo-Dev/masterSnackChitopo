@@ -16,14 +16,23 @@ import { BurstProvider } from "../lib/burst";
 import { prefersReducedMotion } from "../lib/motion";
 import { LANDING_URL } from "../lib/landingUrl";
 import { useApp } from "../context/AppContext";
-import { STORE_CONFIG, totalUnits, brandsIn, bolsas, whatsappLink } from "../data/store";
+import {
+  STORE_CONFIG,
+  totalBoxes,
+  brandsIn,
+  cajas,
+  formatGrams,
+  formatTitle,
+  whatsappLink,
+} from "../data/store";
 import { COMPANY, DEFAULT_BRAND, brandOf } from "../data/brands";
+import { SellosFranja } from "../components/brand/Sellos";
 
 // La empresa ya la presentó la landing: acá la cinta repite lo que el local
 // necesita para pedir, sobre todo el mínimo.
 const cinta = minOrder => [
-  `Pedido mínimo ${minOrder} unidades`,
-  "Mezcla sabores y formatos",
+  `Pedido mínimo ${minOrder} cajas`,
+  "Solo caja cerrada",
   "Fábrica propia en La Pintana",
   "Despacho en la RM",
 ];
@@ -87,12 +96,13 @@ function CatalogoPage() {
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
-  // Formatos de venta presentes en el catálogo (Caja, Display, Unidad…)
+  // Cajas presentes en el catálogo ("Caja 150 g", "Caja 15 g"…), de la
+  // bolsa más grande a la más chica.
   const allFormats = useMemo(() => {
     const map = new Map();
     products
       .filter(p => p.active)
-      .forEach(p => (p.formats || []).forEach(f => map.set(f.label, f.units)));
+      .forEach(p => (p.formats || []).forEach(f => map.set(formatTitle(p, f), formatGrams(p, f) || 0)));
     return [...map.entries()].sort((a, b) => b[1] - a[1]).map(([label]) => label);
   }, [products]);
 
@@ -106,7 +116,7 @@ function CatalogoPage() {
       if (!p.active) return false;
       if (brandFilter !== "todas" && (p.brand || DEFAULT_BRAND) !== brandFilter) return false;
       if (lineFilter !== "todos" && p.line !== lineFilter) return false;
-      if (formatFilter && !(p.formats || []).some(f => f.label === formatFilter)) return false;
+      if (formatFilter && !(p.formats || []).some(f => formatTitle(p, f) === formatFilter)) return false;
       if (search) {
         const q = search.toLowerCase();
         const haystack = `${p.name} ${p.flavor} ${p.line} ${brandOf(p.brand).name}`.toLowerCase();
@@ -130,7 +140,7 @@ function CatalogoPage() {
     return list;
   }, [products, brandFilter, lineFilter, formatFilter, search, sortBy]);
 
-  const units = totalUnits(cart);
+  const units = totalBoxes(cart);
 
   // El botón del pedido rebota cada vez que entra algo. Se anima un
   // envoltorio y no el botón: el transform inline de GSAP le pisaría el
@@ -159,28 +169,30 @@ function CatalogoPage() {
           id: product.id,
           brand: product.brand || DEFAULT_BRAND,
           name: product.name,
-          grams: product.grams,
+          grams: formatGrams(product, format),
           image: product.image,
           emoji: product.emoji,
           flavor: product.flavor,
           formatId: format.id,
-          formatLabel: format.label,
+          formatLabel: formatTitle(product, format),
           units: format.units,
           price: format.price,
           qty,
         },
       ];
     });
-    showToast(`${product.name} · ${format.label} ×${qty} agregado`);
+    showToast(`Agregaste ${cajas(qty)} de ${product.name} (${formatGrams(product, format)} g)`);
   }
 
+  // En el carro la cantidad no baja del mínimo: para sacar el producto
+  // está la X.
   function changeQty(item, delta) {
     setCart(prev =>
-      prev
-        .map(c =>
-          c.id === item.id && c.formatId === item.formatId ? { ...c, qty: c.qty + delta } : c
-        )
-        .filter(c => c.qty > 0)
+      prev.map(c =>
+        c.id === item.id && c.formatId === item.formatId
+          ? { ...c, qty: Math.max(c.qty + delta, settings.minOrder) }
+          : c
+      )
     );
   }
 
@@ -247,7 +259,7 @@ function CatalogoPage() {
               <button
                 onClick={() => setCartOpen(true)}
                 className="relative inline-flex items-center gap-2 min-h-[44px] px-3 sm:px-4 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-sm border-[3px] border-night [box-shadow:3px_3px_0_var(--color-night)] nb-press cursor-pointer"
-                aria-label={`Ver pedido, ${bolsas(units)}`}
+                aria-label={`Ver pedido, ${cajas(units)}`}
               >
                 <ShoppingCart size={18} aria-hidden="true" />
                 <span className="hidden sm:inline">Mi pedido</span>
@@ -266,6 +278,7 @@ function CatalogoPage() {
         {settings.notice && <NoticeBar text={settings.notice} />}
         <CatalogHero />
         <Marquee items={cintaItems} duration={26} />
+        <SellosFranja />
 
         <section
           id="productos"
@@ -347,7 +360,7 @@ function CatalogoPage() {
               </label>
             </div>
 
-            {allFormats.length > 0 && (
+            {allFormats.length > 1 && (
               <div className="flex gap-2 items-center flex-wrap" role="group" aria-label="Formato">
                 <span className="font-condensed text-xs text-night-soft uppercase tracking-[0.14em] shrink-0 mr-1">
                   Formato

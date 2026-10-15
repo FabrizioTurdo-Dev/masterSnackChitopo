@@ -142,10 +142,11 @@ body,
   text-shadow: 0.045em 0.05em 0 var(--title-shadow);
 }
 /* SplitText enmascara cada palabra para que las letras suban desde
-   abajo; sin este margen la máscara corta la sombra y el contorno. */
+   abajo; sin este margen la máscara corta la sombra, el contorno y los
+   acentos de las mayúsculas (la É de "suflé" sube ~0.1em sobre la E). */
 .hero-title .hw-mask {
-  padding: 0.04em 0.1em 0.12em 0.04em;
-  margin: -0.04em -0.1em -0.12em -0.04em;
+  padding: 0.25em 0.1em 0.12em 0.04em;
+  margin: -0.25em -0.1em -0.12em -0.04em;
 }
 
 /* Arte plano del envase convertido en bolsa: dientes de termosellado
@@ -180,6 +181,27 @@ body,
     linear-gradient(180deg, rgb(0 0 0 / 0.22) 0 6%, transparent 6% 94%, rgb(0 0 0 / 0.22) 94%),
     linear-gradient(90deg, rgb(0 0 0 / 0.3), transparent 10%, transparent 88%, rgb(0 0 0 / 0.34)),
     linear-gradient(112deg, transparent 26%, rgb(255 255 255 / 0.3) 33%, transparent 42%);
+}
+
+/* Sellos del envase (sin gluten, no frito, No GMO). Cada PNG es solo una
+   máscara: el ícono toma el color del texto de donde aparece, así sirve
+   igual en la cinta de Chitopo, en la de Master Snacks y en las tarjetas. */
+.sello {
+  display: inline-block;
+  flex-shrink: 0;
+  aspect-ratio: 1;
+  background-color: currentColor;
+  -webkit-mask: var(--sello) center / contain no-repeat;
+  mask: var(--sello) center / contain no-repeat;
+}
+.sello-sin-gluten {
+  --sello: url("./sellos/sin-gluten.png");
+}
+.sello-no-frito {
+  --sello: url("./sellos/no-frito.png");
+}
+.sello-no-gmo {
+  --sello: url("./sellos/no-gmo.png");
 }
 
 /* Sello circular que gira lento. */

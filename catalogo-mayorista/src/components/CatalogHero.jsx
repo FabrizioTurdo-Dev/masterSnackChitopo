@@ -13,8 +13,8 @@ gsap.registerPlugin(SplitText, useGSAP);
 
 // El mínimo lo editan los dueños desde el panel.
 const steps = minOrder => [
-  { title: "Elige", text: "Sabor y formato: caja, display o unidad." },
-  { title: `Suma ${minOrder}`, text: "Es el pedido mínimo. Puedes mezclar sabores." },
+  { title: "Elige", text: "Sabor y caja: solo vendemos por caja cerrada." },
+  { title: `Desde ${minOrder}`, text: `Cajas por producto. Para menos, te pasamos un distribuidor.` },
   { title: "Envía", text: "Te respondemos por WhatsApp con precio y despacho." },
 ];
 
@@ -100,7 +100,7 @@ export default function CatalogHero() {
       </div>
 
       <StampBadge
-        text={`Pedido mínimo ${settings.minOrder} u · Cerramos por WhatsApp · `}
+        text={`Pedido mínimo ${settings.minOrder} cajas · Cerramos por WhatsApp · `}
         className="ch-stamp absolute right-3 top-4 w-20 sm:right-6 sm:top-6 sm:w-28 lg:right-8 lg:top-8 lg:w-36 z-10"
       />
 

@@ -2,7 +2,7 @@ import { MapPin, Clock, Truck, MessageCircle, ArrowUpRight, Lock } from "lucide-
 import Logo from "../brand/Logo";
 import MasterSnacksLogo from "../brand/MasterSnacksLogo";
 import InstagramIcon from "../brand/InstagramIcon";
-import { DEV_CREDIT, DEV_WHATSAPP_LINK } from "../../data/store";
+import { DEV_CREDIT, DEV_WHATSAPP_LINK, DISTRIBUIDOR_MSG } from "../../data/store";
 import { useSiteConfig } from "../../lib/siteConfig";
 import { COMPANY, BRANDS, CHITOPO } from "../../data/brands";
 import { ADMIN_URL, CATALOGO_URL, HOME_URL, brandUrl } from "../../lib/urls";
@@ -104,8 +104,20 @@ export default function Footer() {
               <Item icon={Clock} className={t.soft}>{COMPANY.schedule}</Item>
               <Item icon={Truck} className={t.soft}>{COMPANY.shipping}</Item>
               <Item icon={Truck} className={t.soft}>
-                Pedido mínimo: {site.minOrder} unidades
+                Pedido mínimo: {site.minOrder} cajas
               </Item>
+              <li className={`text-[13px] leading-relaxed max-w-[260px] ${t.soft}`}>
+                ¿Menos cajas?{" "}
+                <a
+                  href={site.whatsappWith(DISTRIBUIDOR_MSG)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${t.link} hover:text-green font-semibold underline underline-offset-2`}
+                >
+                  Escríbenos
+                </a>{" "}
+                y te pasamos el contacto de un distribuidor.
+              </li>
             </ul>
           </div>
 

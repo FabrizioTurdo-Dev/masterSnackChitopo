@@ -1,22 +1,14 @@
-import { Flame, MapPin, Handshake, Truck, TrendingUp, Wheat } from "lucide-react";
+import { MapPin, Handshake, Truck, TrendingUp } from "lucide-react";
 import Section from "../ui/Section";
 import Reveal from "../ui/Reveal";
 
+// Sin gluten y no frito no van acá: ya están en la franja de sellos que
+// queda bajo el hero.
 const RAZONES = [
-  {
-    icon: Flame,
-    title: "Horneado, no frito",
-    text: "Todo el crunch, con harto menos grasa que un snack frito.",
-  },
   {
     icon: MapPin,
     title: "Hecho en Chile",
     text: "Producción propia en La Pintana, con proveedores de acá.",
-  },
-  {
-    icon: Wheat,
-    title: "Libre de gluten",
-    text: "Nuestros suflés vienen sin gluten, tal como lo indica el empaque.",
   },
   {
     icon: Handshake,
@@ -45,7 +37,7 @@ export default function PorQueElegirnos() {
       <Reveal
         stagger
         grid
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
       >
         {RAZONES.map(({ icon: Icon, title, text }) => (
           <article

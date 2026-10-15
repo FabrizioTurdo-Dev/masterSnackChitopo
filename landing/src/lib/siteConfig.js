@@ -13,7 +13,7 @@ const URL = import.meta.env.VITE_SUPABASE_URL;
 const KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const CACHE_KEY = "ms-site-config";
 
-const DEFAULTS = { phone: SELLER_PHONE, minOrder: STORE_CONFIG.minOrderUnits };
+const DEFAULTS = { phone: SELLER_PHONE, minOrder: STORE_CONFIG.minOrderBoxes };
 
 function fromCache() {
   try {

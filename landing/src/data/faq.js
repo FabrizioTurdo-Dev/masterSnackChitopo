@@ -13,7 +13,8 @@ export const PREGUNTAS = [
   {
     scope: "todas",
     q: "¿Cuál es el pedido mínimo?",
-    a: ({ minOrder }) => `${minOrder} unidades. Puedes mezclar productos y formatos para llegar al mínimo: no hace falta que sea todo lo mismo.`,
+    a: ({ minOrder }) =>
+      `${minOrder} cajas por producto; desde ahí sumas de a una. Para cantidades menores, escríbenos por WhatsApp y te pasamos el contacto de un distribuidor.`,
   },
   {
     scope: "todas",
@@ -28,12 +29,7 @@ export const PREGUNTAS = [
   {
     scope: "todas",
     q: "¿En qué formatos venden?",
-    a: "Caja, display y unidad. El display es el que mejor funciona para el mesón del almacén; la caja conviene si tienes más rotación.",
-  },
-  {
-    scope: "todas",
-    q: "¿Emiten boleta o factura?",
-    a: `Sí. Somos una pyme formal: ${COMPANY.legalName}, con ${COMPANY.sesma}.`,
+    a: "Solo por caja cerrada: la de 150 g trae 15 bolsas y la de 15 g, 80 bolsas.",
   },
   {
     scope: "chitopo",

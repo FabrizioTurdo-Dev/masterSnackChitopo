@@ -9,11 +9,14 @@ import {
   formatPrice,
   hasPrice,
   totalUnits,
+  totalBoxes,
   itemUnits,
   bolsas,
+  cajas,
   flavorAccent,
   whatsappLink,
 } from "../data/store";
+import { DistributorNote } from "./ProductCard";
 
 function WhatsAppIcon({ size = 20 }) {
   return (
@@ -27,36 +30,6 @@ function WhatsAppIcon({ size = 20 }) {
 // superficies claras.
 const ERROR_TEXT = "text-xs font-semibold text-[#a32004] mt-1 block";
 
-// Barra hacia el pedido mínimo: se llena en rojo y pasa a verde al llegar.
-function MinOrderMeter({ units, min }) {
-  const done = units >= min;
-  const pct = Math.min(100, Math.round((units / min) * 100));
-  return (
-    <div role="status" aria-live="polite">
-      <div className="flex items-baseline justify-between gap-3 mb-1.5">
-        <span className="font-condensed uppercase tracking-[0.06em] text-base text-night">
-          {done ? `¡Listo! ${bolsas(units)}` : `Llevas ${units} de ${bolsas(min)}`}
-        </span>
-        <span className="text-xs font-semibold text-night-soft tabular-nums">
-          {done ? "Pedido mínimo cumplido" : `Te faltan ${min - units}`}
-        </span>
-      </div>
-      <div className="h-4 bg-snow border-2 border-night overflow-hidden">
-        <div
-          className={`h-full transition-[width,background-color] duration-500 ease-out ${
-            done ? "bg-green" : "bg-electric"
-          } ${pct > 0 && pct < 100 ? "border-r-2 border-night" : ""}`}
-          style={{
-            width: `${pct}%`,
-            backgroundImage:
-              "repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.2) 0 6px, transparent 6px 12px)",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
 export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove, onSent, onClear }) {
   const { addOrder, settings } = useApp();
   const prefersReduced = useReducedMotion();
@@ -69,7 +42,10 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
   const [errors, setErrors] = useState({});
 
   const units = totalUnits(cart);
-  const belowMin = units < settings.minOrder;
+  const boxes = totalBoxes(cart);
+  // Cada producto entra con el mínimo y el carro no deja bajarlo; esto
+  // ataja un mínimo que los dueños suban con el carro ya armado.
+  const belowMin = cart.some(c => c.qty < settings.minOrder);
 
   // Solo hay total real si todos los ítems tienen precio cargado.
   const priced = cart.length > 0 && cart.every(c => hasPrice(c.price));
@@ -97,6 +73,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
       phone: phone.trim(),
       items: cart,
       units,
+      boxes,
       total,
       money: priced ? formatPrice : null,
       shopName: settings.shopName,
@@ -219,7 +196,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                   <h2 className="font-title uppercase text-2xl text-night m-0 leading-none">
                     Tu pedido{" "}
                     <span className="font-sans normal-case font-semibold text-sm text-night-soft tabular-nums">
-                      ({bolsas(units)})
+                      ({cajas(boxes)})
                     </span>
                   </h2>
                   <button
@@ -241,8 +218,8 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                         Todavía no hay nada
                       </p>
                       <p className="text-sm text-night-soft mt-2 mb-6 max-w-[240px] leading-relaxed">
-                        Elige cajas o displays del catálogo y arma tu pedido. Los precios los
-                        cerramos por WhatsApp.
+                        Elige las cajas del catálogo y arma tu pedido. Los precios los cerramos
+                        por WhatsApp.
                       </p>
                       <button
                         onClick={onClose}
@@ -279,7 +256,7 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                               {item.name}
                             </div>
                             <div className="text-xs text-night-faint tabular-nums">
-                              {item.formatLabel} ×{item.units} · {bolsas(itemUnits(item))}
+                              {item.formatLabel} ×{item.units} · {cajas(item.qty)} · {bolsas(itemUnits(item))}
                             </div>
                             {hasPrice(item.price) && (
                               <div className="font-condensed text-electric tabular-nums">
@@ -290,18 +267,19 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           <div className="inline-flex items-stretch border-2 border-night bg-snow">
                             <button
                               onClick={() => onChangeQty(item, -1)}
-                              className={stepBtn}
-                              aria-label={`Quitar un ${item.formatLabel} de ${item.name}`}
+                              disabled={item.qty <= settings.minOrder}
+                              className={`${stepBtn} disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent`}
+                              aria-label={`Restar una caja de ${item.name}`}
                             >
                               <Minus size={14} aria-hidden="true" />
                             </button>
-                            <span className="min-w-8 px-1 grid place-items-center border-x-2 border-night font-condensed text-night tabular-nums">
+                            <span className="min-w-10 px-1 grid place-items-center border-x-2 border-night font-condensed text-night tabular-nums">
                               {item.qty}
                             </span>
                             <button
                               onClick={() => onChangeQty(item, 1)}
                               className={stepBtn}
-                              aria-label={`Sumar un ${item.formatLabel} de ${item.name}`}
+                              aria-label={`Sumar una caja de ${item.name}`}
                             >
                               <Plus size={14} aria-hidden="true" />
                             </button>
@@ -321,7 +299,14 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
 
                 {cart.length > 0 && (
                   <div className="px-4 sm:px-6 py-5 border-t-[3px] border-night bg-snow-2 flex flex-col gap-4 max-h-[62vh] overflow-y-auto">
-                    <MinOrderMeter units={units} min={settings.minOrder} />
+                    <div role="status" aria-live="polite" className="flex flex-col gap-1">
+                      <span className="font-condensed uppercase tracking-[0.06em] text-base text-night">
+                        {belowMin
+                          ? `Cada producto lleva mínimo ${cajas(settings.minOrder)}`
+                          : "Pedido mínimo cumplido"}
+                      </span>
+                      <DistributorNote min={settings.minOrder} phone={settings.phone} />
+                    </div>
 
                     <div className="flex justify-between items-center gap-3 px-4 py-3 bg-snow border-2 border-night">
                       <div>
@@ -329,7 +314,8 @@ export default function CartDrawer({ cart, open, onClose, onChangeQty, onRemove,
                           {priced ? "Total estimado" : "Total del pedido"}
                         </span>
                         <div className="text-xs text-night-faint tabular-nums">
-                          {cart.length} {cart.length === 1 ? "producto" : "productos"} · {bolsas(units)}
+                          {cart.length} {cart.length === 1 ? "producto" : "productos"} · {cajas(boxes)} ·{" "}
+                          {bolsas(units)}
                         </div>
                       </div>
                       {priced ? (

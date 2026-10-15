@@ -10,6 +10,10 @@ import { COMPANY, DEFAULT_BRAND, brandOf } from "../data/brands.js";
 
 // "1 bolsa", "24 bolsas". Va acá y no desde store.js, que Node no puede importar.
 const bolsas = n => `${n} ${n === 1 ? "bolsa" : "bolsas"}`;
+const cajas = n => `${n} ${n === 1 ? "caja" : "cajas"}`;
+
+// Total de cajas: la tabla de pedidos guarda bolsas, las cajas salen de los ítems.
+const boxesOf = items => items.reduce((s, i) => s + (i.qty || 0), 0);
 
 // [[marca, ítems], ...] en el orden en que aparecen en el pedido. Los
 // pedidos viejos no traen marca: son de la marca por defecto.
@@ -40,15 +44,17 @@ export function newOrderMessage({
   phone,
   items,
   units,
+  boxes = boxesOf(items),
   total,
   money,
   shopName = COMPANY.name,
 }) {
+  // formatLabel ya trae el peso de la bolsa: "Caja 15 g".
   const line = item => {
     const bags = (item.units || 1) * item.qty;
     const base =
-      `• ${item.name} ${item.grams} g — ${item.formatLabel} ×${item.units} · ` +
-      `${item.qty} ${item.qty === 1 ? "bulto" : "bultos"} (${bolsas(bags)})`;
+      `• ${item.name} — ${item.formatLabel} ×${item.units} · ` +
+      `${cajas(item.qty)} (${bolsas(bags)})`;
     return money ? `${base} = ${money(item.price * item.qty)}` : base;
   };
 
@@ -60,7 +66,7 @@ export function newOrderMessage({
   msg += "\n*Pedido:*\n";
   msg += detail(items, line) + "\n";
   msg += "\n─────────────────\n";
-  msg += `*Total: ${units} bolsas*`;
+  msg += `*Total: ${cajas(boxes)} (${bolsas(units)})*`;
   msg += money ? `\n*Monto: ${money(total)}*` : "\n\n_Precios a confirmar por este medio._";
   return msg;
 }
@@ -69,13 +75,13 @@ export function newOrderMessage({
 export function followUpMessage(order, money, shopName = COMPANY.name) {
   const line = i =>
     `• ${i.name} — ${i.format} ×${i.units} · ` +
-    `${i.qty} ${i.qty === 1 ? "bulto" : "bultos"} (${bolsas((i.units || 1) * i.qty)})`;
+    `${cajas(i.qty)} (${bolsas((i.units || 1) * i.qty)})`;
   const codigo = order.ref ? ` ${order.ref}` : "";
   const monto = money ? `\nMonto: ${money(order.total)}` : "";
   return (
     `¡Hola, ${order.client}! Te escribimos de ${shopName} por tu pedido${codigo}:\n\n` +
     detail(order.items || [], line) +
-    `\n\nTotal: ${order.units} bolsas` +
+    `\n\nTotal: ${cajas(boxesOf(order.items || []))} (${bolsas(order.units)})` +
     monto
   );
 }

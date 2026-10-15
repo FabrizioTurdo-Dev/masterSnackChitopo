@@ -7,8 +7,14 @@
 // los valores con los que arranca la página y los que quedan si la base no
 // responde.
 export const STORE_CONFIG = {
-  minOrderUnits: 100,
+  // Cajas por producto
+  minOrderBoxes: 120,
 };
+
+// Mensaje de WhatsApp para quien necesita menos cajas que el mínimo: lo
+// derivan a un distribuidor.
+export const DISTRIBUIDOR_MSG =
+  "¡Hola! Necesito menos cajas que el pedido mínimo. ¿Me pasan el contacto de un distribuidor?";
 
 // WhatsApp del socio — formato internacional sin +
 export const SELLER_PHONE = "56978632055";

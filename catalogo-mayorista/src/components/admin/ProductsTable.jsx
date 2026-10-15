@@ -18,21 +18,23 @@ import {
   bolsas,
   plural,
   DEV_CREDIT,
+  formatTitle,
+  gramsLabel,
 } from "../../data/store";
 import { brandOf, DEFAULT_BRAND } from "../../data/brands";
 import { productsService } from "../../services/productsService";
 import { isSupabaseConfigured } from "../../config/supabase";
 import BrandMark from "../brand/BrandMark";
 
-function FormatTag({ format, threshold }) {
+function FormatTag({ product, format, threshold }) {
   const isZero = format.stock === 0;
   const isLow = format.stock > 0 && format.stock <= threshold;
   return (
     <span
       className={`${PILL} ${isZero ? TONES.red : isLow ? TONES.gold : TONES.green}`}
-      title={`${format.label} de ${bolsas(format.units)}: ${format.stock} en stock`}
+      title={`${formatTitle(product, format)} de ${bolsas(format.units)}: ${format.stock} en stock`}
     >
-      {format.label} ×{format.units}: {format.stock}
+      {formatTitle(product, format)} ×{format.units}: {format.stock}
     </span>
   );
 }
@@ -200,9 +202,9 @@ export default function ProductsTable({ stockThreshold }) {
       p.name,
       brandOf(p.brand).name,
       lineLabel(p.line),
-      `${p.grams} g`,
+      gramsLabel(p),
       p.status === "activo" ? "A la venta" : "Próximamente",
-      (p.formats || []).map(f => `${f.label} x${f.units}: ${f.stock}`).join(" | "),
+      (p.formats || []).map(f => `${formatTitle(p, f)} x${f.units}: ${f.stock}`).join(" | "),
       totalStock(p),
       p.active ? "Sí" : "No",
     ]);
@@ -347,7 +349,7 @@ export default function ProductsTable({ stockThreshold }) {
                         <div className="font-condensed uppercase text-base leading-tight text-night truncate">{p.name}</div>
                         <div className="text-xs text-night-faint">
                           {multiBrand && `${brandOf(p.brand).name} · `}
-                          {lineLabel(p.line)} · {p.grams} g
+                          {lineLabel(p.line)} · {gramsLabel(p)}
                         </div>
                       </div>
                     </div>
@@ -355,7 +357,7 @@ export default function ProductsTable({ stockThreshold }) {
                   </div>
                   <div className="flex gap-1 flex-wrap">
                     {(p.formats || []).map(f => (
-                      <FormatTag key={f.id} format={f} threshold={stockThreshold} />
+                      <FormatTag key={f.id} product={p} format={f} threshold={stockThreshold} />
                     ))}
                   </div>
                   <div className="flex items-center justify-between">
@@ -423,12 +425,12 @@ export default function ProductsTable({ stockThreshold }) {
                         </td>
                       )}
                       <td className="px-4 py-3 text-sm text-night-soft">{lineLabel(p.line)}</td>
-                      <td className="px-4 py-3 text-sm text-night-soft tabular-nums">{p.grams} g</td>
+                      <td className="px-4 py-3 text-sm text-night-soft tabular-nums">{gramsLabel(p)}</td>
                       <td className="px-4 py-3 text-xs font-bold text-electric">{priceOf(p)}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1 flex-wrap max-w-[260px]">
                           {(p.formats || []).map(f => (
-                            <FormatTag key={f.id} format={f} threshold={stockThreshold} />
+                            <FormatTag key={f.id} product={p} format={f} threshold={stockThreshold} />
                           ))}
                         </div>
                         <div className="text-xs text-night-faint mt-1">{bolsas(totalStock(p))}</div>

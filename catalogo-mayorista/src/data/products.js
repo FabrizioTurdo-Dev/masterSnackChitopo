@@ -3,8 +3,15 @@
 // brands.js). Datos tomados del brief de marca (22-08-2026) y del arte de
 // los empaques.
 //
-// ⚠️ Pendientes marcados con TODO: precios, y las fichas nutricionales de
-// los productos que todavía no salen a la venta.
+// `claims` son los sellos del envase (sin gluten, no frito, No GMO); según
+// los dueños, No GMO vale para toda la línea.
+//
+// Solo se vende por caja cerrada: la de 150 g trae 15 bolsas y la de 15 g,
+// 80. `grams` en un formato es el peso de sus bolsas cuando no es el del
+// producto.
+//
+// ⚠️ Pendientes marcados con TODO: precios, las bolsas por caja de maní y
+// tocino, y las fichas nutricionales de los productos que todavía no salen.
 
 const PRODUCTS = [
   {
@@ -20,15 +27,15 @@ const PRODUCTS = [
     tag: "Más vendido",
     emoji: "🧀",
     image: "/img/productos/sufle-queso.webp",
+    gallery: [{ src: "/img/productos/sufle-queso-reverso.webp", label: "Reverso" }],
     barcode: "0799192945984",
     // El arte del empaque declara "LIBRE DE GLUTEN" y el símbolo de espiga
     // tachada, igual que el de papa.
-    claims: { baked: true, glutenFree: true, seals: ["alto-en-calorias"] },
+    claims: { baked: true, glutenFree: true, nonGmo: true, seals: ["alto-en-calorias"] },
     // TODO precios: definir con Alex. price null => "A consultar".
     formats: [
-      { id: "caja-24", label: "Caja", units: 24, stock: 40, price: null },
-      { id: "display-12", label: "Display", units: 12, stock: 25, price: null },
-      { id: "unidad", label: "Unidad", units: 1, stock: 300, price: null },
+      { id: "caja-150g-15", label: "Caja", units: 15, stock: 40, price: null },
+      { id: "caja-15g-80", label: "Caja", grams: 15, units: 80, stock: 40, price: null },
     ],
     ingredients:
       "Gritz de maíz, aceite vegetal, sólidos de leche, almidón, sal, glutamato monosódico, saborizante y colorantes (amarillo crepúsculo, tartrazina), antioxidantes (BHT, TBHQ).",
@@ -59,12 +66,12 @@ const PRODUCTS = [
     tag: null,
     emoji: "🥔",
     image: "/img/productos/sufle-papa.webp",
+    gallery: [{ src: "/img/productos/sufle-papa-reverso.webp", label: "Reverso" }],
     barcode: "0799192945977",
-    claims: { baked: true, glutenFree: true, seals: ["alto-en-calorias"] },
+    claims: { baked: true, glutenFree: true, nonGmo: true, seals: ["alto-en-calorias"] },
     formats: [
-      { id: "caja-24", label: "Caja", units: 24, stock: 35, price: null },
-      { id: "display-12", label: "Display", units: 12, stock: 20, price: null },
-      { id: "unidad", label: "Unidad", units: 1, stock: 240, price: null },
+      { id: "caja-150g-15", label: "Caja", units: 15, stock: 35, price: null },
+      { id: "caja-15g-80", label: "Caja", grams: 15, units: 80, stock: 35, price: null },
     ],
     ingredients:
       "Gritz de maíz, papa en escama, aceite vegetal, sal, glutamato monosódico, antioxidante (BHT, TBHQ).",
@@ -89,20 +96,20 @@ const PRODUCTS = [
     brand: "chitopo",
     line: "sufles",
     flavor: "frutos",
-    // El arte vectorizado oficial ("Sufle completo/3.svg") imprime 125 g,
-    // igual que el texto del brief. La foto suelta que dice 150 g es un
-    // mockup anterior.
-    grams: 125,
+    // Confirmado por los dueños: 130 g. El arte vectorizado y el brief
+    // todavía dicen 125 g.
+    grams: 130,
     status: "proximamente",
     active: true,
     tag: null,
     emoji: "🫐",
-    image: "/img/productos/sufle-frutos-del-bosque.webp",
+    // Render 3D ya recortado: el catálogo lo muestra sin armarlo como bolsa.
+    image: "/img/productos/sufle-frutos-del-bosque-cutout.webp",
+    gallery: [{ src: "/img/productos/sufle-frutos-del-bosque-reverso.webp", label: "Reverso" }],
     barcode: null,
-    claims: { baked: true, glutenFree: true, seals: ["alto-en-calorias"] },
+    claims: { baked: true, glutenFree: true, nonGmo: true, seals: ["alto-en-calorias"] },
     formats: [
-      { id: "caja-24", label: "Caja", units: 24, stock: 0, price: null },
-      { id: "display-12", label: "Display", units: 12, stock: 0, price: null },
+      { id: "caja-15", label: "Caja", units: 15, stock: 0, price: null },
     ],
     ingredients:
       "Gritz de maíz, aceite de maravilla, harina de arroz, fibra de manzana, deshidratado en polvo natural de frutos del bosque, colorantes, saborizante natural, azúcar, antioxidante (BHT, TBHQ). (Preliminar)",
@@ -125,10 +132,10 @@ const PRODUCTS = [
     image: "/img/productos/mani-salado.webp",
     barcode: "0799192624322",
     // El arte del empaque lleva el octógono "ALTO EN CALORÍAS".
-    claims: { baked: true, glutenFree: true, seals: ["alto-en-calorias"] },
+    claims: { baked: true, glutenFree: true, nonGmo: true, seals: ["alto-en-calorias"] },
+    // TODO: bolsas por caja sin confirmar.
     formats: [
       { id: "caja-24", label: "Caja", units: 24, stock: 0, price: null },
-      { id: "display-12", label: "Display", units: 12, stock: 0, price: null },
     ],
     ingredients: "Maní, sal.",
     allergens: "Contiene maní.",
@@ -149,7 +156,7 @@ const PRODUCTS = [
   {
     id: 5,
     slug: "tocino-merken",
-    name: "Tocino Merkén",
+    name: "Suflés Tocino Merkén",
     brand: "chitopo",
     line: "aros",
     flavor: "tocino",
@@ -158,14 +165,15 @@ const PRODUCTS = [
     active: true,
     tag: "Viene fuertón",
     emoji: "🌶️",
-    image: "/img/productos/tocino-merken.webp",
+    image: "/img/productos/tocino-merken-cutout.webp",
     // Imágenes extra de la ficha, además de `image` (que es el frente).
     gallery: [
       { src: "/img/productos/tocino-merken-reverso.webp", label: "Reverso" },
     ],
     barcode: "0762083569200",
     // Datos del arte del envase (TCM.png): declara "LIBRE DE GLUTEN" y "NO FRITO".
-    claims: { baked: true, glutenFree: true, seals: ["alto-en-calorias"] },
+    claims: { baked: true, glutenFree: true, nonGmo: true, seals: ["alto-en-calorias"] },
+    // TODO: bolsas por caja sin confirmar.
     formats: [
       { id: "caja-24", label: "Caja", units: 24, stock: 0, price: null },
     ],

@@ -56,12 +56,12 @@ export default function Historia() {
       id="nosotros"
       title={
         <>
-          Somos los nuevos
+          De nuestras manos
           <br />
-          del barrio
+          a las tuyas
         </>
       }
-      intro="Esto partió como cualquier idea de amigos en una junta: tres locos con hartas ganas y cero plata de multinacional. Hoy tenemos un galpón en La Pintana y una máquina que no para; cada producto lo armamos con nuestras propias manos. El precio lo pensamos pa' ti, no pa' que se lo lleve una corporación. Puras ganas de que pruebes lo que hacemos, cachái."
+      intro="Chitopo nació en una junta de amigos, con la convicción de que se podía hacer un snack rico, honesto y al alcance de todos. Hoy producimos en nuestro galpón de La Pintana, donde cada bolsa pasa por nuestras manos antes de llegar a ti. Por eso cuidamos cada detalle. Gracias por probar lo que hacemos."
     >
       <Reveal
         stagger

@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Store, ArrowRight } from "lucide-react";
 import Button from "../ui/Button";
 import { CATALOGO_URL } from "../../lib/urls";
+import { DISTRIBUIDOR_MSG } from "../../data/store";
 import { useSiteConfig } from "../../lib/siteConfig";
 import { prefersReducedMotion } from "../../lib/useLenis";
 import { useTone } from "../../lib/brand";
@@ -18,7 +19,7 @@ const TONES = {
 
 // Clímax de la página: el bloque que manda al catálogo.
 export default function CtaCatalogo() {
-  const { minOrder } = useSiteConfig();
+  const { minOrder, whatsappWith } = useSiteConfig();
   const root = useRef(null);
   const box = useTone(TONES);
 
@@ -67,7 +68,19 @@ export default function CtaCatalogo() {
 
           <p className="text-sm mt-6 opacity-90">
             Cotizas online, cerramos por WhatsApp · Pedido mínimo{" "}
-            {minOrder} unidades
+            {minOrder} cajas por producto
+          </p>
+          <p className="text-sm mt-2 opacity-90">
+            ¿Menos de {minOrder} cajas?{" "}
+            <a
+              href={whatsappWith(DISTRIBUIDOR_MSG)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold underline underline-offset-2 hover:opacity-80"
+            >
+              Escríbenos por WhatsApp
+            </a>{" "}
+            y te pasamos el contacto de un distribuidor.
           </p>
         </div>
       </div>

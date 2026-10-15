@@ -1,13 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { X, Plus, Bell, WheatOff, Flame, Maximize2 } from "lucide-react";
+import { X, Plus, Bell, Maximize2 } from "lucide-react";
 import SelloAdvertencia from "./brand/SelloAdvertencia";
 import NutritionTable from "./brand/NutritionTable";
 import ImageLightbox from "./ImageLightbox";
-import { Bag, QtyStepper } from "./ProductCard";
+import { Bag, QtyStepper, DistributorNote } from "./ProductCard";
 import { useBurst } from "../lib/burst";
 import BrandMark from "./brand/BrandMark";
-import { formatPrice, hasPrice, flavorAccent, formatsOf, bolsas, whatsappLink } from "../data/store";
+import { Sello, sellosDe } from "./brand/Sellos";
+import {
+  formatPrice,
+  hasPrice,
+  flavorAccent,
+  formatsOf,
+  bolsas,
+  cajas,
+  formatGrams,
+  gramsLabel,
+  whatsappLink,
+} from "../data/store";
 import { useApp } from "../context/AppContext";
 import { brandOf } from "../data/brands";
 
@@ -21,14 +32,15 @@ function Dato({ label, children }) {
   );
 }
 
-const CLAIM = "inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1.5 bg-snow-2 text-night border-2 border-night";
+const CLAIM = "inline-flex items-center gap-2 text-xs font-bold pl-1.5 pr-3 py-1 bg-snow-2 text-night border-2 border-night";
 
 export default function ProductModal({ product, onClose, onAdd, stockThreshold }) {
   const prefersReduced = useReducedMotion();
   const { settings } = useApp();
   const available = formatsOf(product || {});
   const [selectedId, setSelectedId] = useState(available[0]?.id ?? null);
-  const [qty, setQty] = useState(1);
+  const min = settings.minOrder;
+  const [qty, setQty] = useState(min);
   const [imgError, setImgError] = useState(false);
   const [viewIdx, setViewIdx] = useState(0);
   const [zoomed, setZoomed] = useState(false);
@@ -62,8 +74,11 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
 
   const accent = flavorAccent(product.flavor);
   const soon = product.status === "proximamente";
+  const sellos = sellosDe(product);
   const selected = available.find(f => f.id === selectedId) || null;
-  const maxQty = selected ? selected.stock : 1;
+  // Mismo criterio que la tarjeta: el tope nunca queda bajo el mínimo.
+  const maxQty = selected ? Math.max(selected.stock, min) : min;
+  const count = Math.min(Math.max(qty, min), maxQty);
 
   function notifyMe() {
     const msg = `¡Hola! Quiero que me avisen cuando llegue ${product.name}, de ${brandOf(product.brand).name}.`;
@@ -73,7 +88,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
   function add() {
     const r = addBtn.current?.getBoundingClientRect();
     if (r) fire(r.left + r.width / 2, r.top + 6, accent);
-    onAdd(product, selected, qty);
+    onAdd(product, selected, count);
     onClose();
   }
 
@@ -190,7 +205,7 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
             <div>
               <div className="flex items-center gap-3 flex-wrap text-xs text-night-faint">
                 <BrandMark brand={product.brand} height={22} />
-                <span className="font-semibold text-night">{product.grams} g</span>
+                <span className="font-semibold text-night">{gramsLabel(product)}</span>
                 {soon && (
                   <span className="font-condensed uppercase tracking-[0.08em] text-xs px-2 py-0.5 bg-night text-gold">
                     Próximamente
@@ -211,18 +226,13 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
               )}
             </div>
 
-            {(product.claims?.baked || product.claims?.glutenFree) && (
+            {sellos.length > 0 && (
               <div className="flex gap-2 flex-wrap items-center">
-                {product.claims?.baked && (
-                  <span className={CLAIM}>
-                    <Flame size={13} aria-hidden="true" /> Horneado, no frito
+                {sellos.map(s => (
+                  <span key={s.id} className={CLAIM}>
+                    <Sello id={s.id} className="size-7" /> {s.label}
                   </span>
-                )}
-                {product.claims?.glutenFree && (
-                  <span className={CLAIM}>
-                    <WheatOff size={13} aria-hidden="true" /> Libre de gluten
-                  </span>
-                )}
+                ))}
               </div>
             )}
 
@@ -251,28 +261,27 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
               <>
                 <div>
                   <p className="font-condensed uppercase tracking-[0.12em] text-sm text-night-soft m-0 mb-2">
-                    Elige el formato
+                    Elige la caja
                   </p>
                   <div className="flex gap-2.5 flex-wrap" role="radiogroup" aria-label="Formatos disponibles">
                     {available.map(f => {
-                      const isLow = f.stock <= stockThreshold;
                       const isSel = selectedId === f.id;
                       return (
                         <button
                           key={f.id}
-                          onClick={() => { setSelectedId(f.id); setQty(1); }}
+                          onClick={() => { setSelectedId(f.id); setQty(min); }}
                           role="radio"
                           aria-checked={isSel}
-                          aria-label={`${f.label} de ${bolsas(f.units)}, ${f.stock} disponibles`}
+                          aria-label={`${f.label} de ${bolsas(f.units)} de ${formatGrams(product, f)} g`}
                           className={`px-4 py-2 text-left border-[3px] border-night transition-colors cursor-pointer ${
                             isSel ? "bg-night text-gold" : "bg-snow text-night hover:bg-snow-2"
                           }`}
                         >
                           <span className="font-condensed uppercase tracking-[0.04em] text-lg leading-none">
-                            {f.label} ×{f.units}
+                            {f.label} {formatGrams(product, f)} g
                           </span>
-                          <span className={`block text-[11px] font-semibold mt-1 ${isSel ? "text-gold/75" : isLow ? "text-electric" : "text-night-faint"}`}>
-                            {isLow ? `Quedan ${f.stock}` : `${f.stock} disponibles`}
+                          <span className={`block text-[11px] font-semibold mt-1 ${isSel ? "text-gold/75" : "text-night-faint"}`}>
+                            {bolsas(f.units)} por caja
                           </span>
                         </button>
                       );
@@ -284,21 +293,20 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                   <div className="bg-snow-2 border-2 border-night p-4">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <span className="text-sm text-night font-semibold">
-                          {selected.label} de {bolsas(selected.units)}
-                        </span>
+                        <span className="text-sm text-night font-semibold">Cajas</span>
                         <span className="block text-xs text-night-faint tabular-nums">
-                          Stock: {selected.stock} {selected.stock === 1 ? "bulto" : "bultos"}
+                          Mínimo {cajas(min)}
                         </span>
                       </div>
-                      <QtyStepper qty={qty} max={maxQty} onChange={setQty} size="lg" />
+                      <QtyStepper qty={count} min={min} max={maxQty} onChange={setQty} size="lg" />
                     </div>
                     <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-night/20">
-                      <span className="text-sm text-night-soft">{bolsas(selected.units * qty)} en total</span>
+                      <span className="text-sm text-night-soft">{bolsas(selected.units * count)} en total</span>
                       <span className="font-condensed text-xl text-electric tabular-nums">
-                        {hasPrice(selected.price) ? formatPrice(selected.price * qty) : "A consultar"}
+                        {hasPrice(selected.price) ? formatPrice(selected.price * count) : "A consultar"}
                       </span>
                     </div>
+                    <DistributorNote min={min} phone={settings.phone} className="mt-3" />
                   </div>
                 )}
 
@@ -307,10 +315,10 @@ export default function ProductModal({ product, onClose, onAdd, stockThreshold }
                   disabled={!selected}
                   onClick={add}
                   className="w-full min-h-[54px] inline-flex items-center justify-center gap-2 bg-electric text-snow font-condensed uppercase tracking-[0.06em] text-xl nb nb-press hover:bg-royal cursor-pointer disabled:bg-snow-2 disabled:text-night-faint disabled:cursor-not-allowed"
-                  aria-label={selected ? `Agregar ${qty} ${selected.label}` : "Elige un formato primero"}
+                  aria-label={selected ? `Agregar ${cajas(count)} al pedido` : "Elige una caja primero"}
                 >
                   <Plus size={22} aria-hidden="true" />
-                  Agregar al pedido{qty > 1 ? ` (×${qty})` : ""}
+                  Agregar {cajas(count)}
                 </button>
               </>
             )}

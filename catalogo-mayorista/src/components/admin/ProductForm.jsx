@@ -85,6 +85,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
     claims: product?.claims || {
       baked: brandOf(DEFAULT_BRAND).baked ?? false,
       glutenFree: false,
+      nonGmo: false,
       seals: [],
     },
     formats: product?.formats?.length
@@ -132,8 +133,10 @@ export default function ProductForm({ product, onSave, onCancel }) {
     setForm(f => {
       const formats = [...f.formats];
       formats[i] = { ...formats[i], [key]: val };
-      if (key === "label" || key === "units") {
-        formats[i].id = `${slugify(formats[i].label || "formato")}-${formats[i].units || 1}`;
+      if (key === "label" || key === "units" || key === "grams") {
+        const g = Number(formats[i].grams);
+        formats[i].id =
+          `${slugify(formats[i].label || "formato")}-${g ? `${g}g-` : ""}${formats[i].units || 1}`;
       }
       return { ...f, formats };
     });
@@ -199,8 +202,9 @@ export default function ProductForm({ product, onSave, onCancel }) {
       barcode: form.barcode.trim() || null,
       ingredients: form.ingredients.trim() || null,
       allergens: form.allergens.trim() || null,
-      formats: form.formats.map(f => ({
+      formats: form.formats.map(({ grams, ...f }) => ({
         ...f,
+        ...(Number(grams) ? { grams: Number(grams) } : {}),
         units: Number(f.units) || 1,
         stock: Number(f.stock) || 0,
         price: f.price === "" || f.price === null ? null : Number(f.price),
@@ -327,19 +331,19 @@ export default function ProductForm({ product, onSave, onCancel }) {
       {/* ── Formatos de venta ───────────────────────────────────────── */}
       <div>
         <div className="flex items-center justify-between mb-2.5">
-          <label className={LABEL}>Formatos de venta</label>
+          <label className={LABEL}>Cajas</label>
           <Btn small variant="ghost" onClick={addFormat}>
-            <Plus size={13} aria-hidden="true" /> Agregar formato
+            <Plus size={13} aria-hidden="true" /> Agregar caja
           </Btn>
         </div>
         <div className="bg-snow-2 border-2 border-night p-3 flex flex-col gap-2">
-          <div className="hidden sm:grid grid-cols-[1fr_90px_90px_110px_32px] gap-2 px-1">
-            {["Nombre", "Bolsas", "Stock", "Precio", ""].map(h => (
+          <div className="hidden sm:grid grid-cols-[1fr_80px_80px_80px_100px_32px] gap-2 px-1">
+            {["Nombre", "Gramos", "Bolsas", "Stock", "Precio", ""].map(h => (
               <span key={h} className="font-condensed text-[11px] uppercase tracking-[0.1em] text-night-soft">{h}</span>
             ))}
           </div>
           {form.formats.map((f, i) => (
-            <div key={i} className="grid grid-cols-2 sm:grid-cols-[1fr_90px_90px_110px_32px] gap-2 items-center">
+            <div key={i} className="grid grid-cols-2 sm:grid-cols-[1fr_80px_80px_80px_100px_32px] gap-2 items-center">
               <input
                 value={f.label}
                 onChange={e => setFormat(i, "label", e.target.value)}
@@ -349,9 +353,19 @@ export default function ProductForm({ product, onSave, onCancel }) {
               <input
                 type="number"
                 min="1"
+                value={f.grams ?? ""}
+                onChange={e => setFormat(i, "grams", e.target.value)}
+                placeholder={form.grams ? String(form.grams) : "g"}
+                aria-label="Gramos de cada bolsa"
+                className={`${FIELD_SM} text-center`}
+              />
+              <input
+                type="number"
+                min="1"
                 value={f.units}
                 onChange={e => setFormat(i, "units", e.target.value)}
-                placeholder="24"
+                placeholder="15"
+                aria-label="Bolsas por caja"
                 className={`${FIELD_SM} text-center`}
               />
               <input
@@ -381,12 +395,13 @@ export default function ProductForm({ product, onSave, onCancel }) {
             </div>
           ))}
           {form.formats.length === 0 && (
-            <p className="text-sm text-night-soft text-center py-3 m-0">Sin formatos. Agrega al menos uno.</p>
+            <p className="text-sm text-night-soft text-center py-3 m-0">Sin cajas. Agrega al menos una.</p>
           )}
         </div>
         <p className="text-xs text-night-faint mt-2 mb-0 leading-relaxed">
-          "Bolsas" es cuántas unidades trae el bulto; "Stock" son cuántos bultos hay.
-          Deja el precio vacío mientras siga en "a consultar".
+          "Gramos" es el peso de cada bolsa: déjalo vacío si es el mismo del producto. "Bolsas" es
+          cuántas trae la caja; "Stock" son cuántas cajas hay. Deja el precio vacío mientras siga en
+          "a consultar".
         </p>
       </div>
 
@@ -397,6 +412,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
           {[
             { key: "baked", label: "Horneado, no frito" },
             { key: "glutenFree", label: "Libre de gluten" },
+            { key: "nonGmo", label: "No GMO" },
           ].map(c => (
             <button
               key={c.key}

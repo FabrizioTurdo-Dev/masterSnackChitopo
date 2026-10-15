@@ -2,7 +2,7 @@
 
 Catálogo mayorista de Master Snacks (Master Snacks Inversiones SpA, La Pintana, Santiago).
 Cada producto pertenece a una de sus marcas: hoy todos son de **Chitopo**, la de horneados.
-No hay checkout: el local arma su pedido eligiendo cajas o displays, y el pedido se deriva al
+No hay checkout: el local arma su pedido eligiendo cajas cerradas, y el pedido se deriva al
 WhatsApp del socio, donde se cierra precio, pago y despacho.
 
 React 18 · Vite 5 · Tailwind v4 · framer-motion · GSAP · Supabase (opcional).
@@ -83,12 +83,15 @@ Cada producto tiene un array `formats`. Reemplaza lo que en el proyecto base era
 
 ```js
 formats: [
-  { id: "caja-24", label: "Caja", units: 24, stock: 40, price: null },
+  { id: "caja-150g-15", label: "Caja", units: 15, stock: 40, price: null },
+  { id: "caja-15g-80", label: "Caja", grams: 15, units: 80, stock: 40, price: null },
 ]
 ```
 
-- `units` = cuántas bolsas trae el bulto
-- `stock` = cuántos bultos hay
+- `grams` = peso de cada bolsa, solo si no es el del producto
+- `units` = cuántas bolsas trae la caja
+- `stock` = cuántas cajas hay
+- El pedido mínimo (`min_order` en `config`) se cuenta en cajas por producto: el selector parte ahí
 - `price: null` = a consultar
 
 > ⚠️ Las cantidades por bulto (24 y 12) son **placeholders**. Hay que confirmarlas con Alex
@@ -189,7 +192,7 @@ en cualquier pieza que se sume.
 ## Pendientes del brief
 
 - Precios mayoristas de cada formato.
-- Cantidades reales por caja y display.
+- Bolsas por caja de Maní y Tocino Merkén.
 - Ficha nutricional de Frutos del Bosque y Tocino Merkén.
 - Maní dulce y picante (todavía no existen como SKU).
 - Confirmar si Tocino Merkén pasa de concepto a producto real.

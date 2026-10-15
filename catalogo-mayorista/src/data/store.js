@@ -32,12 +32,11 @@ export const STORE_CONFIG = {
     { id: "aros", label: "Aro", labelPlural: "Aros", emoji: "🌶️" },
   ],
 
-  // Formatos de venta sugeridos al crear un producto nuevo.
-  // ⚠️ Cantidades placeholder — confirmar los bultos reales con Alex.
+  // Formato sugerido al crear un producto nuevo. Por ahora solo se vende
+  // por caja cerrada; `grams` va cuando la caja trae bolsas de otro peso
+  // que el del producto.
   defaultFormats: [
-    { id: "caja-24", label: "Caja", units: 24, stock: 0, price: null },
-    { id: "display-12", label: "Display", units: 12, stock: 0, price: null },
-    { id: "unidad", label: "Unidad", units: 1, stock: 0, price: null },
+    { id: "caja-15", label: "Caja", units: 15, stock: 0, price: null },
   ],
 };
 
@@ -55,12 +54,12 @@ export const DEFAULT_SETTINGS = {
   shopName: "Master Snacks",
   // WhatsApp del socio — formato internacional sin +
   phone: "56978632055",
-  // En unidades (bolsas)
-  minOrder: 100,
+  // En cajas, por producto: el selector de cantidad parte acá
+  minOrder: 120,
   // Con showPrices en false el catálogo funciona como cotizador: no muestra
   // ningún precio y el pedido se cierra por WhatsApp.
   showPrices: false,
-  // Umbral de stock bajo, en bultos
+  // Umbral de stock bajo, en cajas
   lowStock: 5,
   welcome: DEFAULT_WELCOME,
   // Aviso destacado sobre el catálogo: vacío no se muestra
@@ -118,6 +117,10 @@ export function phonePretty(digits) {
   const m = /^(56)(9)(\d{4})(\d{4})$/.exec(digits || "");
   return m ? `+${m[1]} ${m[2]} ${m[3]} ${m[4]}` : `+${digits}`;
 }
+
+// Para quien necesita menos cajas que el mínimo: lo derivan a un distribuidor.
+export const DISTRIBUIDOR_MSG =
+  "¡Hola! Necesito menos cajas que el pedido mínimo. ¿Me pasan el contacto de un distribuidor?";
 
 // Link de WhatsApp, con el mensaje ya escrito si viene.
 export function whatsappLink(phone, msg) {
@@ -201,7 +204,35 @@ export function bolsas(n) {
   return plural(n, "bolsa");
 }
 
-// Unidades reales de un ítem del carrito (bolsas, no bultos)
+// "1 caja", "120 cajas".
+export function cajas(n) {
+  return plural(n, "caja");
+}
+
+// Gramos de las bolsas de un formato: el del formato si lo trae (la caja de
+// bolsas de 15 g), si no el del producto.
+export function formatGrams(product, format) {
+  return Number(format?.grams) || product?.grams;
+}
+
+// "Caja 150 g": el nombre del formato con el peso de sus bolsas.
+export function formatTitle(product, format) {
+  const g = formatGrams(product, format);
+  return g ? `${format.label} ${g} g` : format.label;
+}
+
+// "150 g" o "150 g · 15 g" si el producto viene en bolsas de varios pesos.
+export function gramsLabel(product) {
+  const all = [product?.grams, ...(product?.formats || []).map(f => formatGrams(product, f))];
+  return [...new Set(all.filter(Boolean))].map(g => `${g} g`).join(" · ");
+}
+
+// Total de cajas del carrito
+export function totalBoxes(cart) {
+  return cart.reduce((s, c) => s + c.qty, 0);
+}
+
+// Unidades reales de un ítem del carrito (bolsas, no cajas)
 export function itemUnits(item) {
   return (item.units || 1) * item.qty;
 }

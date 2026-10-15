@@ -81,7 +81,7 @@ export default function Footer() {
               </li>
               <Item icon={Clock}>{COMPANY.schedule}</Item>
               <Item icon={Truck}>{COMPANY.shipping}</Item>
-              <Item icon={Truck}>Pedido mínimo: {settings.minOrder} unidades</Item>
+              <Item icon={Truck}>Pedido mínimo: {settings.minOrder} cajas por producto</Item>
             </ul>
           </div>
 

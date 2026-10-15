@@ -243,15 +243,15 @@ export default function SettingsPanel() {
 
             <div className="flex flex-col gap-1.5">
               <Input
-                label="Pedido mínimo (unidades)"
+                label="Pedido mínimo (cajas)"
                 id="cfg-min"
                 type="number"
                 min="1"
                 value={form.minOrder}
                 onChange={e => set("minOrder", e.target.value)}
-                placeholder="100"
+                placeholder="120"
               />
-              <Hint>Se cuenta en bolsas. El carro no deja enviar un pedido más chico.</Hint>
+              <Hint>Cajas por producto: la cantidad parte acá y no se puede pedir menos.</Hint>
             </div>
 
             <ReadOnly label="Moneda" value={`Peso chileno (${STORE_CONFIG.currency.code})`} />
@@ -336,7 +336,7 @@ export default function SettingsPanel() {
         <Card title="Alertas de stock">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
-              label="Umbral de stock bajo (bultos)"
+              label="Umbral de stock bajo (cajas)"
               id="cfg-low"
               type="number"
               min="0"
@@ -347,7 +347,7 @@ export default function SettingsPanel() {
             <div className="flex flex-col gap-1.5 justify-end">
               <span className={LABEL}>Ayuda</span>
               <p className="text-sm text-night-soft leading-relaxed m-0">
-                Los formatos con esa cantidad de bultos o menos se marcan como{" "}
+                Las cajas con esa cantidad en stock o menos se marcan como{" "}
                 <span className="font-semibold text-electric">stock bajo</span> en la tabla y en el catálogo.
               </p>
             </div>

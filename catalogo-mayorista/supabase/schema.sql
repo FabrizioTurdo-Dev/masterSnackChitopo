@@ -14,9 +14,10 @@
 
 -- ── 1. PRODUCTOS ────────────────────────────────────────────
 -- Un producto = un SKU (sabor + gramaje) de una marca de Master Snacks
--- (brand: id de src/data/brands.js, hoy 'chitopo'). Los bultos de venta
--- (caja, display, unidad) viven en formats como JSONB:
---   [{ "id":"caja-24", "label":"Caja", "units":24, "stock":40, "price":null }]
+-- (brand: id de src/data/brands.js, hoy 'chitopo'). Las cajas de venta
+-- viven en formats como JSONB; grams va cuando sus bolsas pesan distinto
+-- que el producto:
+--   [{ "id":"caja-15g-80", "label":"Caja", "grams":15, "units":80, "stock":40, "price":null }]
 -- price en null significa "a consultar".
 
 CREATE TABLE IF NOT EXISTS productos (
@@ -105,7 +106,7 @@ CREATE TABLE IF NOT EXISTS config (
   id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   shop_name   TEXT    DEFAULT 'Master Snacks',
   phone       TEXT    DEFAULT '56978632055',
-  min_order   INT     DEFAULT 100,     -- en unidades (bolsas)
+  min_order   INT     DEFAULT 120,     -- en cajas, por producto
   currency    TEXT    DEFAULT 'CLP',
   show_prices BOOLEAN DEFAULT false,   -- false = modo "a consultar"
   low_stock   INT     DEFAULT 5,       -- umbral en bultos

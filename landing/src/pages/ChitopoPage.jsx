@@ -4,6 +4,7 @@ import { BrandProvider } from "../lib/brand";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import Marquee from "../components/ui/Marquee";
+import { SellosFranja } from "../components/brand/Sellos";
 import Hero from "../components/sections/Hero";
 // Productos queda afuera por ahora para acortar el recorrido: los 5 sabores
 // ya se ven en el hero. Se reactiva descomentando esto, el <ProductosDestacados />
@@ -47,6 +48,7 @@ export default function ChitopoPage() {
           <main className="relative z-10">
             <Hero />
             <Marquee items={CINTA} />
+            <SellosFranja />
             {/* <ProductosDestacados /> */}
             <PorQueElegirnos />
             <HechoPorMasterSnacks />

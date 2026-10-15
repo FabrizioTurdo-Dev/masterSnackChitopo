@@ -219,7 +219,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
                     <div className="font-condensed text-2xl text-electric tabular-nums">{formatPrice(order.total)}</div>
                   )}
                   <div className="font-condensed uppercase tracking-[0.06em] text-sm text-night-soft tabular-nums">
-                    {order.units} bolsas
+                    {plural((order.items || []).reduce((n, i) => n + (i.qty || 0), 0), "caja")} · {order.units} bolsas
                   </div>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export default function OrdersList({ sync = {}, onRefresh }) {
                 {(order.items || []).map((item, i) => (
                   <span key={i} className="text-xs px-2 py-1 bg-snow-2 text-night border border-night/30">
                     {mixed && <strong>{brandOf(item.brand).name} · </strong>}
-                    {item.name} · {item.format} ×{item.units} · {plural(item.qty, "bulto")}
+                    {item.name} · {item.format} ×{item.units} · {plural(item.qty, "caja")}
                   </span>
                 ))}
               </div>

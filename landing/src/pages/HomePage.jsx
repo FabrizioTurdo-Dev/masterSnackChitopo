@@ -4,6 +4,7 @@ import { BrandProvider } from "../lib/brand";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import Marquee from "../components/ui/Marquee";
+import { SellosFranja } from "../components/brand/Sellos";
 import HeroEmpresa from "../components/home/HeroEmpresa";
 import NuestrasMarcas from "../components/home/NuestrasMarcas";
 import Historia from "../components/sections/Historia";
@@ -41,6 +42,7 @@ export default function HomePage() {
           <main className="relative z-10">
             <HeroEmpresa />
             <Marquee items={CINTA} tone="night" />
+            <SellosFranja />
             <NuestrasMarcas />
             <Historia />
             <Fabrica />

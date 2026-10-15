@@ -94,8 +94,8 @@ a alguien borrando su usuario en Authentication → Users y su fila en `admins`.
 
 En `catalogo-mayorista/src/data/products.js`:
 - Precios mayoristas: todos en `null` ("a consultar") en todos los formatos de todos los productos — falta definirlos.
-- Fichas nutricionales faltantes: Frutos del Bosque y Tocino Merkén.
-- Cantidades por bulto (caja de 24 / display de 12) son placeholders sin confirmar.
+- Fichas nutricionales faltantes: Frutos del Bosque (el reverso nuevo trae una tabla, todavía sin cargar porque el sodio impreso, 2,0 mg por 100 g, hay que confirmarlo) y Tocino Merkén.
+- Solo caja cerrada: 15 bolsas de 150 g u 80 de 15 g; mínimo 120 cajas por producto. Falta confirmar las bolsas por caja de maní y tocino.
 - Maní dulce/picante mencionados en el brief no existen todavía como producto.
 
 ### 3.3 Dominio propio
